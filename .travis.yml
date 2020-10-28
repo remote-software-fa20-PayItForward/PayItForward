@@ -6,7 +6,7 @@ install:
 - cd backend ; npm install
 script:
 - cd ..
-- cd backend ; npm start
+- cd backend ; npm test
 cache:
   directories:
   - node_modules
