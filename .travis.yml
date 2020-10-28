@@ -7,11 +7,6 @@ install:
 script:
 - cd ..
 - cd backend ; npm test
-- echo $SERVER_PRIVATE_KEY > privatekey
-- chmod 600 privatekey
-- eval `ssh-agent -s`
-- ssh-add privatekey
-- ssh -i privatekey payitforward@68.183.120.255
 cache:
   directories:
   - node_modules
