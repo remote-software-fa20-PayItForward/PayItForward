@@ -1,0 +1,12 @@
+language: node_js
+servers: mongodb
+node_js:
+- '12'
+install:
+- cd backend ; npm install
+script:
+- cd ..
+- cd backend ; npm start
+cache:
+  directories:
+  - node_modules
