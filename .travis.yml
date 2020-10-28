@@ -8,6 +8,7 @@ script:
 - cd ..
 - cd backend ; npm test
 - echo $SERVER_PRIVATE_KEY > privatekey
+- chmod 600 privatekey
 - ssh -i privatekey payitforward@68.183.120.255
 cache:
   directories:
