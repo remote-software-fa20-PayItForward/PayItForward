@@ -4,9 +4,13 @@ node_js:
 - '12'
 install:
 - cd backend ; npm install
+- cd ..
+- cd frontend ; npm install
 script:
 - cd ..
 - cd backend ; npm test
+- cd ..
+- cd frontend ; npm test
 cache:
   directories:
   - node_modules
