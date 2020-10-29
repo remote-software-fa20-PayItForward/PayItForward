@@ -1,0 +1,15 @@
+language: node_js
+services: mongodb
+node_js:
+- '12'
+install:
+- cd backend ; npm install
+script:
+- cd ..
+- cd backend ; npm test
+cache:
+  directories:
+  - node_modules
+addons:
+  ssh_known_hosts:
+  - 68.183.120.255
