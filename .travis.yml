@@ -4,6 +4,7 @@ node_js:
 - '12'
 install:
 - cd backend ; npm install
+- cd ..
 - cd frontend ; npm install
 script:
 - cd ..
