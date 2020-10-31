@@ -13,12 +13,19 @@ function HomePage() {
             <Navbar bg="dark" variant="dark">
                 <Navbar.Brand href="/">Pay it Forward</Navbar.Brand>
             </Navbar>
-            <Card style={{marginTop: 50, marginBottom: 50}}>
-            <Container>
-                <Row className="justify-content-md-center"><h1>Pay it Forward</h1></Row>
-                <Row className="justify-content-md-center" style={{padding: 10, paddingBottom: 5}}><Link to="/login"><Button variant="primary">Login</Button></Link></Row>
-                <Row className="justify-content-md-center" style={{padding: 10, paddingTop: 5}}><Link to="/register"><Button variant="primary">Create an Account</Button></Link></Row>
-            </Container></Card>
+            
+            <div className="homepage">
+                <div className="form">
+                    <form className="login-form" method="POST">
+                        <img id="logo" src="/payitforwardlogo.png" />
+                        <br />
+                        <input type="text" name="username" placeholder="email" required/>
+                        <input type="password" name="password" placeholder="password"required />
+                        <button>login</button>
+                        <p className="message">Not registered? <a href="register">Create an account</a></p>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 }
