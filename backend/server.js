@@ -2,6 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 require( './db' );
 require('dotenv').config();
 
@@ -20,9 +22,38 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(function(user, done) { //store username in passport
+	done(null, user.username);
+});
+passport.deserializeUser(function(userId, done) { //fetch user from database using username
+	User.findById(username, (err, user) => done(err, user));
+});
+//local authentication strategy:
+//		* check if user is in database
+//		* check if hash of submitted password matches stored hash
+//		* call done or false 
+const local = new LocalStrategy((username, password, done) => {
+	User.findOne( {username} )
+		.then(user => {
+			if (!user || !user.validPassword(password)) {
+				done(null, false);
+			} else {
+				done(null, user);	
+			}
+		})
+		.catch(e => done(e));
+});
+passport.use('local', local);
+
 //============app routes============================
 app.get('/', (req, res, next) => {
     res.send('Hello, world!');
+});
+
+app.post('/login', (req, res, next) => {
+	
 });
 
 app.post('/register', (req, res, next) => {
