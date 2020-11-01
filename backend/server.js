@@ -27,7 +27,8 @@ app.get('/', (req, res, next) => {
 
 app.post('/register', (req, res, next) => {
 	if (req.body.password !== req.body.passwordconfirm) {
-		res.status(500).send('The passwords entered are not the same');
+		res.statusMessage = 'The passwords entered are not the same';
+		res.status(500).end();
 	} else {
 		const newUser = {
 			username: req.body.email,
@@ -39,11 +40,13 @@ app.post('/register', (req, res, next) => {
 		User.create(newUser, function(err, user) {
 			if (err) {
 				console.log(err);
-				res.status(500).send('Error creating user. Please try again');
+				res.statusMessage = 'Error creating user. Please try again';
+				res.status(500).end();
 			} else {
 				console.log('user', user);
 				console.log('Successfully created user');
-				res.status(200).send('Successfully created user');
+				res.statusMessage = 'Successfully created user';
+				res.status(200).end();
 			}
 		})
 	}
