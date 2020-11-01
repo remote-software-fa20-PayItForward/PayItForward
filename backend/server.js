@@ -25,6 +25,30 @@ app.get('/', (req, res, next) => {
     res.send('Hello, world!');
 });
 
+app.post('/register', (req, res, next) => {
+	if (req.body.password !== req.body.passwordconfirm) {
+		res.status(500).send('The passwords entered are not the same');
+	} else {
+		const newUser = {
+			username: req.body.email,
+			password: req.body.password,
+			first: req.body.firstname,
+			last: req.body.lastname
+		}
+		console.log(newUser);
+		User.create(newUser, function(err, user) {
+			if (err) {
+				console.log(err);
+				res.status(500).send('Error creating user. Please try again');
+			} else {
+				console.log('user', user);
+				console.log('Successfully created user');
+				res.status(200).send('Successfully created user');
+			}
+		})
+	}
+});
+
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
 }); 
