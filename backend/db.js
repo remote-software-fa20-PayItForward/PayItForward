@@ -3,10 +3,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 //adds validation for unique fields in schema
 const uniqueValidator = require('mongoose-unique-validator');
-require('dotenv').config();
 
 const saltRounds = 10;
-const mongo_uri = process.env.MONGODB_KEY;
 
 const UserSchema = new mongoose.Schema({
 	username: {type: String, required: true, unique: true},
@@ -26,7 +24,3 @@ UserSchema.virtual("password").set(function(value) {
 });
 
 mongoose.model('User', UserSchema);
-
-mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
-	.then((resolved) => console.log('The database has been successfully connected! :D'))
-	.catch((err) => console.log(err));
