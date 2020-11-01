@@ -13,10 +13,15 @@ class HomePage extends Component {
     constructor(props) {
         super(props);
         this.submit = this.submit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
             email: "",
             password: ""
         }
+    }
+
+    handleChange(e) {
+        this.setState({[e.target.name]: e.target.value })
     }
 
     submit() {
@@ -35,8 +40,8 @@ class HomePage extends Component {
                         <form className="login-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
                             <img id="logo" src="/payitforwardlogo.png" />
                             <br />
-                            <input autofocus="true" type="email" name="username" placeholder="email" value={this.state.email} required/>
-                            <input type="password" name="password" placeholder="password" value={this.state.password} required />
+                            <input autofocus="true" type="email" name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} required/>
+                            <input type="password" name="password" placeholder="password" value={this.state.password} onChange={this.handleChange} required />
                             <button type="submit">login</button>
                             <p className="message">Not registered? <Link to="/register">Create an account</Link></p>
                         </form>
