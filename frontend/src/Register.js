@@ -13,6 +13,7 @@ class Register extends Component {
     constructor(props) {
         super(props);
         this.submit = this.submit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
             email: "",
             password: "",
@@ -20,6 +21,10 @@ class Register extends Component {
             firstname: "",
             lastname: "",
         }
+    }
+
+    handleChange(e) {
+        this.setState({[e.target.name]: e.target.value })
     }
 
     submit() {
@@ -39,14 +44,14 @@ class Register extends Component {
                         <form className="register-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
                             <br />
                             <div style={{float: 'left'}}>
-                            <input autofocus="true" type="text" name="first" placeholder="first name" size={10} value={this.state.firstname} required />
+                            <input autofocus="true" type="text" name="firstname" placeholder="first name" size={10} value={this.state.firstname} onChange={this.handleChange} required />
                             </div>
                             <div style={{float: 'right'}}>
-                            <input type="text" name="last" placeholder="last name" size={10} value={this.state.lastname} required />
+                            <input type="text" name="lastname" placeholder="last name" size={10} value={this.state.lastname} onChange={this.handleChange} required />
                             </div>
-                            <input type="email" name="username" placeholder="email" value={this.state.email} required />
-                            <input type="password" name="password" placeholder="create a password" value={this.state.password} required />
-                            <input type="password" name="passwordconfirm" placeholder="confirm password" value={this.state.passwordconfirm} required />
+                            <input type="email" name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} required />
+                            <input type="password" name="password" placeholder="create a password" value={this.state.password} onChange={this.handleChange} required />
+                            <input type="password" name="passwordconfirm" placeholder="confirm password" value={this.state.passwordconfirm} onChange={this.handleChange} required />
                             <button type="submit">create account</button>
                             <p className="message">Already registered? <Link to="/">Sign In</Link></p>
                         </form>
