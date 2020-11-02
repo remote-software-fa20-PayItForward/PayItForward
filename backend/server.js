@@ -61,12 +61,12 @@ app.post('/login', function(req, res, next) {
     if (err) { 
 		return res.status(500).json({error: 'Issue with Passport authentication1'});
 	}
-    if (!user) { 
-		return res.status(500).json({error: 'Issue with Passport authentication2'});
+    if (!user) {
+		return res.status(403).json({error: 'The login information entered is not correct. Please try again'});
 	}
     req.logIn(user, function(err) {
-      if (err) {
-		return res.status(403).json({error: 'The login information entered is not correct. Please try again'});
+      if (err) { 
+		return res.status(500).json({error: 'Issue with Passport authentication2'});
 	  }
 		return res.json({success: 'Successfully logged in user'})
     });
