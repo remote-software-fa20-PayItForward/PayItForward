@@ -50,35 +50,32 @@ const local = new LocalStrategy((username, password, done) => {
 passport.use('local', local);
 
 //============app routes============================
+/*
 app.get('/', (req, res, next) => {
     res.send('Hello, world!');
 });
+*/
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err) { 
-		res.statusMessage = 'Issue with Passport authentication1';
-		res.status(500).end();
+		res.status(500).json({error: 'Issue with Passport authentication1'});
 	}
     if (!user) { 
-		res.statusMessage = 'Issue with Passport authentication2';
-		res.status(500).end();
+		res.status(500).json({error: 'Issue with Passport authentication2'});
 	}
     req.logIn(user, function(err) {
-      if (err) { 
-	  	res.statusMessage = 'The login information entered is not correct. Please try again';
-		res.status(401).end();
+      if (err) {
+		res.status(403).json({error: 'The login information entered is not correct. Please try again'});
 	  }
-      	res.statusMessage = 'Successfully logged in user';
-		res.status(200).end()
+		res.json({success: 'Successfully logged in user'})
     });
   })(req, res, next);
 });
 
 app.post('/register', (req, res, next) => {
 	if (req.body.password !== req.body.passwordconfirm) {
-		res.statusMessage = 'The passwords entered are not the same';
-		res.status(500).end();
+		res.status(400).json({error: 'The passwords entered are not the same'});
 	} else {
 		const newUser = {
 			username: req.body.email,
@@ -90,13 +87,11 @@ app.post('/register', (req, res, next) => {
 		User.create(newUser, function(err, user) {
 			if (err) {
 				console.log(err);
-				res.statusMessage = 'Error creating user. Please try again';
-				res.status(501).end();
+				res.status(500).json({error: 'Error creating user. Please try again'});
 			} else {
 				console.log('user', user);
 				console.log('Successfully created user');
-				res.statusMessage = 'Successfully created user';
-				res.status(200).end();
+				res.json({success: 'Successfully created user'});
 			}
 		})
 	}
