@@ -18,7 +18,7 @@ class Login extends Component {
         this.state = {
             username: "",
             password: "",
-            flash: false
+            errorMsg: ""
         }
     }
 
@@ -36,12 +36,12 @@ class Login extends Component {
         })
         .then((response) => {
             console.log(response);
-            if(response.status == 500) {
-                console.log(response.statusMessage);
-                this.state.flash = true;
+            if(response.ok) {
                 this.props.history.push('/');
             } else {
-                this.props.history.push('/home');
+                response.json().then(body => {
+                    this.setState({errorMsg: body.error})
+                })
             }
         })
     }
@@ -57,9 +57,7 @@ class Login extends Component {
                     <div className="form">
                         <form className="login-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
                             <img id="logo" src="/payitforwardlogo.png" />
-                            { this.state.flash &&
-                                <div className="error"> The login information entered was incorrect. Please try again.</div>
-                            }
+                            <div className="error">{this.state.errorMsg}</div>
                             <input autoFocus={true} type="email" name="username" placeholder="email" value={this.state.email} onChange={this.handleChange} required/>
                             <input type="password" name="password" placeholder="password" value={this.state.password} onChange={this.handleChange} required />
                             <button type="submit">login</button>

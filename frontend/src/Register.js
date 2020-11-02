@@ -20,8 +20,7 @@ class Register extends Component {
             passwordconfirm: "",
             firstname: "",
             lastname: "",
-            flash1: false,
-            flase2: false
+            errorMsg: ""
         }
     }
 
@@ -39,16 +38,12 @@ class Register extends Component {
         })
         .then((response) => {
             console.log(response);
-            if(response.status == 500) {
-                this.state.flash1 = true;
-                this.state.flash2 = false;
-                this.props.history.push('/register');
-            } else if (response.status == 501) {
-                this.state.flash2 = true;
-                this.state.flash1 = false;
-                this.props.history.push('/register');
-            } else {
+            if (response.ok) {
                 this.props.history.push('/');
+            } else {
+                response.json().then(body => {
+                    this.setState({errorMsg: body.error})
+                })
             }
         })
     }
@@ -65,12 +60,7 @@ class Register extends Component {
                     <div className="form">
                         <form className="register-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
                             <br />
-                            { this.state.flash1 &&
-                                <div className="error"> The passwords entered are not the same. Please try again.</div>
-                            }
-                            { this.state.flash2 &&
-                                <div className="error"> An account already exists with that email. Please use a different email or login.</div>
-                            }
+                            <div className="error">{this.state.errorMsg}</div>
                             <div style={{float: 'left'}}>
                             <input autoFocus={true} type="text" name="firstname" placeholder="first name" size={10} value={this.state.firstname} onChange={this.handleChange} required />
                             </div>
@@ -81,7 +71,7 @@ class Register extends Component {
                             <input type="password" name="password" placeholder="create a password" value={this.state.password} onChange={this.handleChange} required />
                             <input type="password" name="passwordconfirm" placeholder="confirm password" value={this.state.passwordconfirm} onChange={this.handleChange} required />
                             <button type="submit">create account</button>
-                            <p className="message">Already registered? <Link to="/">Sign In</Link></p>
+                            <p className="message">Already registered? <Link to="/login">Sign In</Link></p>
                         </form>
                     </div>
                 </div>
