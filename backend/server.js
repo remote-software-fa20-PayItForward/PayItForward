@@ -59,23 +59,23 @@ app.get('/', (req, res, next) => {
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err) { 
-		res.status(500).json({error: 'Issue with Passport authentication1'});
+		return res.status(500).json({error: 'Issue with Passport authentication1'});
 	}
     if (!user) { 
-		res.status(500).json({error: 'Issue with Passport authentication2'});
+		return res.status(500).json({error: 'Issue with Passport authentication2'});
 	}
     req.logIn(user, function(err) {
       if (err) {
-		res.status(403).json({error: 'The login information entered is not correct. Please try again'});
+		return res.status(403).json({error: 'The login information entered is not correct. Please try again'});
 	  }
-		res.json({success: 'Successfully logged in user'})
+		return res.json({success: 'Successfully logged in user'})
     });
   })(req, res, next);
 });
 
 app.post('/register', (req, res, next) => {
 	if (req.body.password !== req.body.passwordconfirm) {
-		res.status(400).json({error: 'The passwords entered are not the same'});
+		return res.status(400).json({error: 'The passwords entered are not the same'});
 	} else {
 		const newUser = {
 			username: req.body.email,
@@ -91,11 +91,11 @@ app.post('/register', (req, res, next) => {
 				User.create(newUser, function(err, user) {
 					if (err) {
 						console.log(err);
-						res.status(500).json({error: 'Error creating user. Please try again'});
+						return res.status(500).json({error: 'Error creating user. Please try again'});
 					} else {
 						console.log('user', user);
 						console.log('Successfully created user');
-						res.json({success: 'Successfully created user'});
+						return res.json({success: 'Successfully created user'});
 					}
 				})
 			}
