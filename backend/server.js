@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 require( './db' );
@@ -11,6 +12,7 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(session({secret: process.env.SESSION_SECRET}));
 
 //=========set up mongodb================================
 const mongo_uri = process.env.MONGODB_KEY;
