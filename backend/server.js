@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const plaid = require('plaid');
 require( './db' );
 require('dotenv').config();
 
@@ -50,6 +51,17 @@ const local = new LocalStrategy((username, password, done) => {
 		.catch(e => done(e));
 });
 passport.use('local', local);
+
+//setup plaid
+const plaid_id = process.env.PLAID_CLIENT_ID;
+const plaid_secret = process.env.PLAID_SECRET;
+const plaid_env = plaid.environments.sandbox;
+
+const client = new plaid.Client({
+	clientID: plaid_id,
+	secret: plaid_secret,
+	env: plaid_env
+});
 
 //============app routes============================
 /*
