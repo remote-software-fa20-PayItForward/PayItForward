@@ -84,16 +84,23 @@ app.post('/register', (req, res, next) => {
 			last: req.body.lastname
 		}
 		console.log(newUser);
-		User.create(newUser, function(err, user) {
-			if (err) {
-				console.log(err);
-				res.status(500).json({error: 'Error creating user. Please try again'});
+		User.findOne({ username: req.body.email }).then(user => {
+			if (user) {
+				return res.status(400).json({error: 'An account already exists with that email. Please use a different email.'})
 			} else {
-				console.log('user', user);
-				console.log('Successfully created user');
-				res.json({success: 'Successfully created user'});
+				User.create(newUser, function(err, user) {
+					if (err) {
+						console.log(err);
+						res.status(500).json({error: 'Error creating user. Please try again'});
+					} else {
+						console.log('user', user);
+						console.log('Successfully created user');
+						res.json({success: 'Successfully created user'});
+					}
+				})
 			}
 		})
+
 	}
 });
 
