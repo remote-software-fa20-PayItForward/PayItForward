@@ -67,7 +67,7 @@ app.post('/login', function(req, res, next) {
     req.logIn(user, function(err) {
       if (err) { 
 	  	res.statusMessage = 'The login information entered is not correct. Please try again';
-		res.status(500).end();
+		res.status(401).end();
 	  }
       	res.statusMessage = 'Successfully logged in user';
 		res.status(200).end()
@@ -91,7 +91,7 @@ app.post('/register', (req, res, next) => {
 			if (err) {
 				console.log(err);
 				res.statusMessage = 'Error creating user. Please try again';
-				res.status(500).end();
+				res.status(501).end();
 			} else {
 				console.log('user', user);
 				console.log('Successfully created user');
