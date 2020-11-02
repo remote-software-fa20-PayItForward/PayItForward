@@ -2,6 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 require( './db' );
 require('dotenv').config();
 
@@ -10,6 +12,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//=========set up mongodb================================
 const mongo_uri = process.env.MONGODB_KEY;
 mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 	.then((resolved) => console.log('The database has been successfully connected! :D'))
@@ -20,9 +23,56 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
+//=========set up passport auth============================
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(function(user, done) { //store user id in passport
+	done(null, user._id);
+});
+passport.deserializeUser(function(userId, done) { //fetch user from database using id
+	User.findById(userId, (err, user) => done(err, user));
+});
+//local authentication strategy:
+//		* check if user is in database
+//		* check if hash of submitted password matches stored hash
+//		* call done or false 
+const local = new LocalStrategy((username, password, done) => {
+	User.findOne( {username} )
+		.then(user => {
+			if (!user || !user.validPassword(password)) {
+				done(null, false);
+			} else {
+				done(null, user);	
+			}
+		})
+		.catch(e => done(e));
+});
+passport.use('local', local);
+
 //============app routes============================
 app.get('/', (req, res, next) => {
     res.send('Hello, world!');
+});
+
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { 
+		res.statusMessage = 'Issue with Passport authentication1';
+		res.status(500).end();
+	}
+    if (!user) { 
+		res.statusMessage = 'Issue with Passport authentication2';
+		res.status(500).end();
+	}
+    req.logIn(user, function(err) {
+      if (err) { 
+	  	res.statusMessage = 'The login information entered is not correct. Please try again';
+		res.status(500).end();
+	  }
+      	res.statusMessage = 'Successfully logged in user';
+		res.status(200).end()
+    });
+  })(req, res, next);
 });
 
 app.post('/register', (req, res, next) => {
