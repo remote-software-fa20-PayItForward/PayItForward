@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const plaid = require('plaid');
 require( './db' );
 require('dotenv').config();
 
@@ -117,6 +116,21 @@ app.post('/register', (req, res, next) => {
 
 	}
 });
+
+
+app.get('/user', (req, res, next) => {
+	console.log(req.user);
+	if (req.user) {
+		return res.json(req.user);
+	} else {
+		return res.json({});
+	}
+})
+
+app.get('/logout', (req, res, next) => {
+	req.logOut();
+	res.json({success: "Successfully logged out"});
+})
 
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
