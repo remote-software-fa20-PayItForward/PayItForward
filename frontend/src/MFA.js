@@ -11,11 +11,15 @@ class MFA extends Component {
     }
 
     componentDidMount() {
-        Duo.init({
-            'host': 'api-42b012a0.duosecurity.com',
-            'sig_request': this.props.location.state.sig_response,
-            'submit_callback': this.submit
-        })
+        if (!this.props.location.state) {
+            this.props.history.push('/login');
+        } else {
+            Duo.init({
+                'host': 'api-42b012a0.duosecurity.com',
+                'sig_request': this.props.location.state.sig_response,
+                'submit_callback': this.submit
+            })
+        }
     }
 
     submit(form) {
