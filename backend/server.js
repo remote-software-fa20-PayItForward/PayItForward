@@ -6,6 +6,7 @@ const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
+const duo_web = require('@duosecurity/duo_web');
 require( './db' );
 require('dotenv').config();
 
@@ -78,6 +79,10 @@ app.post('/login', function(req, res, next) {
     if (!user) {
 		return res.status(403).json({error: 'The login information entered is not correct. Please try again'});
 	}
+	if (user.mfaEnabled) {
+		sig_request = duo_web.sign_request(process.env.DUO_INTEGRATION_KEY, process.env.DUO_SECRET_KEY, process.env.DUO_APPLICATION_KEY, user.username);
+		return res.status(200).json({mfa: sig_request})
+	}
     req.logIn(user, function(err) {
       if (err) { 
 		return res.status(500).json({error: 'Issue with Passport authentication2'});
@@ -118,6 +123,25 @@ app.post('/register', (req, res, next) => {
 	}
 });
 
+app.post('/mfaverify', (req, res, next) => {
+	var username = duo_web.verify_response(process.env.DUO_INTEGRATION_KEY, process.env.DUO_SECRET_KEY, process.env.DUO_APPLICATION_KEY, req.body.sig_response);
+	if (!username) {
+		return res.status(403).json({error: 'The login information could not be verified. Please try again'});
+	} else {
+		User.findOne({ username: username }).then(user => {
+			if (user) {
+				req.logIn(user, function(err) {
+					if (err) { 
+					  return res.status(500).json({error: 'Issue with Passport authentication2'});
+					}
+					  return res.json({success: 'Successfully logged in user'})
+				});
+			} else {
+				return res.status(500).json({error: 'Issue with Passport authentication.'})
+			}
+		});
+	}
+})
 
 app.get('/user', (req, res, next) => {
 	console.log(req.user);
