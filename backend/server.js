@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const plaid = require('plaid');
 require( './db' );
 require('dotenv').config();
 
