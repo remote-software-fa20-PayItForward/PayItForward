@@ -37,11 +37,20 @@ class Login extends Component {
         .then((response) => {
             console.log(response);
             if(response.ok) {
-                this.props.history.push('/');
+                response.json().then(body => {
+                    if (body.mfa) {
+                        this.props.history.push({
+                            pathname: '/mfa',
+                            state: {sig_response: body.mfa}
+                        });
+                    } else {
+                        this.props.history.push('/');
+                    }
+                });
             } else {
                 response.json().then(body => {
                     this.setState({errorMsg: body.error})
-                })
+                });
             }
         })
     }
