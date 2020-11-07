@@ -8,6 +8,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 class UserPage extends Component {
 
 
+	edit() {
+
+	}
 
 
 
@@ -16,8 +19,21 @@ class UserPage extends Component {
 
 
 
+	render() {
+        return(
 
-
-
-
+        	<div>
+                {this.state.bio &&
+                	<h2> {this.state.firstname} </h2>
+                	<p> {this.state.bio} </p>
+                	<Button variant="outline-light" onClick={(e) => { this.edit();}}>Edit Bio</Button>
+                {!this.state.bio &&
+                	<h2> {this.state.firstname} </h2>
+                	<p> You do not currently have a bio, would you like to add one? </p>
+                	<Button variant="outline-light" onClick={(e) => { this.edit();}}>Add Bio</Button>
+            </div>
+        );
+    }
 }
+
+export default UserPage;
