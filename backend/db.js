@@ -11,8 +11,9 @@ const UserSchema = new mongoose.Schema({
 	passwordHash: {type: String, required: true},
 	first: {type: String, required: true},
 	last: {type: String, required: true},
-	mfaEnabled: {type: Boolean, default: false}
-	bio: {type: String, required: false}
+	mfaEnabled: {type: Boolean, default: false},
+	bio: {type: String, required: false},
+	privacy: {type: Boolean, default: false, required: false}
 });
 
 //apply uniqueValidator to UserSchema
