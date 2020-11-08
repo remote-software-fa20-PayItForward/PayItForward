@@ -29,6 +29,7 @@ class Transactions extends Component{
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
+                this.props.history.push('/login');
             }
 
             if (!response.ok && response.status == 409) {

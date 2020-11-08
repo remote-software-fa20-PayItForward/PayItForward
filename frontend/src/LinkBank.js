@@ -20,6 +20,7 @@ class LinkBank extends Component {
         fetch('/obtain-plaid-link-token', {credentials: 'include'}).then((response) => {
             if (!response.ok && response.status == 401) {
                 this.setState({isLoading: false, hasAuthenticatedUser: false});
+                this.props.history.push('/login');
                 return;
             }
 
