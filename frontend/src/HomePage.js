@@ -77,7 +77,7 @@ class HomePage extends Component{
                     }
                     
                     {!isLoading && !hasAuthenticatedUser && 
-                        <p>Please, <Link to="/login">Log In</Link> to start managing your bank accounts.</p>
+                        <p>Please <Link to="/login">log in</Link> to start managing your bank accounts.</p>
                     }
                     {!isLoading && hasAuthenticatedUser &&
                         <div>
