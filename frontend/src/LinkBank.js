@@ -1,4 +1,3 @@
-import './LinkBank.css'
 import * as Duo from './Duo-Web-v2';
 import React, { Component } from "react";
 import Navbar from 'react-bootstrap/Navbar';
