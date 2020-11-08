@@ -25,3 +25,12 @@ UserSchema.virtual("password").set(function(value) {
 });
 
 mongoose.model('User', UserSchema);
+
+const BankItemSchema = new mongoose.Schema({
+	user_id: {type: Object, required: true},
+	itemId: {type: String, required: true},
+	accessToken: {type: String, required: true},
+	institutionName: {type: String, required: true}
+});
+
+mongoose.model('BankItem', BankItemSchema);
