@@ -32,13 +32,12 @@ class UserPage extends Component {
         return(
 
         	<div>
-                {this.state.bio &&
                 	<h2> {this.state.firstname} </h2>
-                	<p> {this.state.bio} </p>
-                	<Button variant="outline-light" onClick={(e) => { this.edit();}}>Edit Bio</Button>
+                    {this.state.bio &&
+                	<p> {this.state.bio} </p> }
+                	
                 {!this.state.bio &&
-                	<h2> {this.state.firstname} </h2>
-                	<p> You do not currently have a bio, would you like to add one? </p>
+                	<p> You do not currently have a bio, would you like to add one? </p>}
                 	<Button variant="outline-light" onClick={(e) => { this.edit();}}>Add Bio</Button>
             </div>
         );
