@@ -4,6 +4,7 @@ import HomePage from './HomePage';
 import Register from './Register';
 import Login from './Login';
 import MFA from './MFA';
+import UserPage from './UserPage';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Route exact path="/login" component={Login} />
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
+      <Route exact path="/userpage" component={UserPage} />
     </Router>
   );
 }

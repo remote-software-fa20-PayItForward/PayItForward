@@ -1,8 +1,14 @@
 import './UserPage.css';
-import React, { Component } from "react";
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import NavBar from './Navbar'
+
 
 
 class UserPage extends Component {
@@ -12,26 +18,36 @@ class UserPage extends Component {
             username: "",
             firstname: "",
             lastname: "",
-            bio:""
+            bio: ""
         }
     }
 
+
+
+	componentDidMount() {
+        fetch('/user', {credentials: 'include'}).then((response) => {
+            response.json().then(body => {
+                this.setState({
+                    username: body.username,
+                    firstname: body.first,
+                    lastname: body.last,
+                    bio: body.bio
+                })
+            });
+        }); 
+    }
 
 	edit() {
 
 	}
 
 
-
-
-
-
-
-
 	render() {
         return(
 
-        	<div>
+        	<div>{}
+        	<NavBar />
+        	<br />
                 	<h2> {this.state.firstname} </h2>
                     {this.state.bio &&
                 	<p> {this.state.bio} </p> }
