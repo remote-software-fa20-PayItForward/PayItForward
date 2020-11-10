@@ -9,8 +9,6 @@ import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
 
-
-
 class UserPage extends Component {
 	 constructor(props) {
         super(props); 
@@ -18,11 +16,10 @@ class UserPage extends Component {
             username: "",
             firstname: "",
             lastname: "",
-            bio: ""
+            bio: "",
+            editing: false
         }
     }
-
-
 
 	componentDidMount() {
         fetch('/user', {credentials: 'include'}).then((response) => {
@@ -37,26 +34,62 @@ class UserPage extends Component {
         }); 
     }
 
-	edit() {
+    edit() {
+    	this.setState({
+    		editing: true
+    	})
+    }
 
-	}
+    save() {
+    	var val = this.refs.newText.value;
+    	alert(val)
+    	this.setState({
+    		bio: val,
+    		editing: false
+    	});
+    }
+
+    renderView() {
+    	return (
+
+    		<div>{}
+        		<NavBar />
+        		<br />
+                	<h2> {this.state.firstname} </h2>
+                	{this.state.bio &&
+                		<p> {this.state.bio} </p> }
+                	
+                	{!this.state.bio &&
+                		<p> You do not currently have a bio, would you like to add one? </p>}
+                	<Button variant="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>
+            </div>
+    	);
+    }
+
+    renderEdit() {
+    	return (
+
+    		<div>{}
+    			<NavBar />
+    			<br />
+    				<h2> {this.state.firstname} </h2>
+    				{this.state.bio && 
+    					<textarea ref="newText" defaultValue = "this.state.bio"></textarea>}
+    				{!this.state.bio &&
+    					<textarea ref="newText" defaultValue ="Edit bio..."></textarea>}
+    				<Button variant="outline-dark" onClick={(e)=>{this.save();}}>Save Changes</Button>
+    		</div>
+    	)
+    }
+
 
 
 	render() {
-        return(
-
-        	<div>{}
-        	<NavBar />
-        	<br />
-                	<h2> {this.state.firstname} </h2>
-                    {this.state.bio &&
-                	<p> {this.state.bio} </p> }
-                	
-                {!this.state.bio &&
-                	<p> You do not currently have a bio, would you like to add one? </p>}
-                	<Button variant="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>
-            </div>
-        );
+       	if(this.state.editing) { 
+       		return this.renderEdit();
+       	} else { 
+        	return this.renderView(); 
+        }
     }
 }
 
