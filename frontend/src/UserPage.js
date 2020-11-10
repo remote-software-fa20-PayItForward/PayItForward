@@ -54,7 +54,7 @@ class UserPage extends Component {
                 	
                 {!this.state.bio &&
                 	<p> You do not currently have a bio, would you like to add one? </p>}
-                	<Button variant="outline-light" onClick={(e) => { this.edit();}}>Add Bio</Button>
+                	<Button variant="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>
             </div>
         );
     }
