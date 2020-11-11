@@ -153,10 +153,10 @@ app.get('/user', (req, res, next) => {
 })
 
 app.post('/UserPage', (req, res, next) => {
-	console.log(req.body);
+	console.log('hi', req.body);
 	User.findOne({username: req.user.username}).then(user => {
 		if(user) {
-			console.log(req.body.bio);
+			console.log('hey', req.body.bio);
 		}
 	})
 })
