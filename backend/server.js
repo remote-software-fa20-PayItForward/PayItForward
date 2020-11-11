@@ -8,7 +8,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
-require( './db' );
+require( './models/User' );
+require( './models/BankItem' );
 require('dotenv').config();
 
 //=========set up app================================
