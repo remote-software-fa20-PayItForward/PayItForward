@@ -42,7 +42,6 @@ class UserPage extends Component {
 
     save() {
     	var val = this.refs.newText.value;
-    	alert(val)
     	this.setState({
     		bio: val,
     		editing: false
