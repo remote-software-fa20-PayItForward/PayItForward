@@ -40,7 +40,6 @@ class NavBar extends Component {
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>Welcome, {this.state.firstname} {this.state.lastname}</Navbar.Text>
-                        <Link to="/"><Button variant="outline-light">Home Page</Button></Link>
                         <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
                         <Button variant="outline-light" onClick={(e) => { this.logout();}}>Log Out</Button>
                 </Navbar.Collapse>}
