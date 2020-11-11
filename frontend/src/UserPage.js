@@ -50,6 +50,13 @@ class UserPage extends Component {
     }
 
     renderView() {
+    	const bio = this.state.bio;
+    	let button;
+    	if(bio) {
+    		button = <Button variant ="outline-dark" onClick={(e) => { this.edit();}}>Edit Bio</Button>;
+    	} else {
+    		button = <Button variant ="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>;
+    	}
     	return (
 
     		<div>{}
@@ -61,7 +68,7 @@ class UserPage extends Component {
                 	
                 	{!this.state.bio &&
                 		<p> You do not currently have a bio, would you like to add one? </p>}
-                	<Button variant="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>
+                	{button}
             </div>
     	);
     }
