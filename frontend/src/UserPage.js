@@ -74,9 +74,9 @@ class UserPage extends Component {
     			<br />
     				<h2> {this.state.firstname} </h2>
     				{this.state.bio && 
-    					<textarea ref="newText" defaultValue = "this.state.bio"></textarea>}
+    					<textarea ref="newText" defaultValue = {this.state.bio}></textarea>}
     				{!this.state.bio &&
-    					<textarea ref="newText" defaultValue ="Edit bio..."></textarea>}
+    					<textarea ref="newText" placeholder="Edit bio..."></textarea>}
     				<Button variant="outline-dark" onClick={(e)=>{this.save();}}>Save Changes</Button>
     		</div>
     	)
