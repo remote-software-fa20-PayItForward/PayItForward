@@ -8,8 +8,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
-require( './models/User' );
-require( './models/BankItem' );
+const User = require( './models/User' );
+const BankItem = require( './models/BankItem' );
 require('dotenv').config();
 
 //=========set up app================================
@@ -27,8 +27,6 @@ mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 
 
 	
-const User = mongoose.model('User');
-const BankItem = mongoose.model('BankItem');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -280,6 +278,7 @@ app.post('/link-bank-account', async (req, res, next) => {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
+
 
 app.get('/banks/:bankId/accounts', async (req, res, next) => {
 	console.log(req.params.bankId);

@@ -7,4 +7,4 @@ const BankItemSchema = new mongoose.Schema({
 	institutionName: {type: String, required: true}
 });
 
-mongoose.model('BankItem', BankItemSchema);
+module.exports = mongoose.model('BankItem', BankItemSchema);
