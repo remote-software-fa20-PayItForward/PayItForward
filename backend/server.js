@@ -153,10 +153,11 @@ app.get('/user', (req, res, next) => {
 })
 
 app.post('/UserPage', (req, res, next) => {
-	console.log('hi', req.body);
-	User.findOne({username: req.user.username}).then(user => {
-		if(user) {
-			console.log('hey', req.body.bio);
+	User.updateOne({username: req.user.username}, {bio: req.body.bio}).then(bio => {
+		if(bio) {
+			return res.json({Success: 'Successfully updated bio'})
+		} else {
+			return res.status(500).json({error: 'Issue updating bio'})
 		}
 	})
 })
