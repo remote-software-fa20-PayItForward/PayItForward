@@ -8,7 +8,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
-require( './db' );
+const User = require( './models/User' );
+const BankItem = require( './models/BankItem' );
 require('dotenv').config();
 
 //=========set up app================================
@@ -26,8 +27,6 @@ mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 
 
 	
-const User = mongoose.model('User');
-const BankItem = mongoose.model('BankItem');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -157,6 +156,16 @@ app.get('/user', (req, res, next) => {
 	}
 })
 
+app.post('/UserPage', (req, res, next) => {
+	User.updateOne({username: req.user.username}, {bio: req.body.bio}).then(bio => {
+		if(bio) {
+			return res.json({Success: 'Successfully updated bio'})
+		} else {
+			return res.status(500).json({error: 'Issue updating bio'})
+		}
+	})
+})
+
 app.get('/logout', (req, res, next) => {
 	req.logOut();
 	res.json({success: "Successfully logged out"});
@@ -269,6 +278,7 @@ app.post('/link-bank-account', async (req, res, next) => {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
+
 
 app.get('/banks/:bankId/accounts', async (req, res, next) => {
 	console.log(req.params.bankId);
