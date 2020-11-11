@@ -46,6 +46,14 @@ class UserPage extends Component {
     		bio: val,
     		editing: false
     	});
+    	console.log("hi")
+    	fetch('/UserPage', {
+    		method: "POST",
+    		 headers: {
+    		 	'Content-type': 'application/json'
+    		 },
+    		 body: JSON.stringify(this.state)
+    	})
     }
 
     renderView() {

@@ -152,6 +152,15 @@ app.get('/user', (req, res, next) => {
 	}
 })
 
+app.post('/UserPage', (req, res, next) => {
+	console.log(req.body);
+	User.findOne({username: req.user.username}).then(user => {
+		if(user) {
+			console.log(req.body.bio);
+		}
+	})
+})
+
 app.get('/logout', (req, res, next) => {
 	req.logOut();
 	res.json({success: "Successfully logged out"});
