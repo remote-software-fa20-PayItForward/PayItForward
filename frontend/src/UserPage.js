@@ -42,18 +42,18 @@ class UserPage extends Component {
 
     save() {
     	var val = this.refs.newText.value;
-    	this.setState({
-    		bio: val,
-    		editing: false
-    	});
-    	console.log("hi")
-    	fetch('/UserPage', {
+        fetch('/UserPage', {
     		method: "POST",
     		 headers: {
     		 	'Content-type': 'application/json'
     		 },
-    		 body: JSON.stringify(this.state)
-    	})
+    		 body: JSON.stringify({bio: val})
+    	});
+    	this.setState({
+    		bio: val,
+    		editing: false
+    	});
+        console.log(this.state);
     }
 
     renderView() {
