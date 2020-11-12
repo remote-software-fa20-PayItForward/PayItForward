@@ -40,6 +40,12 @@ class UserPage extends Component {
     	})
     }
 
+    cancel() {
+        this.setState({
+            editing: false
+        })
+    }
+
     save() {
     	var val = this.refs.newText.value;
         fetch('/UserPage', {
@@ -91,7 +97,8 @@ class UserPage extends Component {
     					<textarea ref="newText" defaultValue = {this.state.bio}></textarea>}
     				{!this.state.bio &&
     					<textarea ref="newText" placeholder="Edit bio..."></textarea>}
-    				<Button variant="outline-dark" onClick={(e)=>{this.save();}}>Save Changes</Button>
+    				<Button variant="outline-dark"  style = {{color:'green'}}onClick={(e)=>{this.save();}}>Save Changes</Button>
+                    <Button variant="outline-dark"  style = {{color:'red'}} onClick={(e)=>{this.cancel();}}>Cancel</Button>
     		</div>
     	)
     }
