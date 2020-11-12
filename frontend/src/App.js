@@ -5,6 +5,7 @@ import Register from './Register';
 import Login from './Login';
 import MFA from './MFA';
 import UserPage from './UserPage';
+import ProfilePic from './ProfilePic';
 import LinkBank from './LinkBank'
 import Accounts from './Accounts'
 import Transactions from './Transactions'
@@ -17,6 +18,7 @@ function App() {
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
       <Route exact path="/userpage" component={UserPage} />
+      <Route exact path="/ProfilePic" component={ProfilePic} />
       <Route exact path="/link-bank-account" component={LinkBank} />
       <Route exact path="/banks/:bankId/accounts" component={Accounts} />
       <Route exact path="/banks/:bankId/accounts/:accountId/transactions" component={Transactions} />

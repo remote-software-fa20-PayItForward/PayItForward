@@ -82,6 +82,8 @@ class UserPage extends Component {
                 	{!this.state.bio &&
                 		<p> You do not currently have a bio, would you like to add one? </p>}
                 	{button}
+                    <Link to="/ProfilePic"><Button variant="outline-dark">ProfilePic</Button></Link>
+
             </div>
     	);
     }
