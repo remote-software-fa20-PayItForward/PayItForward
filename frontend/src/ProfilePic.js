@@ -18,22 +18,43 @@ class ProfilePic extends React.Component{
   constructor(props){
     super(props)
     this.state = {
+      data: "",
+      name: '',
       file: null
     }
     this.handleChange = this.handleChange.bind(this)
+    this.submit = this.submit.bind(this);
   }
   handleChange(event) {
-    this.setState({
-      file: URL.createObjectURL(event.target.files[0])
+    var file = event.target.files[0];
+    file.text().then(text => {
+      this.setState({
+        data: event.target.files[0],
+        file: URL.createObjectURL(file),
+        name: file.name
+      })
     })
   }
+
+  submit() {
+    if (this.state.data) {
+      const formData = new FormData(); 
+      formData.append( 
+        "myFile", 
+        this.state.data, 
+        this.state.data.name 
+      ); 
+      axios.post('/user/profilephoto', formData).then(function(response) {
+        
+      });
+    }
+  }
+  
   render() {
     return (
       <div className="ProfilePic">
-      	<NavBar />
-		<br />
         <input type="file" onChange={this.handleChange}/>
-        <button onClick={this.fileUploadHandler}>Upload Button</button>
+        <button onClick={this.submit}>Upload</button>
         <img src={this.state.file}/>
       </div>
     );
