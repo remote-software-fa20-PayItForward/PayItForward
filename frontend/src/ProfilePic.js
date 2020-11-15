@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import logo from "./logo.svg";
 import axios from "axios";
 import "./ProfilePic.css";
 
@@ -13,51 +12,33 @@ import { Link } from 'react-router-dom';
 import NavBar from './Navbar'
 
 
-class ProfilePic extends Component{
+class ProfilePic extends React.Component{
 
-	fileSelectedHandler = event => {
-		this.setState({
 
-		selectedFile: event.target.files[0]	
-		
-		})
-		
-	}
-
-	fileUploadHandler = () => {
-		const fileImg = new FormData();
-		fileImg.append("image", this.state.selectedFile,this.state.selectedFile.name);
-		axios.post("");
-	}
-
-    save() {
-    	var val = this.refs.newText.value;
-        fetch('/ProfilePic', {
-    		method: "POST",
-    		 headers: {
-    		 	'Content-type': 'application/json'
-    		 },
-    		 body: JSON.stringify({bio: val})
-    	});
-    	this.setState({
-    		bio: val,
-    		editing: false
-    	});
-        console.log(this.state);
+  constructor(props){
+    super(props)
+    this.state = {
+      file: null
     }
-
-
-
-render() {
-	return (
-		<div className="ProfilePic"> 
-			<NavBar />
-			<br />
-		<input type="file" onChange={this.fileSelectedHandler}/>
-		<button onClick={this.fileUploadHandler}>Upload Button</button>
-		</div>
-		);
-	}
+    this.handleChange = this.handleChange.bind(this)
+  }
+  handleChange(event) {
+    this.setState({
+      file: URL.createObjectURL(event.target.files[0])
+    })
+  }
+  render() {
+    return (
+      <div className="ProfilePic">
+      	<NavBar />
+		<br />
+        <input type="file" onChange={this.handleChange}/>
+        <button onClick={this.fileUploadHandler}>Upload Button</button>
+        <img src={this.state.file}/>
+      </div>
+    );
+  }
 }
+
 
 export default ProfilePic;

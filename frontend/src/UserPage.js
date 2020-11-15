@@ -75,7 +75,9 @@ class UserPage extends Component {
     		<div>{}
         		<NavBar />
         		<br />
-                	<h2> {this.state.firstname} </h2>
+                	<h2> {this.state.firstname} 
+                    
+                    </h2>
                 	{this.state.bio &&
                 		<p> {this.state.bio} </p> }
                 	
