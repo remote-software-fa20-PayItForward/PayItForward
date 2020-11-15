@@ -8,6 +8,7 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
+import ProfilePic from './ProfilePic';
 
 class UserPage extends Component {
 	 constructor(props) {
@@ -84,7 +85,7 @@ class UserPage extends Component {
                 	{!this.state.bio &&
                 		<p> You do not currently have a bio, would you like to add one? </p>}
                 	{button}
-                    <Link to="/ProfilePic"><Button variant="outline-dark">ProfilePic</Button></Link>
+                    <ProfilePic />
 
             </div>
     	);
