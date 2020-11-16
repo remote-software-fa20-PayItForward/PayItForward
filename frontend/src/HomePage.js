@@ -16,7 +16,6 @@ class HomePage extends Component{
             isLoading: true,
             hasAuthenticatedUser: false,
             bankItems: null,
-            firstname: ""
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -41,8 +40,7 @@ class HomePage extends Component{
         fetch('/linked-banks', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
-                    console.log(body);
-                    this.setState({bankItems: body.bankItems, hasAuthenticatedUser: true, firstname: body.firstname});
+                    this.setState({bankItems: body.bankItems, hasAuthenticatedUser: true});
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
