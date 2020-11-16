@@ -8,6 +8,10 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('pk_test_51HlnHWIfMQHs5Z9IuL8N16OlzlwZMD425Ev9UrplmvI35xjlzNfBmMkhRIrdWNwMUtTz6xCSl0kzs1bAVRfNUoDi00qJFHqKAO');
+
 
 class HomePage extends Component{
     constructor(props) {
@@ -16,7 +20,8 @@ class HomePage extends Component{
             isLoading: true,
             hasAuthenticatedUser: false,
             bankItems: null,
-            firstname: ""
+            firstname: "",
+            errorMsg: ""
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -49,6 +54,19 @@ class HomePage extends Component{
             this.setState({isLoading: false});
         });
     }
+/*
+    async submit(e){
+        const stripe = await stripePromise;
+        const response = await fetch('/create-checkout-session', { method: 'POST' });
+        const session = await response.json();
+        const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+        });
+        if (result.error) {
+            <h1>{result.error.message}</h1>
+            }
+        };*/
+
 
     render() {
         let { isLoading, bankItems, hasAuthenticatedUser } = this.state;
@@ -101,7 +119,17 @@ class HomePage extends Component{
                                         <h3 className="font-weight-bold">Send a Sprout</h3>
                                         <p className="lead mt-3">Feeling generous? Choose to donate your change and help grow a fellow sprout!</p>
                                         <div class="card-footer bg-white p-0" style={{border: "none"}}>
-                                            <Link to="#"><Button className="purple-btn font-weight-bold">Let's grow!</Button></Link>
+                                            <Button className="purple-btn font-weight-bold" onClick={async (event) => {
+                                              const stripe = await stripePromise;
+                                              const response = await fetch('/create-checkout-session', { method: 'POST' });
+                                              const session = await response.json();
+                                              const result = await stripe.redirectToCheckout({
+                                                sessionId: session.id,
+                                              });
+                                              if (result.error) {
+                                               <h1>{result.error.message}</h1>
+                                              }
+                                            }}>Let's grow!</Button>
                                             <img src="/grow.png" style={{width: "30%"}} className="float-right"/>
                                         </div>
                                     </div>
@@ -139,11 +167,30 @@ class HomePage extends Component{
                                 {bankItems.map((bankItem) => <li>{bankItem.bankName} <Link to={`/banks/${bankItem.bankId}/accounts`}>View Accounts</Link></li>)}
                                 </ul>
                                 <Link to="/link-bank-account" onClick={this.triggerPlaidLinkOpen}>Link New Bank</Link>
-                            */}
+                        
+                                <br></br>
+                                <form className="register-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
+                                <div className="error">{this.state.errorMsg}</div>
+                                <input type="number" name="donationAmount" placeholder="amount" required/>
+                                <button type="submit">Donate</button>
+                                </form>
+                                <button role="link" onClick={async (event) => {
+                                    const stripe = await stripePromise;
+                                    const response = await fetch('/create-checkout-session', { method: 'POST' });
+                                    const session = await response.json();
+                                    const result = await stripe.redirectToCheckout({
+                                    sessionId: session.id,
+                                    });
+                                    if (result.error) {
+                                        <h1>{result.error.message}</h1>
+                                    }
+                                }}>
+                                Donate
+                            </button>  
+                            if no bank account connected create new button */}
                             </div>
                         }
                     </div>
-
             </div>
         );
     }

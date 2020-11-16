@@ -8,9 +8,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
+const multer = require('multer');
 const User = require( './models/User' );
 const BankItem = require( './models/BankItem' );
+const Image = require( './models/Image' );
 require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+var upload = multer();
 
 //=========set up app================================
 const app = express();
@@ -72,6 +76,8 @@ app.get('/', (req, res, next) => {
     res.send('Hello, world!');
 });
 */
+
+app.use('/images/', require("./routes/images"));
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -163,6 +169,24 @@ app.post('/UserPage', (req, res, next) => {
 		}
 	})
 })
+
+app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
+	console.log(req.file);
+	Image.create({data: req.file.buffer, name: req.file.originalname, mime: req.file.mimetype}, function(err, image) {
+		if (err) {
+			console.log(err);
+			return res.status(500).json({error: 'Error uploading image. Please try again'});
+		} else {
+			User.updateOne({_id: req.user._id}, {avatar: '/images/' + image._id}).then(response => {
+				if(response) {
+					return res.json({Success: 'Successfully updated profile photo'})
+				} else {
+					return res.status(500).json({error: 'Issue updating profile photo'})
+				}
+			});
+		}
+	});
+});
 
 app.get('/logout', (req, res, next) => {
 	req.logOut();
@@ -354,7 +378,53 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
+// app.get('/create-checkout-session', async (req,res) =>{
+
+// 	console.log("get func working")
+// });
+app.post('/create-checkout-session', async (req, res) => {
+	const session = await stripe.checkout.sessions.create({
+		customer_email: req.user.username,
+		payment_method_types: ['card'],
+		line_items: [
+			{
+			price_data: {
+				currency: 'usd',
+				product_data: {
+				name: 'Fundraiser Name',
+				},
+				unit_amount: 2000,
+			},
+			quantity: 1,
+			},
+		],
+		mode: 'payment',
+		
+		//for deployment only
+		success_url: 'https://payforwardapp.com/donation-success',
+		cancel_url: 'https://payforwardapp.com/'
+		/*
+		For testing comment out the code on top and use code below
+		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
+		
+		success_url: "https://example.com/success",
+		cancel_url: "https://example.com/cancel"*/
+	}).catch(error=>{
+		console.log(error);
+		return res.status(500).json({error: error});
+	});
+res.json({ id: session.id });
+  });
+
+  /*
+  if user creates new donation fund 
+  const account = await stripe.accounts.create({
+  type: 'express',
+});*/
+
+
 
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
 }); 
+
