@@ -1,6 +1,7 @@
+import './Navbar.css';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
@@ -35,8 +36,8 @@ class NavBar extends Component {
 
     render() {
         return(
-            <Navbar bg="dark" variant="dark">
-                <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
+            <Navbar variant="dark" className="navbar-custom">
+                <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>Welcome, {this.state.firstname} {this.state.lastname}</Navbar.Text>
@@ -45,8 +46,10 @@ class NavBar extends Component {
                 </Navbar.Collapse>}
                 {!this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
-                    <ButtonGroup>
+                    <ButtonGroup className="mr-2">
                         <Link to="/login"><Button variant="outline-light">Log In</Button></Link>
+                    </ButtonGroup>
+                    <ButtonGroup className="mr-2">
                         <Link to="/register"><Button variant="outline-light">Create an Account</Button></Link>
                     </ButtonGroup>
                 </Navbar.Collapse>}

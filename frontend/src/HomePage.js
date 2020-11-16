@@ -54,41 +54,28 @@ class HomePage extends Component{
         return(
         
             <div>
-                {/*
-            <Navbar bg="dark" variant="dark">
-                <Navbar.Brand href="/">Pay it Forward</Navbar.Brand>
+                <NavBar />
                 
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav mr-auto">
-                    <li className="nav-item" id="logout">
-                        <a className="nav-link" href="#">Log Out</a>
-                    </li>
-                </ul>
-            </div>
-            
-        </Navbar>
-                */}
-            <NavBar />
-            <br />
-                <div className="container">
-                    <h1>Welcome</h1>
-                    {isLoading &&
-                        <p>Loading...</p>
-                    }
-                    
-                    {!isLoading && !hasAuthenticatedUser && 
-                        <p>Please <Link to="/login">log in</Link> to start managing your bank accounts.</p>
-                    }
-                    {!isLoading && hasAuthenticatedUser &&
-                        <div>
-                            <h2>Connected Banks</h2>
-                            <ul>
-                            {bankItems.map((bankItem) => <li>{bankItem.bankName} <Link to={`/banks/${bankItem.bankId}/accounts`}>View Accounts</Link></li>)}
-                            </ul>
-                            <Link to="/link-bank-account" onClick={this.triggerPlaidLinkOpen}>Link New Bank</Link>
-                        </div>
-                    }
-                </div>
+                    <div className="container">
+                        <h1>Welcome</h1>
+                        {isLoading &&
+                            <p>Loading...</p>
+                        }
+                        
+                        {!isLoading && !hasAuthenticatedUser && 
+                            <p>Please <Link to="/login">log in</Link> to start managing your bank accounts.</p>
+                        }
+                        {!isLoading && hasAuthenticatedUser &&
+                            <div>
+                                <h2>Connected Banks</h2>
+                                <ul>
+                                {bankItems.map((bankItem) => <li>{bankItem.bankName} <Link to={`/banks/${bankItem.bankId}/accounts`}>View Accounts</Link></li>)}
+                                </ul>
+                                <Link to="/link-bank-account" onClick={this.triggerPlaidLinkOpen}>Link New Bank</Link>
+                            </div>
+                        }
+                    </div>
+
             </div>
         );
     }
