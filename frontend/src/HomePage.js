@@ -8,6 +8,10 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('pk_test_51HlnHWIfMQHs5Z9IuL8N16OlzlwZMD425Ev9UrplmvI35xjlzNfBmMkhRIrdWNwMUtTz6xCSl0kzs1bAVRfNUoDi00qJFHqKAO');
+
 
 class HomePage extends Component{
     constructor(props) {
@@ -15,7 +19,8 @@ class HomePage extends Component{
         this.state = {
             isLoading: true,
             hasAuthenticatedUser: false,
-            bankItems: null
+            bankItems: null,
+            errorMsg: ""
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -48,6 +53,19 @@ class HomePage extends Component{
             this.setState({isLoading: false});
         });
     }
+/*
+    async submit(e){
+        const stripe = await stripePromise;
+        const response = await fetch('/create-checkout-session', { method: 'POST' });
+        const session = await response.json();
+        const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+        });
+        if (result.error) {
+            <h1>{result.error.message}</h1>
+            }
+        };*/
+
 
     render() {
         let { isLoading, bankItems, hasAuthenticatedUser } = this.state;
@@ -86,6 +104,26 @@ class HomePage extends Component{
                             {bankItems.map((bankItem) => <li>{bankItem.bankName} <Link to={`/banks/${bankItem.bankId}/accounts`}>View Accounts</Link></li>)}
                             </ul>
                             <Link to="/link-bank-account" onClick={this.triggerPlaidLinkOpen}>Link New Bank</Link>
+                            <br></br>
+                        {/* <form className="register-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
+                            <div className="error">{this.state.errorMsg}</div>
+                            <input type="number" name="donationAmount" placeholder="amount" required/>
+                            <button type="submit">Donate</button>
+                            </form> */}
+                            <button role="link" onClick={async (event) => {
+                                const stripe = await stripePromise;
+                                const response = await fetch('/create-checkout-session', { method: 'POST' });
+                                const session = await response.json();
+                                const result = await stripe.redirectToCheckout({
+                                sessionId: session.id,
+                                });
+                                if (result.error) {
+                                    <h1>{result.error.message}</h1>
+                                }
+                            }}>
+                            Donate
+                        </button>  
+                        {/* if no bank account connected create new button */}
                         </div>
                     }
                 </div>
