@@ -8,6 +8,7 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
+import ProfilePic from './ProfilePic';
 
 class UserPage extends Component {
 	 constructor(props) {
@@ -28,7 +29,8 @@ class UserPage extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
-                    bio: body.bio
+                    bio: body.bio,
+                    avatar: body.avatar
                 })
             });
         }); 
@@ -75,13 +77,17 @@ class UserPage extends Component {
     		<div>{}
         		<NavBar />
         		<br />
-                	<h2> {this.state.firstname} </h2>
+                	<h2> {this.state.firstname} <img src={this.state.avatar}/>
+                    </h2>
                 	{this.state.bio &&
                 		<p> {this.state.bio} </p> }
                 	
                 	{!this.state.bio &&
                 		<p> You do not currently have a bio, would you like to add one? </p>}
                 	{button}
+                    <br /><br />
+                    <ProfilePic />
+
             </div>
     	);
     }

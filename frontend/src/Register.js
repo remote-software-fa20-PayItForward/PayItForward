@@ -52,8 +52,8 @@ class Register extends Component {
         return(
         
             <div>
-                <Navbar bg="dark" variant="dark">
-                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
+                <Navbar variant="dark" className="navbar-custom">
+                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 </Navbar>
                 
                 <div className="login">

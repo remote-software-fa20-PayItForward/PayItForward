@@ -44,7 +44,7 @@ class Login extends Component {
                             state: {sig_response: body.mfa}
                         });
                     } else {
-                        this.props.history.push('/');
+                        this.props.history.push('/home');
                     }
                 });
             } else {
@@ -58,8 +58,8 @@ class Login extends Component {
     render() {
         return (
             <div>
-                <Navbar bg="dark" variant="dark">
-                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
+                <Navbar  variant="dark" className="navbar-custom">
+                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 </Navbar>
                 
                 <div className="login">

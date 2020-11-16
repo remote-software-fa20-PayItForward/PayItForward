@@ -8,10 +8,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
+const multer = require('multer');
 const User = require( './models/User' );
 const BankItem = require( './models/BankItem' );
+const Image = require( './models/Image' );
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+var upload = multer();
 
 //=========set up app================================
 const app = express();
@@ -25,8 +28,6 @@ const mongo_uri = process.env.MONGODB_KEY;
 mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 	.then((resolved) => console.log('The database has been successfully connected! :D'))
 	.catch((err) => console.log(err));
-
-
 	
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -75,6 +76,8 @@ app.get('/', (req, res, next) => {
     res.send('Hello, world!');
 });
 */
+
+app.use('/images/', require("./routes/images"));
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -167,6 +170,24 @@ app.post('/UserPage', (req, res, next) => {
 	})
 })
 
+app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
+	console.log(req.file);
+	Image.create({data: req.file.buffer, name: req.file.originalname, mime: req.file.mimetype}, function(err, image) {
+		if (err) {
+			console.log(err);
+			return res.status(500).json({error: 'Error uploading image. Please try again'});
+		} else {
+			User.updateOne({_id: req.user._id}, {avatar: '/images/' + image._id}).then(response => {
+				if(response) {
+					return res.json({Success: 'Successfully updated profile photo'})
+				} else {
+					return res.status(500).json({error: 'Issue updating profile photo'})
+				}
+			});
+		}
+	});
+});
+
 app.get('/logout', (req, res, next) => {
 	req.logOut();
 	res.json({success: "Successfully logged out"});
@@ -185,8 +206,7 @@ app.get('/linked-banks', async (req, res, next) => {
 			return {bankId: bankItem._id, bankName: bankItem.institutionName}
 		});
 		console.log(bankItemsResponse)
-
-		res.json({bankItems: bankItemsResponse});
+		res.json({bankItems: bankItemsResponse, firstname: req.user.first});
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
