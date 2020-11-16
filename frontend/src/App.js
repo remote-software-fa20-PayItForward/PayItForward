@@ -1,5 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import FrontPage from './FrontPage';
 import HomePage from './HomePage';
 import Register from './Register';
 import Login from './Login';
@@ -12,7 +13,8 @@ import Transactions from './Transactions'
 function App() {
   return (
     <Router>
-      <Route exact path="/" component={HomePage} />
+      <Route exact path="/" component={FrontPage} />
+      <Route exact path="/home" component={HomePage} />
       <Route exact path="/login" component={Login} />
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />

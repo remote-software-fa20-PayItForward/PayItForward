@@ -44,7 +44,7 @@ class Login extends Component {
                             state: {sig_response: body.mfa}
                         });
                     } else {
-                        this.props.history.push('/');
+                        this.props.history.push('/home');
                     }
                 });
             } else {
