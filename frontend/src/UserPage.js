@@ -29,7 +29,8 @@ class UserPage extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
-                    bio: body.bio
+                    bio: body.bio,
+                    avatar: body.avatar
                 })
             });
         }); 
@@ -76,8 +77,7 @@ class UserPage extends Component {
     		<div>{}
         		<NavBar />
         		<br />
-                	<h2> {this.state.firstname} 
-                    
+                	<h2> {this.state.firstname} <img src={this.state.avatar}/>
                     </h2>
                 	{this.state.bio &&
                 		<p> {this.state.bio} </p> }
@@ -85,6 +85,7 @@ class UserPage extends Component {
                 	{!this.state.bio &&
                 		<p> You do not currently have a bio, would you like to add one? </p>}
                 	{button}
+                    <br /><br />
                     <ProfilePic />
 
             </div>

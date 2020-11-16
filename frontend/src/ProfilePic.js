@@ -20,7 +20,8 @@ class ProfilePic extends React.Component{
     this.state = {
       data: "",
       name: '',
-      file: null
+      file: null,
+      addPic: true
     }
     this.handleChange = this.handleChange.bind(this)
     this.submit = this.submit.bind(this);
@@ -46,6 +47,16 @@ class ProfilePic extends React.Component{
         
       });
     }
+    this.setState({
+    	avatar: this.state.file,
+    	addPic: false
+    	});
+  }
+
+  addImage() {
+  	this.setState({
+    	addPic: true
+    	})
   }
   
   render() {

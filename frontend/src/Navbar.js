@@ -4,6 +4,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import ProfilePic from './ProfilePic';
 
 class NavBar extends Component {
     constructor(props) {
@@ -21,7 +22,8 @@ class NavBar extends Component {
                 this.setState({
                     username: body.username,
                     firstname: body.first,
-                    lastname: body.last
+                    lastname: body.last,
+                    avatar: body.avatar
                 })
             });
         }); 
@@ -40,6 +42,7 @@ class NavBar extends Component {
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>Welcome, {this.state.firstname} {this.state.lastname}</Navbar.Text>
+                        <img src={this.state.avatar} width={50} height={50}/>  
                         <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
                         <Button variant="outline-light" onClick={(e) => { this.logout();}}>Log Out</Button>
                 </Navbar.Collapse>}
