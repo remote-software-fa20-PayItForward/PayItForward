@@ -182,7 +182,7 @@ app.get('/linked-banks', async (req, res, next) => {
 			return {bankId: bankItem._id, bankName: bankItem.institutionName}
 		});
 		console.log(bankItemsResponse)
-		res.json({bankItems: bankItemsResponse});
+		res.json({bankItems: bankItemsResponse, firstname: req.user.first});
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
