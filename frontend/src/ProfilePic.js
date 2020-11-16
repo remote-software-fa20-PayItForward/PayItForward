@@ -27,12 +27,10 @@ class ProfilePic extends React.Component{
   }
   handleChange(event) {
     var file = event.target.files[0];
-    file.text().then(text => {
-      this.setState({
-        data: event.target.files[0],
-        file: URL.createObjectURL(file),
-        name: file.name
-      })
+    this.setState({
+      data: file,
+      file: URL.createObjectURL(file),
+      name: file.name
     })
   }
 
