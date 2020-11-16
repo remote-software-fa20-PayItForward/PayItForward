@@ -58,7 +58,7 @@ class Login extends Component {
     render() {
         return (
             <div>
-                <Navbar bg="dark" variant="dark">
+                <Navbar  variant="dark" className="navbar-custom">
                     <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
                 </Navbar>
                 

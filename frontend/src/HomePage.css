@@ -1,3 +1,11 @@
-#logout {
-	color: pink !important;
+.purple-text { 
+	color: #57068C;
+}
+.purple-btn {
+	background-color: #57068C !important;
+	color: white !important;
+}
+.purple-bg {
+	background-color: #57068C !important;
+	color: white !important;
 }
