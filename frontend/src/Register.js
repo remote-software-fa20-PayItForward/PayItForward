@@ -58,7 +58,7 @@ class Register extends Component {
                 
                 <div className="login">
                     <div className="form">
-                        <form className="register-form" onSubmit={(e) => {this.submit();}}>
+                        <form className="register-form" onSubmit={(e) => { this.submit(); e.preventDefault(); }}>
                             <br />
                             <div className="error">{this.state.errorMsg}</div>
                             <div style={{float: 'left'}}>
