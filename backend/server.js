@@ -13,6 +13,7 @@ const User = require( './models/User' );
 const BankItem = require( './models/BankItem' );
 const Image = require( './models/Image' );
 require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 var upload = multer();
 
 //=========set up app================================
@@ -380,7 +381,53 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
+// app.get('/create-checkout-session', async (req,res) =>{
+
+// 	console.log("get func working")
+// });
+app.post('/create-checkout-session', async (req, res) => {
+	const session = await stripe.checkout.sessions.create({
+		customer_email: req.user.username,
+		payment_method_types: ['card'],
+		line_items: [
+			{
+			price_data: {
+				currency: 'usd',
+				product_data: {
+				name: 'Fundraiser Name',
+				},
+				unit_amount: 2000,
+			},
+			quantity: 1,
+			},
+		],
+		mode: 'payment',
+		
+		//for deployment only
+		success_url: 'https://payforwardapp.com/donation-success',
+		cancel_url: 'https://payforwardapp.com/'
+		/*
+		For testing comment out the code on top and use code below
+		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
+		
+		success_url: "https://example.com/success",
+		cancel_url: "https://example.com/cancel"*/
+	}).catch(error=>{
+		console.log(error);
+		return res.status(500).json({error: error});
+	});
+res.json({ id: session.id });
+  });
+
+  /*
+  if user creates new donation fund 
+  const account = await stripe.accounts.create({
+  type: 'express',
+});*/
+
+
 
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
 }); 
+

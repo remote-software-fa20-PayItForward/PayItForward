@@ -24,8 +24,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "plaid": "^8.0.0",
-    "react-easy-crop": "^3.3.0",
-    "stripe": "^8.119.0"
+    "stripe": "^8.121.0"
   },
   "devDependencies": {
     "mocha": "^6.2.1",
