@@ -10,7 +10,7 @@ import React, { Component } from "react";
 import NavBar from './Navbar'
 
 class FrontPage extends Component{
-
+    
     render() {
 
         return(
