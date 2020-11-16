@@ -402,7 +402,7 @@ app.post('/create-checkout-session', async (req, res) => {
 		
 		//for deployment only
 		success_url: 'https://payforwardapp.com/donation-success',
-		cancel_url: 'https://payforwardapp.com/'
+		cancel_url: 'https://payforwardapp.com/home'
 		/*
 		For testing comment out the code on top and use code below
 		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
