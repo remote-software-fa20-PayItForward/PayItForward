@@ -53,7 +53,7 @@ class Register extends Component {
         
             <div>
                 <Navbar variant="dark" className="navbar-custom">
-                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
+                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 </Navbar>
                 
                 <div className="login">

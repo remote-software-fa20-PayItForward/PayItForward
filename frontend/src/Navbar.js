@@ -40,9 +40,13 @@ class NavBar extends Component {
                 <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
-                        <Navbar.Text>Welcome, {this.state.firstname} {this.state.lastname}</Navbar.Text>
+                        <Navbar.Text className="pr-3">Welcome back, {this.state.firstname} {this.state.lastname}!</Navbar.Text>
+                        <ButtonGroup className="mr-2">
                         <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
+                        </ButtonGroup>
+                        <ButtonGroup className="mr-2">
                         <Button variant="outline-light" onClick={(e) => { this.logout();}}>Log Out</Button>
+                        </ButtonGroup>
                 </Navbar.Collapse>}
                 {!this.state.username &&
                 <Navbar.Collapse className="justify-content-end">

@@ -15,7 +15,8 @@ class HomePage extends Component{
         this.state = {
             isLoading: true,
             hasAuthenticatedUser: false,
-            bankItems: null
+            bankItems: null,
+            firstname: ""
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -40,7 +41,8 @@ class HomePage extends Component{
         fetch('/linked-banks', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
-                    this.setState({bankItems: body.bankItems, hasAuthenticatedUser: true});
+                    console.log(body);
+                    this.setState({bankItems: body.bankItems, hasAuthenticatedUser: true, firstname: body.firstname});
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
@@ -53,11 +55,11 @@ class HomePage extends Component{
         let { isLoading, bankItems, hasAuthenticatedUser } = this.state;
         return(
         
-            <div>
+            <div className="bg-light" >
                 <NavBar />
                 
                     <div className="container">
-                        <h1>Welcome</h1>
+                        
                         {isLoading &&
                             <p>Loading...</p>
                         }
@@ -67,11 +69,78 @@ class HomePage extends Component{
                         }
                         {!isLoading && hasAuthenticatedUser &&
                             <div>
+                            
+                                <div class="container mt-5">
+                                  <div class="row mt-5 border">
+                                    <div class="col-4 pt-3 text-center bg-white">
+                                        <h3 className="font-weight-bold">You've helped grow <br /> [total #] of Sprouts.</h3>
+                                        <img src="/sprout.png" style={{width: "50%"}}/>
+                                    </div>
+                                    <div class="col-8 purple-bg p-5">
+                                      <h2 className="font-weight-bold">
+                                            Hi {this.state.firstname}, 
+                                            <br />
+                                            your next sprout donation of [$amount] will happen on [date].
+                                        </h2>
+                                        <br />
+                                        <a href="#" className="font-weight-bold purple-bg"><h5>Update my sprouting preferences →</h5></a>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="card-deck mt-5">
+                                    <div className="card p-5">
+                                        <h3 className="font-weight-bold">Request a Sprout </h3>
+                                        <p className="lead mt-3">Select from our donation categories and plant your very own sprout!</p>
+                                        <div class="card-footer bg-white p-0" style={{border: "none"}}>
+                                            <Link to="#"><Button className="purple-btn font-weight-bold">Let's plant!</Button></Link>
+                                            <img src="/plant.png" style={{width: "30%"}} className="float-right"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="card p-5">
+                                        <h3 className="font-weight-bold">Send a Sprout</h3>
+                                        <p className="lead mt-3">Feeling generous? Choose to donate your change and help grow a fellow sprout!</p>
+                                        <div class="card-footer bg-white p-0" style={{border: "none"}}>
+                                            <Link to="#"><Button className="purple-btn font-weight-bold">Let's grow!</Button></Link>
+                                            <img src="/grow.png" style={{width: "30%"}} className="float-right"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="card-deck mt-5">
+                                    <div className="card p-5 position-relative text-center purple-bg">
+                                        <h3 className="font-weight-bold mb-3">You received [$amount] from fellow planters on your most recent sprout!</h3>
+                                        <div class="card-footer purple-bg" style={{border: "none"}}>
+                                            <Link to="#"><Button className="font-weight-bold px-3 mb-5" variant="outline-light"><h4>View Fundraiser History</h4></Button></Link>
+                                            <br />
+                                            <img src="/cycle1.png" style={{width: "100%"}}/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="card p-5 position-relative text-center purple-bg">
+                                        <h3 className="font-weight-bold mb-3">You last helped a sprout grow with [$amount] on [date]!</h3>
+                                        <div class="card-footer purple-bg" style={{border: "none"}}>
+                                            <Link to="#"><Button className="font-weight-bold px-3 mb-5" variant="outline-light"><h4>View Donation History</h4></Button></Link>
+                                            <br />
+                                            <img src="/cycle2.png" style={{width: "100%"}}/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="container mt-5 p-5" style={{backgroundImage: "url('/forest.jpg')", backgroundSize: "contain"}}>
+                                    <h2 className="font-weight-bold">Global Donation Ranking</h2>
+                                    <Link to="#"><Button className="purple-btn font-weight-bold px-5"><h4>View Rankings</h4></Button></Link>
+                                </div>
+                                <br />
+                            
+                            {/*
                                 <h2>Connected Banks</h2>
                                 <ul>
                                 {bankItems.map((bankItem) => <li>{bankItem.bankName} <Link to={`/banks/${bankItem.bankId}/accounts`}>View Accounts</Link></li>)}
                                 </ul>
                                 <Link to="/link-bank-account" onClick={this.triggerPlaidLinkOpen}>Link New Bank</Link>
+                            */}
                             </div>
                         }
                     </div>
