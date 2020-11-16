@@ -15,7 +15,7 @@ class HomePage extends Component{
         this.state = {
             isLoading: true,
             hasAuthenticatedUser: false,
-            bankItems: null,
+            bankItems: null
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
