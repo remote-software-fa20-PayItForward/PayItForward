@@ -47,7 +47,7 @@ class MFA extends Component {
     render() {
         return(
             <div>
-                <Navbar bg="dark" variant="dark">
+                <Navbar variant="dark" className="navbar-custom">
                     <Navbar.Brand href="/">Pay it Forward</Navbar.Brand>
                 </Navbar>
 
