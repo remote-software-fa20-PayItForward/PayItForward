@@ -8,12 +8,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
-const multer = require('multer');
-const User = require( './models/User' );
-const BankItem = require( './models/BankItem' );
-const Image = require( './models/Image' );
+require( './db' );
 require('dotenv').config();
-var upload = multer();
 
 //=========set up app================================
 const app = express();
@@ -30,6 +26,8 @@ mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 
 
 	
+const User = mongoose.model('User');
+const BankItem = mongoose.model('BankItem');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -77,8 +75,6 @@ app.get('/', (req, res, next) => {
     res.send('Hello, world!');
 });
 */
-
-app.use('/images/', require("./routes/images"));
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -171,24 +167,6 @@ app.post('/UserPage', (req, res, next) => {
 	})
 })
 
-app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
-	console.log(req.file);
-	Image.create({data: req.file.buffer, name: req.file.originalname, mime: req.file.mimetype}, function(err, image) {
-		if (err) {
-			console.log(err);
-			return res.status(500).json({error: 'Error uploading image. Please try again'});
-		} else {
-			User.updateOne({_id: req.user._id}, {avatar: '/images/' + image._id}).then(response => {
-				if(response) {
-					return res.json({Success: 'Successfully updated profile photo'})
-				} else {
-					return res.status(500).json({error: 'Issue updating profile photo'})
-				}
-			});
-		}
-	});
-});
-
 app.get('/logout', (req, res, next) => {
 	req.logOut();
 	res.json({success: "Successfully logged out"});
@@ -196,17 +174,14 @@ app.get('/logout', (req, res, next) => {
 
 
 app.get('/linked-banks', async (req, res, next) => {
-	console.log(req.user);
 	
 	//await BankItem.deleteMany({});
 
 	if (req.user) {
 		const bankItems = await BankItem.find({user_id: req.user._id});
-		console.log(bankItems);
 		const bankItemsResponse = bankItems.map(bankItem => {
-			return {bankId: bankItem._id, bankName: bankItem.institutionName}
+			return {bankId: bankItem._id, bankName: bankItem.institutionName, bankAccounts: bankItem.bank_accounts}
 		});
-		console.log(bankItemsResponse)
 
 		res.json({bankItems: bankItemsResponse});
 	} else {
@@ -214,8 +189,34 @@ app.get('/linked-banks', async (req, res, next) => {
 	}
 });
 
+app.get('/linked-bank-accounts', async (req, res, next) => {
+
+	if (req.user) {
+		const bankItems = await BankItem.find({user_id: req.user._id});
+
+		const bankAccountsResponse = [];
+
+		for(const bankItem of bankItems) {
+			for(const bankAccount of bankItem.bank_accounts) {
+				bankAccountsResponse.push({
+					bankId: bankItem._id,
+					bankName: bankItem.institutionName,
+					account_id: bankAccount.account_id,
+					name: bankAccount.name,
+					official_name: bankAccount.official_name,
+					type: bankAccount.type,
+					subtype: bankAccount.subtype
+				});
+			}
+		}
+
+		res.json({bankAccounts: bankAccountsResponse});
+	} else {
+		return res.status(401).json({error: 'You are not authenticated.'});
+	}
+});
+
 app.get('/obtain-plaid-link-token', async (req, res, next) => {
-	console.log(req.user);
 	if (req.user) {
 		const response = await client.createLinkToken({
 			user: {
@@ -236,11 +237,9 @@ app.get('/obtain-plaid-link-token', async (req, res, next) => {
 	}
 });
 
-app.post('/link-bank-account', async (req, res, next) => {
-	console.log(req.body);
+app.post('/link-bank', async (req, res, next) => {
 
 	if (req.user) {
-		console.log(req.user);
 
 		let plaidClientErrored = false;
 		const tokenResponse = await client.exchangePublicToken(req.body.public_link_token).catch((err) => {
@@ -252,7 +251,6 @@ app.post('/link-bank-account', async (req, res, next) => {
 			return res.status(500).json({error: 'Error creating BankItem. Please try again'});
 		}
 
-		console.log(tokenResponse);
 		const accessToken = tokenResponse.access_token;
 		const itemId = tokenResponse.item_id;
 
@@ -273,14 +271,10 @@ app.post('/link-bank-account', async (req, res, next) => {
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'Error creating BankItem. Please try again'});
 		}
-
-		console.log(institutionResponse);
-		console.log(await BankItem.find({}));
 		
 		return BankItem.findOne({ user_id: req.user._id, institutionName: institutionResponse.institution.name }).then(bankItem => {
+			// check if the item is already within the DB
 			if (bankItem) {
-				console.log(bankItem);
-				// check if the item is already within the DB
 				return res.status(409).json({error: 'This Bank has been added already.'})
 			} else {
 				// if the item is not aleady stored within the DB, then persist it alongiste it's accessToken
@@ -289,7 +283,6 @@ app.post('/link-bank-account', async (req, res, next) => {
 						console.log(err);
 						return res.status(500).json({error: 'Error creating BankItem. Please try again'});
 					} else {
-						console.log('bankItem', bankItem);
 						console.log('Successfully created BankItem');
 						return res.json({success: 'Successfully created BankItem'});
 					}
@@ -303,8 +296,56 @@ app.post('/link-bank-account', async (req, res, next) => {
 });
 
 
+app.post('/banks/:bankId/link-bank-accounts', async (req, res, next) => {
+
+	if (req.user) {
+
+		let plaidClientErrored = false;
+		let dbError = false;
+		const matchingBankItem = await BankItem.findOne({_id: req.params.bankId, user_id: req.user._id}).catch((err) => {
+			dbError = true;
+		});
+		if (dbError) {
+			return res.status(500).json({error: 'There has been an error saving the selected list of bank account for this bank. Please try again later.'});
+		
+		
+		}
+
+
+		const bank_accounts_to_persist = [];
+
+		if (req.body.selectedBankAccountIds != null && req.body.selectedBankAccountIds.length > 0 ) {
+			const bankAccounts = await client.getAccounts(matchingBankItem.accessToken).catch((err) => {
+				console.log(err);
+				plaidClientErrored = true;
+			});
+			if (plaidClientErrored) {
+				return res.status(500).json({error: 'There has been an error obtaining the list accounts within this bank. Please try again later.'});
+			}
+
+			for (const bankAccount of bankAccounts['accounts']) {
+				if (req.body.selectedBankAccountIds.includes(bankAccount.account_id)) {
+					bank_accounts_to_persist.push({
+						account_id: bankAccount.account_id,
+						name: bankAccount.name,
+						official_name: bankAccount.official_name,
+						type: bankAccount.type,
+						subtype: bankAccount.subtype,
+					});
+				}
+			}
+		}
+
+		matchingBankItem.bank_accounts = bank_accounts_to_persist;
+		let ala = await matchingBankItem.save();
+	} else {
+		return res.status(401).json({error: 'You are not authenticated.'});
+	}
+
+	return res.status(201).json({});
+});
+
 app.get('/banks/:bankId/accounts', async (req, res, next) => {
-	console.log(req.params.bankId);
 	if (req.user) {
 		plaidClientErrored = false;
 		const matchingBankItem = await BankItem.findOne({_id: req.params.bankId, user_id: req.user._id}).catch((err) => {
@@ -315,7 +356,6 @@ app.get('/banks/:bankId/accounts', async (req, res, next) => {
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'There has been an error obtaining the list accounts within this bank. Please try again later.'});
 		}
-		console.log(matchingBankItem);
 
 		const bankAccounts = await client.getAccounts(matchingBankItem.accessToken).catch((err) => {
 			console.log(err);
@@ -325,9 +365,16 @@ app.get('/banks/:bankId/accounts', async (req, res, next) => {
 			return res.status(500).json({error: 'There has been an error obtaining the list accounts within this bank. Please try again later.'});
 		}
 
-		console.log(bankAccounts);
+		/*const bankAccountsResponse = [];
+		for (bankAccount of bankAccounts['accounts']) {
+			if ()bankAccount.account_id)
+		}
+		*/
 
-		res.json({bankAccounts: bankAccounts});
+		res.json({
+			bankAccounts: bankAccounts['accounts'],
+			bankItem: matchingBankItem
+		});
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
@@ -345,7 +392,6 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'There has been an error obtaining the transactions. Please try again later.'});
 		}
-		console.log(matchingBankItem);
 
 		const bankAccounts = await client.getAccounts(matchingBankItem.accessToken).catch((err) => {
 			console.log(err);
@@ -354,11 +400,8 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'There has been an error obtaining the transactions. Please try again later.'});
 		}
-		console.log(bankAccounts);
-		req.params.accountId
 
 		const matchingBankAccount = bankAccounts.accounts.find((bankAccount) => {return bankAccount.account_id == req.params.accountId});
-		console.log(matchingBankAccount);
 		if (!matchingBankAccount) {
 			return res.status(409).json({error: 'Unable to find the bank account.'});
 		}
@@ -373,14 +416,98 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 			return res.status(500).json({error: 'There has been an error obtaining the transactions. Please try again later.'});
 		}
 
-		console.log(transactionsResponse)
-
 		res.json({transactions: transactionsResponse});
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
 
+app.get('/current-month-transactions-and-roundup', async (req, res, next) => {
+	const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+	const currentDate = moment().format('YYYY-MM-DD');
+	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, currentDate);
+});
+
+app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
+	const startOfMonth = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
+	const endOfMonth = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
+	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
+});
+
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
 }); 
+
+_fetchTransactionsAndRoundup = async (req, res, next, startDate, endDate) => {
+	if (req.user) {
+		plaidClientErrored = false;
+		const bankItems = await BankItem.find({user_id: req.user._id}).catch((err) => {
+			console.log(err);
+			plaidClientErrored = true;
+			
+		});
+		if (plaidClientErrored) {
+			return res.status(500).json({error: 'There has been an error obtaining the current month roundup. Please try again later.'});
+		}
+		
+		let transactions = [];
+		let totalRoundup = 0;
+		let transactionsTotalAmount = 0;
+
+		for (bankItem of bankItems) {
+			const account_ids = bankItem.bank_accounts.map(bankAccount => {return bankAccount.account_id});
+			if (account_ids.length > 0) {
+				const transactionsToAdd = await _fetchAllBankTransactionsPaginated(bankItem.accessToken, startDate, endDate, account_ids);
+				for (transaction of transactionsToAdd) {
+					if (transaction.amount > 0) {
+						// debit transactions only (money taken from account)
+						// credit transactions (money added to the account) in plaid (e.g. salary) are represented with negative amount value
+						let transactionRoundup = (((Math.ceil(transaction.amount)*100)) - (transaction.amount*100)).toFixed(10);
+						console.log(Math.ceil(transaction.amount)*100, (transaction.amount*100), transactionRoundup);
+						transactions.push(
+							{...transaction, bankName: bankItem.institutionName, roundup: transactionRoundup/100}
+						);
+						totalRoundup = totalRoundup + parseFloat(transactionRoundup);
+						transactionsTotalAmount = transactionsTotalAmount + parseFloat((transaction.amount*100).toFixed(10));
+					}
+				}
+			}
+		}
+
+		const numberOfTransactions =  transactions.length;
+
+		console.log(totalRoundup);
+		console.log(totalRoundup  / numberOfTransactions / 100);
+		res.json({
+			transactions: transactions,
+			transactionsTotalAmount: parseFloat((transactionsTotalAmount / 100).toFixed(2)),
+			numberOfTransactions: numberOfTransactions,
+			averageTransaction: parseFloat((transactionsTotalAmount / numberOfTransactions / 100).toFixed(4)),
+			totalRoundup: parseFloat((totalRoundup / 100).toFixed(2)),
+			averageRoundUp: parseFloat((totalRoundup  / numberOfTransactions / 100).toFixed(4)),
+		});
+	} else {
+		return res.status(401).json({error: 'You are not authenticated.'});
+	}
+}
+
+_fetchAllBankTransactionsPaginated = async (access_token, startDateStr, endDateStr, account_ids) => {
+	const response = await client.getTransactions(access_token, startDateStr, endDateStr, {account_ids: account_ids}).catch((err) => {
+		console.log('ERROR', err);
+	});
+	let transactions = response.transactions;
+	const total_transactions = response.total_transactions;
+
+	// Manipulate the offset parameter to paginate
+	// transactions and retrieve all available data
+	while (transactions.length < total_transactions) {
+		const paginatedTransactionsResponse = await client.getTransactions(
+			access_token, startDateStr, endDateStr,
+			{account_ids, offset: transactions.length}
+		);
+		
+		transactions = transactions.concat(paginatedTransactionsResponse.transactions);
+	}
+
+	return transactions;
+}
