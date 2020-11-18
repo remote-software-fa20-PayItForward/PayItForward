@@ -37,6 +37,9 @@ class NavBar extends Component {
     }
 
     render() {
+        if (this.state.avatar==null) {
+            this.state.avatar="./payitforwardprofilepic.png";
+        }
         return(
             <Navbar variant="dark" className="navbar-custom">
                 <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
