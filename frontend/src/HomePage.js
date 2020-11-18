@@ -10,7 +10,7 @@ import React, { Component } from "react";
 import NavBar from './Navbar'
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe('pk_test_51HlnHWIfMQHs5Z9IuL8N16OlzlwZMD425Ev9UrplmvI35xjlzNfBmMkhRIrdWNwMUtTz6xCSl0kzs1bAVRfNUoDi00qJFHqKAO');
+const stripePromise = loadStripe('pk_test_51HhIVhKJyyCVsqcoeOjgBymqqNJRf5R1tt8U5D0Ksu0AT3lyHSrkN55DHPjAm3rN2h1xHPtq1qVwUSJFbS8RF3tU00YKHhsdI9');
 
 
 class HomePage extends Component{
@@ -119,7 +119,7 @@ class HomePage extends Component{
                                         <h3 className="font-weight-bold">Send a Sprout</h3>
                                         <p className="lead mt-3">Feeling generous? Choose to donate your change and help grow a fellow sprout!</p>
                                         <div class="card-footer bg-white p-0" style={{border: "none"}}>
-                                            <Button className="purple-btn font-weight-bold" onClick={async (event) => {
+                                            <Button className="purple-btn font-weight-bold" onClick={ async (event) => {
                                               const stripe = await stripePromise;
                                               const response = await fetch('/create-checkout-session', { method: 'POST' });
                                               const session = await response.json();
