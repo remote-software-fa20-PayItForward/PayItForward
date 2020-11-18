@@ -378,42 +378,17 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
 });
-// app.get('/create-checkout-session', async (req,res) =>{
 
-// 	console.log("get func working")
-// });
-app.post('/create-checkout-session', async (req, res) => {
-	const session = await stripe.checkout.sessions.create({
-		customer_email: req.user.username,
-		payment_method_types: ['card'],
-		line_items: [
-			{
-			price_data: {
-				currency: 'usd',
-				product_data: {
-				name: 'Fundraiser Name',
-				},
-				unit_amount: 2000,
-			},
-			quantity: 1,
-			},
-		],
-		mode: 'payment',
-		
-		//for deployment only
-		success_url: 'https://payforwardapp.com/donation-success',
-		cancel_url: 'https://payforwardapp.com/home'
-		/*
-		For testing comment out the code on top and use code below
-		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
-		
-		success_url: "https://example.com/success",
-		cancel_url: "https://example.com/cancel"*/
-	}).catch(error=>{
-		console.log(error);
-		return res.status(500).json({error: error});
+app.post("/create-payment-intent", async (req, res) => {
+	const { items } = req.body;
+	// Create a PaymentIntent with the order amount and currency
+	const paymentIntent = await stripe.paymentIntents.create({
+	  amount: 2000,
+	  currency: "usd"
 	});
-res.json({ id: session.id });
+	res.send({
+	  clientSecret: paymentIntent.client_secret
+	});
   });
 
   /*

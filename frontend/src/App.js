@@ -10,6 +10,7 @@ import LinkBank from './LinkBank'
 import Accounts from './Accounts'
 import Transactions from './Transactions'
 import SuccessfulPayment from './SuccessfulPayment'
+import Donate from './Donate'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Route exact path="/link-bank-account" component={LinkBank} />
       <Route exact path="/banks/:bankId/accounts" component={Accounts} />
       <Route exact path="/banks/:bankId/accounts/:accountId/transactions" component={Transactions} />
+      <Route exact path="/donate" component={Donate} />
       <Route exact path="/donation-success" component={SuccessfulPayment} />
     </Router>
   );
