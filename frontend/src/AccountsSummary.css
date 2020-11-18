@@ -1,0 +1,12 @@
+#logout {
+	color: pink !important;
+}
+
+
+.stats {
+    border: none;
+}
+
+table.stats td {
+    border: none;
+}
