@@ -11,6 +11,7 @@ import ManageBanks from './ManageBanks';
 import BankAccounts from './BankAccounts';
 import Transactions from './Transactions'
 import SuccessfulPayment from './SuccessfulPayment'
+import Donate from './Donate'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
       <Route exact path="/userpage" component={UserPage} />
+      <Route exact path="/donate" component={Donate} />
       <Route exact path="/accounts-summary" component={AccountsSummary} />
       <Route exact path="/manage-banks" component={ManageBanks} />
       <Route exact path="/banks/:bankId/accounts" component={BankAccounts} />
