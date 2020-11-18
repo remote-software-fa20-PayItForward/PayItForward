@@ -30,7 +30,7 @@ class UserPage extends Component {
                     firstname: body.first,
                     lastname: body.last,
                     bio: body.bio,
-                    avatar: body.avatar
+                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
                 })
             });
         }); 
@@ -72,9 +72,6 @@ class UserPage extends Component {
     	} else {
     		button = <Button variant ="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>;
     	}
-        if (this.state.avatar==null) {
-                this.state.avatar="./payitforwardprofilepic.png";
-            }
     	return (
     		<div>{}
         		<NavBar />

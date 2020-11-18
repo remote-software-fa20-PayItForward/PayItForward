@@ -24,7 +24,7 @@ class NavBar extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
-                    avatar: body.avatar
+                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
                 })
             });
         }); 
@@ -37,9 +37,6 @@ class NavBar extends Component {
     }
 
     render() {
-        if (this.state.avatar==null) {
-            this.state.avatar="./payitforwardprofilepic.png";
-        }
         return(
             <Navbar variant="dark" className="navbar-custom">
                 <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
