@@ -6,8 +6,9 @@ import Register from './Register';
 import Login from './Login';
 import MFA from './MFA';
 import UserPage from './UserPage';
-import LinkBank from './LinkBank'
-import Accounts from './Accounts'
+import AccountsSummary from './AccountsSummary';
+import ManageBanks from './ManageBanks';
+import BankAccounts from './BankAccounts';
 import Transactions from './Transactions'
 import SuccessfulPayment from './SuccessfulPayment'
 import Donate from './Donate'
@@ -21,11 +22,13 @@ function App() {
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
       <Route exact path="/userpage" component={UserPage} />
-      <Route exact path="/link-bank-account" component={LinkBank} />
-      <Route exact path="/banks/:bankId/accounts" component={Accounts} />
-      <Route exact path="/banks/:bankId/accounts/:accountId/transactions" component={Transactions} />
       <Route exact path="/donate" component={Donate} />
+      <Route exact path="/accounts-summary" component={AccountsSummary} />
+      <Route exact path="/manage-banks" component={ManageBanks} />
+      <Route exact path="/banks/:bankId/accounts" component={BankAccounts} />
       <Route exact path="/donation-success" component={SuccessfulPayment} />
+      {/* /transactions/current-month || /transactions/last-month */} 
+      <Route exact path="/transactions/:month" component={Transactions} />
     </Router>
   );
 }
