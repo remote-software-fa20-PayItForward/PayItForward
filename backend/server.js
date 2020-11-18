@@ -452,6 +452,8 @@ app.post("/create-payment-intent", async (req, res) => {
 	});
 	res.send({
 	  clientSecret: paymentIntent.client_secret
+	});
+});
 
 app.get('/current-month-transactions-and-roundup', async (req, res, next) => {
 	const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
@@ -465,40 +467,6 @@ app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
 	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
 });
 
-
-
-app.post('/create-checkout-session', async (req, res) => {
-	const session = await stripe.checkout.sessions.create({
-		customer_email: req.user.username,
-		payment_method_types: ['card'],
-		line_items: [
-			{
-			price_data: {
-				currency: 'usd',
-				product_data: {
-				name: 'Fundraiser Name',
-				},
-				unit_amount: 2000,
-			},
-			quantity: 1,
-			},
-		],
-		mode: 'payment',
-		
-		//for deployment only
-		success_url: 'https://payforwardapp.com/donation-success',
-		cancel_url: 'https://payforwardapp.com/home'
-		/*
-		For testing comment out the code on top and use code below
-		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
-		
-		success_url: "https://example.com/success",
-		cancel_url: "https://example.com/cancel"*/
-	}).catch(error=>{
-		console.log(error);
-		return res.status(500).json({error: error});
-	});
-  });
 
   /*
   if user creates new donation fund 
