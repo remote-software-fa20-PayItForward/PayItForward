@@ -30,7 +30,7 @@ class UserPage extends Component {
                     firstname: body.first,
                     lastname: body.last,
                     bio: body.bio,
-                    avatar: body.avatar
+                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
                 })
             });
         }); 
@@ -73,11 +73,10 @@ class UserPage extends Component {
     		button = <Button variant ="outline-dark" onClick={(e) => { this.edit();}}>Add Bio</Button>;
     	}
     	return (
-
     		<div>{}
         		<NavBar />
         		<br />
-                	<h2> {this.state.firstname} <img src={this.state.avatar}/>
+                	<h2> {this.state.firstname} <img src={this.state.avatar} width={150} height={150}/>
                     </h2>
                 	{this.state.bio &&
                 		<p> {this.state.bio} </p> }
@@ -87,7 +86,6 @@ class UserPage extends Component {
                 	{button}
                     <br /><br />
                     <ProfilePic />
-
             </div>
     	);
     }
@@ -98,7 +96,7 @@ class UserPage extends Component {
     		<div>{}
     			<NavBar />
     			<br />
-    				<h2> {this.state.firstname} </h2>
+    				<h2> {this.state.firstname} <img src={this.state.avatar}/> </h2>
     				{this.state.bio && 
     					<textarea ref="newText" defaultValue = {this.state.bio}></textarea>}
     				{!this.state.bio &&
