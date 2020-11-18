@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const BankAccountSchema = new mongoose.Schema({
 	account_id: {type: Object, required: true},
-	name: {type: String, require: true},
-	official_name: {type: String, require: true},
-	type: {type: String, require: true},
-	subtype: {type: String, require: true}
+	name: {type: String, required: true},
+	official_name: {type: String, required: true},
+	type: {type: String, required: true},
+	subtype: {type: String, required: true}
 });
 
 
