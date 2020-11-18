@@ -24,7 +24,7 @@ class NavBar extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
-                    avatar: body.avatar
+                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
                 })
             });
         }); 
