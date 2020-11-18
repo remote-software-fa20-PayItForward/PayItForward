@@ -1,0 +1,40 @@
+language: node_js
+services: mongodb
+node_js:
+- '12'
+cache:
+  directories:
+  - node_modules
+jobs:
+  include:
+    - stage: test
+      name: "Backend Test"
+      install:
+        - cd backend 
+        - npm install
+      script:
+        - npm test
+    -
+      name: "Frontend Test"
+      install:
+        - cd frontend
+        - npm install
+      script:
+        - npm test
+    - stage: deploy
+      before_script:
+        - openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
+        - chmod 600 ~/.ssh/id_rsa
+        - chmod +x ./deploy.sh
+      script:
+        - bash ./deploy.sh
+
+stages:
+  - name: test
+    if: type = pull_request
+  - name: deploy
+    if: type = push AND branch = main
+      
+addons:
+  ssh_known_hosts:
+  - 68.183.120.255

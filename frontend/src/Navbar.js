@@ -24,7 +24,11 @@ class NavBar extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
+<<<<<<< HEAD
                     avatar: body.avatar
+=======
+                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
+>>>>>>> 4a150ab88dce54decaaa554455c2cf9d2da35437
                 })
             });
         }); 
@@ -44,9 +48,12 @@ class NavBar extends Component {
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text className="pr-3">Welcome back, {this.state.firstname} {this.state.lastname}!</Navbar.Text>
                         <img src={this.state.avatar} width={50} height={50}/>
+<<<<<<< HEAD
                         <ButtonGroup className="ml-2 mr-2">
                         <Link to="/accounts-summary"><Button variant="outline-light">Accounts Summary</Button></Link>
                         </ButtonGroup>
+=======
+>>>>>>> 4a150ab88dce54decaaa554455c2cf9d2da35437
                         <ButtonGroup className="mr-2">
                         <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
                         </ButtonGroup>

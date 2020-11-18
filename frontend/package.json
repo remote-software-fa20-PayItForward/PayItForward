@@ -10,7 +10,10 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
+<<<<<<< HEAD
     "file-saver": "^2.0.2",
+=======
+>>>>>>> 4a150ab88dce54decaaa554455c2cf9d2da35437
     "profile-picture": "git+https://github.com/dsalvagni/react-profile-picture.git",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
