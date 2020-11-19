@@ -11,6 +11,18 @@ import NavBar from './Navbar'
 
 class FrontPage extends Component{
     
+    componentDidMount() {
+         fetch('/user', {credentials: 'include'}).then((response) => {
+            response.json().then(body => {
+                if (body.username) {
+                    this.props.history.push('/home');
+                } else {
+                    this.props.history.push('/');
+                }
+            });
+        }); 
+    }
+    
     render() {
 
         return(

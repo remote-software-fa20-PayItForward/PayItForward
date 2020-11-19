@@ -12,6 +12,7 @@ import BankAccounts from './BankAccounts';
 import Transactions from './Transactions'
 import SuccessfulPayment from './SuccessfulPayment'
 import Donate from './Donate'
+import DonationRequest from './DonationRequest'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
       <Route exact path="/donation-success" component={SuccessfulPayment} />
       {/* /transactions/current-month || /transactions/last-month */} 
       <Route exact path="/transactions/:month" component={Transactions} />
+      <Route exact path="/donation-request" component={DonationRequest} />
     </Router>
   );
 }
