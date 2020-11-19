@@ -156,7 +156,9 @@ app.post('/mfaverify', (req, res, next) => {
 app.get('/user', (req, res, next) => {
 	console.log(req.user);
 	if (req.user) {
-		return res.json(req.user);
+		let loggedInUser = JSON.parse(JSON.stringify(req.user));
+		delete loggedInUser.passwordHash;
+		return res.json(loggedInUser);
 	} else {
 		return res.json({});
 	}
