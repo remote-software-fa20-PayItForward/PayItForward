@@ -15,6 +15,8 @@ const Image = require( './models/Image' );
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 var upload = multer();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 //=========set up app================================
 const app = express();
@@ -154,20 +156,59 @@ app.post('/mfaverify', (req, res, next) => {
 app.get('/user', (req, res, next) => {
 	console.log(req.user);
 	if (req.user) {
-		return res.json(req.user);
+		let loggedInUser = JSON.parse(JSON.stringify(req.user));
+		delete loggedInUser.passwordHash;
+		return res.json(loggedInUser);
 	} else {
 		return res.json({});
 	}
 })
 
 app.post('/UserPage', (req, res, next) => {
-	User.updateOne({username: req.user.username}, {bio: req.body.bio}).then(bio => {
-		if(bio) {
-			return res.json({Success: 'Successfully updated bio'})
-		} else {
-			return res.status(500).json({error: 'Issue updating bio'})
-		}
-	})
+	let updateUser = {};
+	let hash = '';
+	
+	if (req.body.bio) {
+		updateUser.bio = req.body.bio;	
+	} else 
+		updateUser.bio = req.user.bio;
+		
+	if (req.body.first) {
+		updateUser.first = req.body.first;	
+	} else
+		updateUser.first= req.user.first;
+		
+	if (req.body.last) {
+		updateUser.last = req.body.last;	
+	} else 
+		updateUser.last = req.user.last;
+		
+	if (req.body.username) {
+		updateUser.username = req.body.username;	
+	} else 
+		updateUser.username = req.user.username;
+		
+	if (req.body.passwordHash) {
+		bcrypt.hash(req.body.passwordHash, saltRounds, function(err, hash) {
+			updateUser.passwordHash = hash;
+
+			User.updateOne({username: req.user.username}, updateUser).then(updatedUser => {
+				if(updatedUser) {
+					return res.json({Success: 'Successfully updated user', updateUser: updateUser})
+				} else {
+					return res.status(500).json({error: 'Issue updating user'})
+				}
+			})
+		});
+	} else {
+		User.updateOne({username: req.user.username}, updateUser).then(updatedUser => {
+			if(updatedUser) {
+				return res.json({Success: 'Successfully updated user', updateUser: updateUser})
+			} else {
+				return res.status(500).json({error: 'Issue updating user'})
+			}
+		})
+	}
 })
 
 app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
