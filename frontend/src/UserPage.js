@@ -76,8 +76,8 @@ class UserPage extends Component {
     		<div>{}
         		<NavBar />
         		<br />
-                	<h2> {this.state.firstname} <img src={this.state.avatar} width={150} height={150}/>
-                    </h2>
+                    <img src={this.state.avatar} width={150} height={150}/>
+                	<h2> {this.state.firstname} </h2>
                 	{this.state.bio &&
                 		<p> {this.state.bio} </p> }
                 	
@@ -85,7 +85,6 @@ class UserPage extends Component {
                 		<p> You do not currently have a bio, would you like to add one? </p>}
                 	{button}
                     <br /><br />
-                    <ProfilePic />
             </div>
     	);
     }
@@ -96,7 +95,8 @@ class UserPage extends Component {
     		<div>{}
     			<NavBar />
     			<br />
-    				<h2> {this.state.firstname} <img src={this.state.avatar}/> </h2>
+                    <img src={this.state.avatar} width={150} height={150}/>
+    				<h2> {this.state.firstname}  </h2>
     				{this.state.bio && 
     					<textarea ref="newText" defaultValue = {this.state.bio}></textarea>}
     				{!this.state.bio &&

@@ -51,6 +51,9 @@ class NavBar extends Component {
                         <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
                         </ButtonGroup>
                         <ButtonGroup className="mr-2">
+                        <Link to="/Settings"><Button variant="outline-light">Settings</Button></Link>
+                        </ButtonGroup>
+                        <ButtonGroup className="mr-2">
                         <Button variant="outline-light" onClick={(e) => { this.logout();}}>Log Out</Button>
                         </ButtonGroup>
                 </Navbar.Collapse>}

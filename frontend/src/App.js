@@ -6,6 +6,7 @@ import Register from './Register';
 import Login from './Login';
 import MFA from './MFA';
 import UserPage from './UserPage';
+import Settings from './Settings';
 import AccountsSummary from './AccountsSummary';
 import ManageBanks from './ManageBanks';
 import BankAccounts from './BankAccounts';
@@ -21,6 +22,7 @@ function App() {
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
       <Route exact path="/userpage" component={UserPage} />
+      <Route exact path="/settings" component={Settings} />
       <Route exact path="/accounts-summary" component={AccountsSummary} />
       <Route exact path="/manage-banks" component={ManageBanks} />
       <Route exact path="/banks/:bankId/accounts" component={BankAccounts} />

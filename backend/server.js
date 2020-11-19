@@ -32,7 +32,7 @@ mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-
+v
 //=========set up passport auth============================
 app.use(passport.initialize());
 app.use(passport.session());
@@ -168,6 +168,21 @@ app.post('/UserPage', (req, res, next) => {
 			return res.status(500).json({error: 'Issue updating bio'})
 		}
 	})
+})
+
+app.post('/Settings', (req, res, next) => {
+	console.log(req.body.newpassword);
+	if( req.body.newpassword !== req.body.newpasswordconfirm){
+		return res.status(400).json({error: 'The passwords entered are not the same'});
+	} else {
+		User.updateOne({username: req.user.username}, {password: req.body.newpassword}).then(bio => {
+			if(newpassword) {
+				return res.json({Success:'Successfully reset password'})
+			} else {
+				return res.status(500).json({error: 'Issue reseting password'})
+			}
+		})
+	}
 })
 
 app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
