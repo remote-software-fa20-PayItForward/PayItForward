@@ -62,9 +62,9 @@ class ProfilePic extends React.Component{
   render() {
     return (
       <div className="ProfilePic">
-        <input type="file" onChange={this.handleChange}/>
-        <button onClick={this.submit}>Upload</button>
-        <img src={this.state.file}/>
+        <input type="file" onChange={this.handleChange} className="ml-5 text-break"  />
+        <br /> <br />
+        <button onClick={this.submit} className="ml-3 text-break">Upload</button>
       </div>
     );
   }

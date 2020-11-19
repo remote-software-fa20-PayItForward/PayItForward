@@ -39,13 +39,12 @@ class NavBar extends Component {
     render() {
         return(
             <Navbar variant="dark" className="navbar-custom">
-                <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
+                <Navbar.Brand onClick={(e) => {this.props.history.push('/home')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text className="pr-3">Welcome back, {this.state.firstname} {this.state.lastname}!</Navbar.Text>
-                        <img src={this.state.avatar} width={50} height={50}/>
                         <ButtonGroup className="mr-2">
-                        <Link to="/UserPage"><Button variant="outline-light">My Profile</Button></Link>
+                        <Link to="/UserPage"><Button className="p-0 border-0" style={{width: "55px", backgroundColor: "#57068C"}}><img src={this.state.avatar} width={50} height={50}/></Button></Link>
                         </ButtonGroup>
                         <ButtonGroup className="mr-2">
                         <Button variant="outline-light" onClick={(e) => { this.logout();}}>Log Out</Button>

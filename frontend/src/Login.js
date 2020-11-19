@@ -35,7 +35,6 @@ class Login extends Component {
             body: JSON.stringify(this.state)
         })
         .then((response) => {
-            console.log(response);
             if(response.ok) {
                 response.json().then(body => {
                     if (body.mfa) {
