@@ -27,6 +27,9 @@ class UserPage extends Component {
 	componentDidMount() {
         fetch('/user', {credentials: 'include'}).then((response) => {
             response.json().then(body => {
+                if (!body.username) {
+                    this.props.history.push('/login');
+                }
                 this.setState({
                     username: body.username,
                     firstname: body.first,
@@ -213,12 +216,12 @@ class UserPage extends Component {
                                                     { !this.state.showEditPass
                                                         ? <div> 
                                                         <div className="card card-title bg-light p-2 col-10 float-left"> ●●●●●●●●● </div>
-                                                        <input type="text" ref="inputPass" defaultValue={this.state.passwordHash} type="hidden"/>
+                                                        <input type="text" ref="inputPass" type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditPass : true })}/></div>
                                                         </div>
                                                  
                                                         : <div>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputPass" placeholder="Enter password" defaultValue={this.state.passwordHash}/>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputPass" placeholder="Enter password" />
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
