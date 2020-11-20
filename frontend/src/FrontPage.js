@@ -16,8 +16,6 @@ class FrontPage extends Component{
             response.json().then(body => {
                 if (body.username) {
                     this.props.history.push('/home');
-                } else {
-                    this.props.history.push('/');
                 }
             });
         }); 
