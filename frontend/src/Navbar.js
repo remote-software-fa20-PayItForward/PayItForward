@@ -24,7 +24,7 @@ class NavBar extends Component {
                     username: body.username,
                     firstname: body.first,
                     lastname: body.last,
-                    avatar: body.avatar ? body.avatar : "/payitforwardprofilepic.png"
+                    avatar: body.avatar ? body.avatar : "/profile.jpg"
                 })
             });
         }); 
@@ -35,11 +35,23 @@ class NavBar extends Component {
             this.props.history.push('/login');
         });
     }
+    
+    checkAuth() {
+        fetch('/user', {credentials: 'include'}).then((response) => {
+            response.json().then(body => {
+                if (body.username) {
+                    this.props.history.push('/home');
+                } else {
+                    this.props.history.push('/');
+                }
+            });
+        }); 
+    }
 
     render() {
         return(
             <Navbar variant="dark" className="navbar-custom">
-                <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
+                <Navbar.Brand onClick={(e) => this.checkAuth()} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 {this.state.username &&
                 <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text className="pr-3">Welcome back, {this.state.firstname} {this.state.lastname}!</Navbar.Text>

@@ -35,7 +35,7 @@ class UserPage extends Component {
                     firstname: body.first,
                     lastname: body.last,
                     bio: body.bio,
-                    avatar: body.avatar,
+                    avatar: body.avatar ? body.avatar : "/profile.jpg",
                 })
             });
         }); 

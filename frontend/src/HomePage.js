@@ -31,6 +31,7 @@ class HomePage extends Component{
             fetch('/obtain-plaid-link-token', {credentials: 'include'}).then((response) => {
                 if (!response.ok && response.status == 401) {
                     this.setState({hasAuthenticatedUser: false});
+                    this.props.history.push('/login');
                     return;
                 }
 
@@ -68,10 +69,7 @@ class HomePage extends Component{
                         {isLoading &&
                             <p>Loading...</p>
                         }
-                        
-                        {!isLoading && !hasAuthenticatedUser && 
-                            <p>Please <Link to="/login">log in</Link> to start managing your bank accounts.</p>
-                        }
+
                         {!isLoading && hasAuthenticatedUser &&
                             <div>
                             
@@ -98,7 +96,7 @@ class HomePage extends Component{
                                         <h3 className="font-weight-bold">Request a Sprout </h3>
                                         <p className="lead mt-3">Select from our donation categories and plant your very own sprout!</p>
                                         <div class="card-footer bg-white p-0" style={{border: "none"}}>
-                                            <Link to="#"><Button className="purple-btn font-weight-bold">Let's plant!</Button></Link>
+                                            <Link to="/donation-request"><Button className="purple-btn font-weight-bold">Let's plant!</Button></Link>
                                             <img src="/plant.png" style={{width: "30%"}} className="float-right"/>
                                         </div>
                                     </div>
