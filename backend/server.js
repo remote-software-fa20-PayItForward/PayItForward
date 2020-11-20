@@ -15,6 +15,8 @@ const Image = require( './models/Image' );
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 var upload = multer();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 //=========set up app================================
 const app = express();
@@ -154,20 +156,59 @@ app.post('/mfaverify', (req, res, next) => {
 app.get('/user', (req, res, next) => {
 	console.log(req.user);
 	if (req.user) {
-		return res.json(req.user);
+		let loggedInUser = JSON.parse(JSON.stringify(req.user));
+		delete loggedInUser.passwordHash;
+		return res.json(loggedInUser);
 	} else {
 		return res.json({});
 	}
 })
 
 app.post('/UserPage', (req, res, next) => {
-	User.updateOne({username: req.user.username}, {bio: req.body.bio}).then(bio => {
-		if(bio) {
-			return res.json({Success: 'Successfully updated bio'})
-		} else {
-			return res.status(500).json({error: 'Issue updating bio'})
-		}
-	})
+	let updateUser = {};
+	let hash = '';
+	
+	if (req.body.bio) {
+		updateUser.bio = req.body.bio;	
+	} else 
+		updateUser.bio = req.user.bio;
+		
+	if (req.body.first) {
+		updateUser.first = req.body.first;	
+	} else
+		updateUser.first= req.user.first;
+		
+	if (req.body.last) {
+		updateUser.last = req.body.last;	
+	} else 
+		updateUser.last = req.user.last;
+		
+	if (req.body.username) {
+		updateUser.username = req.body.username;	
+	} else 
+		updateUser.username = req.user.username;
+		
+	if (req.body.passwordHash) {
+		bcrypt.hash(req.body.passwordHash, saltRounds, function(err, hash) {
+			updateUser.passwordHash = hash;
+
+			User.updateOne({username: req.user.username}, updateUser).then(updatedUser => {
+				if(updatedUser) {
+					return res.json({Success: 'Successfully updated user', updateUser: updateUser})
+				} else {
+					return res.status(500).json({error: 'Issue updating user'})
+				}
+			})
+		});
+	} else {
+		User.updateOne({username: req.user.username}, updateUser).then(updatedUser => {
+			if(updatedUser) {
+				return res.json({Success: 'Successfully updated user', updateUser: updateUser})
+			} else {
+				return res.status(500).json({error: 'Issue updating user'})
+			}
+		})
+	}
 })
 
 app.post('/user/profilephoto', upload.single('myFile'), (req, res) => {
@@ -443,6 +484,18 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 	}
 });
 
+app.post("/create-payment-intent", async (req, res) => {
+	const { items } = req.body;
+	// Create a PaymentIntent with the order amount and currency
+	const paymentIntent = await stripe.paymentIntents.create({
+	  amount: 2000,
+	  currency: "usd"
+	});
+	res.send({
+	  clientSecret: paymentIntent.client_secret
+	});
+});
+
 app.get('/current-month-transactions-and-roundup', async (req, res, next) => {
 	const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
 	const currentDate = moment().format('YYYY-MM-DD');
@@ -455,41 +508,6 @@ app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
 	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
 });
 
-
-
-app.post('/create-checkout-session', async (req, res) => {
-	const session = await stripe.checkout.sessions.create({
-		customer_email: req.user.username,
-		payment_method_types: ['card'],
-		line_items: [
-			{
-			price_data: {
-				currency: 'usd',
-				product_data: {
-				name: 'Fundraiser Name',
-				},
-				unit_amount: 2000,
-			},
-			quantity: 1,
-			},
-		],
-		mode: 'payment',
-		
-		//for deployment only
-		success_url: 'https://payforwardapp.com/donation-success',
-		cancel_url: 'https://payforwardapp.com/home'
-		/*
-		For testing comment out the code on top and use code below
-		requires https:// address urls, so res.redirect doesn't work for localhost:3000. For testing comment out the code on top and use code below
-		
-		success_url: "https://example.com/success",
-		cancel_url: "https://example.com/cancel"*/
-	}).catch(error=>{
-		console.log(error);
-		return res.status(500).json({error: error});
-	});
-res.json({ id: session.id });
-  });
 
   /*
   if user creates new donation fund 

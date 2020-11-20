@@ -54,18 +54,6 @@ class HomePage extends Component{
             this.setState({isLoading: false});
         });
     }
-/*
-    async submit(e){
-        const stripe = await stripePromise;
-        const response = await fetch('/create-checkout-session', { method: 'POST' });
-        const session = await response.json();
-        const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
-        });
-        if (result.error) {
-            <h1>{result.error.message}</h1>
-            }
-        };*/
 
 
     render() {
@@ -119,17 +107,7 @@ class HomePage extends Component{
                                         <h3 className="font-weight-bold">Send a Sprout</h3>
                                         <p className="lead mt-3">Feeling generous? Choose to donate your change and help grow a fellow sprout!</p>
                                         <div class="card-footer bg-white p-0" style={{border: "none"}}>
-                                            <Button className="purple-btn font-weight-bold" onClick={ async (event) => {
-                                              const stripe = await stripePromise;
-                                              const response = await fetch('/create-checkout-session', { method: 'POST' });
-                                              const session = await response.json();
-                                              const result = await stripe.redirectToCheckout({
-                                                sessionId: session.id,
-                                              });
-                                              if (result.error) {
-                                               <h1>{result.error.message}</h1>
-                                              }
-                                            }}>Let's grow!</Button>
+                                            <Link to="/donate"><Button className="purple-btn font-weight-bold">Let's grow!</Button></Link>
                                             <img src="/grow.png" style={{width: "30%"}} className="float-right"/>
                                         </div>
                                     </div>
