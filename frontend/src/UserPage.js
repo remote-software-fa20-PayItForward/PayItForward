@@ -32,37 +32,36 @@ class UserPage extends Component {
 
 	componentDidMount() {
         Promise.all([
-           fetch('/user', {credentials: 'include'}),
-           fetch('/donation-request')
-        ]).then(allResponses => {
-            allResponses[0].json().then(body => {
-                if (!body.username) {
-                    this.props.history.push('/login');
-                }
-                this.setState({
-                    username: body.username,
-                    firstname: body.first,
-                    lastname: body.last,
-                    bio: body.bio,
-                    avatar: body.avatar ? body.avatar : "/profile.jpg",
-                })
-            })
-            allResponses[1].json().then(body => {
-                if (body) {
-                    this.setState({
-                       amount: body.amount
-                    })
-                } else {
-                    this.setState({
-                       amount: 0
-                    })
-                }
-            })
-        })
-        /*
+            fetch('/user', {credentials: 'include'}),
+            fetch('/donation-request')
+         ]).then(allResponses => {
+             allResponses[0].json().then(body => {
+                 if (!body.username) {
+                     this.props.history.push('/login');
+                 }
+                 this.setState({
+                     username: body.username,
+                     firstname: body.first,
+                     lastname: body.last,
+                     bio: body.bio,
+                     avatar: body.avatar ? body.avatar : "/profile.jpg",
+                 })
+             })
+             allResponses[1].json().then(body => {
+                 if (body) {
+                     this.setState({
+                        amount: body.amount
+                     })
+                 } else {
+                     this.setState({
+                        amount: 0
+                     })
+                 }
+             })
+         })
+         /*
         fetch('/user', {credentials: 'include'}).then((response) => {
             response.json().then(body => {
-                console.log(body);
                 if (!body.username) {
                     this.props.history.push('/login');
                 }
@@ -72,9 +71,10 @@ class UserPage extends Component {
                     lastname: body.last,
                     bio: body.bio,
                     avatar: body.avatar ? body.avatar : "/profile.jpg",
+                    mfaEnabled: body.mfaEnabled
                 })
             });
-        });
+        }); 
         */
     }
 
@@ -95,12 +95,12 @@ class UserPage extends Component {
         var newEmail = this.refs.inputEmail.value;
         var newPass = this.refs.inputPass.value;
         
-        fetch('/UserPage', {
+        fetch('/user/update', {
     		method: "POST",
     		 headers: {
     		 	'Content-type': 'application/json'
     		 },
-    		 body: JSON.stringify({bio: newBio, first: newFirst, last: newLast, username: newEmail, passwordHash: newPass})
+    		 body: JSON.stringify({bio: newBio, first: newFirst, last: newLast, username: newEmail, password: newPass})
     	})
         
     	this.setState({
@@ -114,6 +114,19 @@ class UserPage extends Component {
             showEditBio: false,
             showEditPass: false
     	});
+    }
+
+    mfa() {
+        fetch('/user/update', {
+    		method: "POST",
+    		 headers: {
+    		 	'Content-type': 'application/json'
+    		 },
+    		 body: JSON.stringify({mfaEnabled: !this.state.mfaEnabled})
+        })
+        this.setState({
+            mfaEnabled: !this.state.mfaEnabled
+        })
     }
 
     render() {
@@ -177,7 +190,7 @@ class UserPage extends Component {
                                                 </div>
                                         
                                                 <div className="text-center">
-                                                    <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
+                                                    <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
@@ -283,6 +296,12 @@ class UserPage extends Component {
                                                         </div>
                                                     }
                                                 </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label form-control-label">2 Factor Authentication</label>
+                                                <div className="card card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</div>
+                                                <div className="col-2 float-right"><input type="button" className="btn" value={this.state.mfaEnabled ? "Disable" : "Enable"} onClick={(e)=>{this.mfa();}} /></div>
                                             </div>
                                             
                                         </form>
