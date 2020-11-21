@@ -5,8 +5,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
@@ -135,17 +137,17 @@ class UserPage extends Component {
     		<div>
         		<NavBar />
                 
-                <div className="container pt-5">
-                    <div className="row my-2">
-                        <div className="col-lg-8 order-lg-2">
+                <Container className="pt-5">
+                    <Row className="my-2">
+                        <Col lg={8} className="order-lg-2">
                       
                             <Tabs defaultActiveKey="profile" transition={false} id="noanim-tab-example">
                                 <Tab eventKey="profile" title="Profile">
                                     <div className="py-4">
                                         <h3 className="mb-3 purple-text font-weight-bold">{this.state.firstname} {this.state.lastname}</h3>
-                                        <div className="row">
+                                        <Row>
                                         
-                                            <div className="col-md-6 border mr-5 pt-3 rounded">
+                                            <Col md={6} className="border mr-5 pt-3 rounded">
                                                 <h5>About</h5>
                                                 <hr />
                                                 <p className="text-break">
@@ -154,48 +156,48 @@ class UserPage extends Component {
                                                     {!this.state.bio &&
                                                         "No bio here yet!"}
                                                 </p>
-                                            </div>
+                                            </Col>
                                             
-                                            <div className="col-md-5 border pt-3 rounded">
+                                            <Col className="border pt-3 rounded">
                                                 <h5> Achievements </h5>
                                                 <hr />
-                                                <h5><span class="badge badge-success ">Top 5% donor</span></h5> 
-                                                <h5><span class="badge badge-primary">Top 10% donor</span></h5>
-                                                <h5><span class="badge badge-dark">Top 20% donor</span></h5>
-                                            </div>
+                                                <h5><Badge variant="success ">Top 5% donor</Badge></h5> 
+                                                <h5><Badge variant="primary">Top 10% donor</Badge></h5>
+                                                <h5><Badge variant="dark">Top 20% donor</Badge></h5>
+                                            </Col>
                                             
-                                            <div className="col-md-12 mt-4 border rounded purple-bg">
+                                            <Col md={12} className="mt-4 border rounded purple-bg">
                                             
                                                 <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Sprout Stats</h5>
                                                 <hr />
-                                                <div className="card-group pl-3 pb-3 text-center">
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body">
+                                                <CardGroup className="pl-3 pb-3 text-center">
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text">${this.state.amount} </p>
                                                             <p className="font-weight-bold"> requested sprout amount </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body">
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text"> 8 </p>
                                                             <p className="font-weight-bold"> planters growing your sprout </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body ">
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text"> $35 </p>
                                                             <p className="font-weight-bold"> current sprout amount </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                        </Card.Body>
+                                                    </Card>
+                                                </CardGroup>
                                         
                                                 <div className="text-center">
                                                     <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
-                                            </div>
-                                        </div>
+                                            </Col>
+                                        </Row>
                                     </div>
                                 </Tab>
                               
@@ -203,12 +205,12 @@ class UserPage extends Component {
                                     <div className="py-5">
                                         <form role="form">
                                         
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">First name</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditFirst
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.firstname} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.firstname} </Card>
                                                         <input type="text" ref="inputFirst" defaultValue={this.state.firstname} type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditFirst : true })}/></div>
                                                         </div>
@@ -219,15 +221,15 @@ class UserPage extends Component {
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Last name</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditLast 
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.lastname} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.lastname} </Card>
                                                         <input type="text" ref="inputLast" defaultValue={this.state.lastname} type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditLast : true })}/></div>
                                                         </div>
@@ -238,15 +240,15 @@ class UserPage extends Component {
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Email</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditEmail
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.username} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.username} </Card>
                                                         <input type="text" ref="inputEmail" defaultValue={this.state.username} type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditEmail : true })}/></div>
                                                         </div>
@@ -257,15 +259,15 @@ class UserPage extends Component {
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Password</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditPass
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> ●●●●●●●●● </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> ●●●●●●●●● </Card>
                                                         <input type="text" ref="inputPass" type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditPass : true })}/></div>
                                                         </div>
@@ -276,15 +278,15 @@ class UserPage extends Component {
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Bio</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditBio
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.bio} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.bio} </Card>
                                                         <input type="text" ref="inputBio" defaultValue={this.state.bio} type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditBio : true })}/></div>
                                                         </div>
@@ -295,48 +297,48 @@ class UserPage extends Component {
                                                         <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
                                                         </div>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
 
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">2 Factor Authentication</label>
-                                                <div className="card card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</div>
+                                                <Card className="card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</Card>
                                                 <div className="col-2 float-right"><input type="button" className="btn" value={this.state.mfaEnabled ? "Disable" : "Enable"} onClick={(e)=>{this.mfa();}} /></div>
-                                            </div>
+                                            </Row>
                                             
                                         </form>
                                     </div>
                                 </Tab>
                                 
                                 <Tab eventKey="donation" title="Donation Settings">
-                                    <div className="col-md-12 mt-4 border rounded bg-light">
+                                    <Col md={12} className="mt-4 border rounded bg-light">
                                             
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Linked Accounts</h4>
                                         
-                                        <div className="card mr-3 shadow p-3 mb-3 purple-bg rounded">
-                                                        <div className="card-body ">
+                                        <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
+                                                        <Card.Body>
                                                             <h4 className="lead font-weight-bold"> CHASE COLLEGE </h4>
                                                             <h5 className="font-weight-bold"> **** 1234 </h5>
-                                                        </div>
-                                        </div>
+                                                        </Card.Body>
+                                        </Card>
                                         
                                         <div className="text-center">
                                                     <Link to="#"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
                                                     <br />
                                                 </div>
-                                    </div>
+                                    </Col>
 
                                 </Tab>
                             </Tabs>
-                        </div>
+                        </Col>
                     
-                        <div className="col-lg-4 order-lg-1 text-center">
+                        <Col lg={4} className="order-lg-1 text-center">
                             <img src={this.state.avatar} className="mx-auto img-fluid img-circle d-block border" alt="avatar" />
                             <br />
                             <ProfilePic />
-                        </div>
-                    </div>
-                </div>
+                        </Col>
+                    </Row>
+                </Container>
             </div>
     	);
     }
