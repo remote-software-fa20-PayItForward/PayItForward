@@ -20,7 +20,13 @@ class UserPage extends Component {
             showEditLast: false,
             showEditEmail: false, 
             showEditBio: false, 
-            showEditPass: false
+            showEditPass: false,
+            username: "",
+            firstname: "",
+            lastname: "",
+            bio: "",
+            avatar: "/profile.jpg",
+            amount: 0
         }
     }
 
@@ -48,7 +54,7 @@ class UserPage extends Component {
                     })
                 } else {
                     this.setState({
-                       amount: "N/A"
+                       amount: 0
                     })
                 }
             })
