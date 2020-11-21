@@ -95,7 +95,7 @@ class FrontPage extends Component{
                         
                         <div className="card-deck">
                             <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/jkh394.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
@@ -105,7 +105,7 @@ class FrontPage extends Component{
                             </div>
                             
                             <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/mstillman9.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
@@ -115,7 +115,7 @@ class FrontPage extends Component{
                             </div>
                             
                            <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/jordanz2k.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
@@ -127,7 +127,7 @@ class FrontPage extends Component{
                         
                         <div className="card-deck pt-5">
                             <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/al5361.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
@@ -137,7 +137,7 @@ class FrontPage extends Component{
                             </div>
                             
                             <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/LeeBoodoo.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
@@ -147,7 +147,7 @@ class FrontPage extends Component{
                             </div>
                             
                             <div className="card">
-                              <img className="card-img-top" src="/nyu.png" alt="Card image cap" />
+                              <img className="card-img-top" src="https://github.com/benrkaplan.png" alt="Card image cap" />
                               <div className="card-body">
                               </div>
                               <div className="card-footer">
