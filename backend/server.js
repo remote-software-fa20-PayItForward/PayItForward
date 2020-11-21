@@ -607,14 +607,23 @@ app.post('/donation-request', (req, res, next) => {
 					return res.json();
 				} else {
 					console.log("Error creating donation request object");	
+					return res.status(500).json({error: 'Error creating donation request object'})
 				}
 			})
 		} else {
 			console.log('Error finding user in /donation-request');	
+			return res.status(500).json({error: 'Error finding user to create donation request object'})
 		}
 	});
 });
 
+app.get('/donation-request', (req, res, next) => {
+	if (req.user) {
+		DonationRequest.findOne ( { user: req.user._id} ).then(donationRequest => {
+			return res.json( JSON.parse(JSON.stringify(donationRequest)) );
+		})
+	}
+});
 
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')

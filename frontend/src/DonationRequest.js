@@ -36,7 +36,13 @@ class DonationRequest extends Component{
             body: JSON.stringify(this.state)
         })
 		.then((response) => {
-            
+             if (response.ok) {
+                this.props.history.push('/my-sprout');
+            } else {
+                response.json().then(body => {
+                    console.log(body.error);
+                })
+            }
         })
 	}
     
