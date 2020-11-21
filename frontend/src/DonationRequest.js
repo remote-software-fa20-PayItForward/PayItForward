@@ -28,7 +28,16 @@ class DonationRequest extends Component{
 	}
 
 	submit() {
-		//TODO - Submission code goes here.
+		fetch('/donation-request', {
+           method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(this.state)
+        })
+		.then((response) => {
+            
+        })
 	}
     
     render() {
@@ -71,7 +80,7 @@ class DonationRequest extends Component{
 							<div className="col-md-6">
 								<div className="form-group">
 									<label className="form-control-label font-weight-bold lead">Upload Sprout Image</label>
-									<input type="file" className="form-control" name="image" onChange={this.handleUpload}/>
+									<input type="file"  name="image" onChange={this.handleUpload}/>
 								</div>
 			  
 								<div className="form-group">

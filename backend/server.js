@@ -12,6 +12,7 @@ const multer = require('multer');
 const User = require( './models/User' );
 const BankItem = require( './models/BankItem' );
 const Image = require( './models/Image' );
+const DonationRequest = require('./models/DonationRequest');
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 var upload = multer();
@@ -588,6 +589,31 @@ _fetchAllBankTransactionsPaginated = async (access_token, startDateStr, endDateS
 
 	return transactions;
 }
+
+app.post('/donation-request', (req, res, next) => {
+	User.findOne( {username: req.user.username} ).then(user => {
+		if (user) {
+			const newDonation = {
+				name: req.body.name, 
+				image: req.body.image, 
+				description: req.body.description,
+				category: req.body.category,
+				amount: req.body.amount,
+				user: user._id
+			}
+			DonationRequest.create(newDonation, function(err, donationRequest) {
+				if (donationRequest) {
+					console.log(donationRequest);
+					return res.json();
+				} else {
+					console.log("Error creating donation request object");	
+				}
+			})
+		} else {
+			console.log('Error finding user in /donation-request');	
+		}
+	});
+});
 
 
 app.listen(4000, () => {
