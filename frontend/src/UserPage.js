@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
 import ProfilePic from './ProfilePic';
+import { findAllByTestId } from '@testing-library/react';
 
 class UserPage extends Component {
 	 constructor(props) {
@@ -20,6 +21,7 @@ class UserPage extends Component {
         this.state = {
             showEditFirst: false, 
             showEditLast: false,
+            showEditName: false,
             showEditEmail: false, 
             showEditBio: false, 
             showEditPass: false,
@@ -85,12 +87,13 @@ class UserPage extends Component {
             showEditBio: false,
             showEditFirst: false, 
             showEditLast: false,
+            showEditName: false,
             showEditEmail: false,
             showEditPass: false
         })
     }
 
-    save() {
+    save(e) {
     	var newBio = this.refs.inputBio.value;
         var newFirst = this.refs.inputFirst.value;
         var newLast = this.refs.inputLast.value;
@@ -217,8 +220,8 @@ class UserPage extends Component {
                                                  
                                                         : <div>
                                                         <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.firstname}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save(e);}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={() => this.setState({ showEditFirst : false })}/></div>
                                                         </div>
                                                     }
                                                 </Col>
@@ -236,8 +239,8 @@ class UserPage extends Component {
                                                  
                                                         : <div>
                                                         <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.lastname}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save(e);}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={() => this.setState({ showEditLast : false })}/></div>
                                                         </div>
                                                     }
                                                 </Col>
@@ -255,8 +258,8 @@ class UserPage extends Component {
                                                  
                                                         : <div>
                                                         <input className="form-control float-left col-10" type="text" ref="inputEmail" placeholder="Enter username" defaultValue={this.state.username}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save(e);}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={() => this.setState({ showEditEmail : false })}/></div>
                                                         </div>
                                                     }
                                                 </Col>
@@ -274,8 +277,8 @@ class UserPage extends Component {
                                                  
                                                         : <div>
                                                         <input className="form-control float-left col-10" type="text" ref="inputPass" placeholder="Enter password" />
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save(e);}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={() => this.setState({ showEditPass : false })}/></div>
                                                         </div>
                                                     }
                                                 </Col>
@@ -293,8 +296,8 @@ class UserPage extends Component {
                                                  
                                                         : <div>
                                                         <input className="form-control float-left col-10" type="text" ref="inputBio" placeholder="Enter bio" defaultValue={this.state.bio}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save(e);}}/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={() => this.setState({ showEditBio : false })}/></div>
                                                         </div>
                                                     }
                                                 </Col>
