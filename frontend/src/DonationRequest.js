@@ -19,6 +19,16 @@ class DonationRequest extends Component{
 		}
 	}
 
+	componentDidMount() {
+		fetch('/user').then((response) => {
+			response.json().then((body) => {
+				if (!body.username) {
+					this.props.history.push('/login');
+				}
+			})
+		})
+	}
+
 	handleChange(e) {
 		this.setState({[e.target.name]: e.target.value });
 	}
@@ -28,12 +38,21 @@ class DonationRequest extends Component{
 	}
 
 	submit() {
+		const formData = new FormData();
+		formData.append("name", this.state.name);
+		formData.append("category", this.state.category);
+		formData.append("amount", this.state.amount);
+		formData.append("description", this.state.description);
+		if (this.state.image) {
+			formData.append( 
+				"image", 
+				this.state.image, 
+				this.state.image.name 
+			);
+		}
 		fetch('/donation-request', {
-           method: "POST",
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
+            method: "POST",
+        	body: formData
         })
 		.then((response) => {
              if (response.ok) {
@@ -86,7 +105,7 @@ class DonationRequest extends Component{
 							<div className="col-md-6">
 								<div className="form-group">
 									<label className="form-control-label font-weight-bold lead">Upload Sprout Image</label>
-									<input type="file"  name="image" onChange={this.handleUpload}/>
+									<input type="file"  name="image" accept="image/*" onChange={this.handleUpload}/>
 								</div>
 			  
 								<div className="form-group">

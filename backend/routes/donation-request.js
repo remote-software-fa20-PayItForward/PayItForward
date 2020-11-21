@@ -2,30 +2,38 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const upload = multer();
-const Image = require( './models/Image' );
-const DonationRequest = require('./models/DonationRequest');
+const Image = require( '../models/Image' );
+const DonationRequest = require('../models/DonationRequest');
+const User = require('../models/User');
 
 
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('image'), (req, res, next) => {
 	User.findOne( {username: req.user.username} ).then(user => {
 		if (user) {
-			const newDonation = {
-				name: req.body.name, 
-				image: req.body.image, 
-				description: req.body.description,
-				category: req.body.category,
-				amount: req.body.amount,
-				user: user._id
-			}
-			DonationRequest.create(newDonation, function(err, donationRequest) {
-				if (donationRequest) {
-					console.log(donationRequest);
-					return res.json();
-				} else {
-					console.log("Error creating donation request object");	
-					return res.status(500).json({error: 'Error creating donation request object'})
-				}
-			})
+            Image.create({data: req.file.buffer, name: req.file.originalname, mime: req.file.mimetype}, function(err, image) {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({error: 'Error uploading image. Please try again'});
+                } else {                    
+                    const newDonation = {
+                        name: req.body.name, 
+                        image: '/images/' + image._id, 
+                        description: req.body.description,
+                        category: req.body.category,
+                        amount: req.body.amount,
+                        user: user._id
+                    }
+                    DonationRequest.create(newDonation, function(err, donationRequest) {
+                        if (donationRequest) {
+                            console.log(donationRequest);
+                            return res.json();
+                        } else {
+                            console.log(err);	
+                            return res.status(500).json({error: 'Error creating donation request object'})
+                        }
+                    })
+                }
+            });
 		} else {
 			console.log('Error finding user in /donation-request');	
 			return res.status(500).json({error: 'Error finding user to create donation request object'})
