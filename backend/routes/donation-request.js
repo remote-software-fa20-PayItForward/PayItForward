@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer();
 const Image = require( '../models/Image' );
-const DonationRequest = require('./models/DonationRequest');
+const DonationRequest = require('../models/DonationRequest');
 
 
 router.post('/', (req, res, next) => {
