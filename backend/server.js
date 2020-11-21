@@ -80,6 +80,7 @@ app.get('/', (req, res, next) => {
 */
 
 app.use('/images/', require("./routes/images"));
+app.use('/donation-request/', require('./routes/donation-request'));
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {

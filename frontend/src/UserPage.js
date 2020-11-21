@@ -20,13 +20,49 @@ class UserPage extends Component {
             showEditLast: false,
             showEditEmail: false, 
             showEditBio: false, 
-            showEditPass: false
+            showEditPass: false,
+            username: "",
+            firstname: "",
+            lastname: "",
+            bio: "",
+            avatar: "/profile.jpg",
+            amount: 0
         }
     }
 
 	componentDidMount() {
+        Promise.all([
+           fetch('/user', {credentials: 'include'}),
+           fetch('/donation-request')
+        ]).then(allResponses => {
+            allResponses[0].json().then(body => {
+                if (!body.username) {
+                    this.props.history.push('/login');
+                }
+                this.setState({
+                    username: body.username,
+                    firstname: body.first,
+                    lastname: body.last,
+                    bio: body.bio,
+                    avatar: body.avatar ? body.avatar : "/profile.jpg",
+                })
+            })
+            allResponses[1].json().then(body => {
+                if (body) {
+                    this.setState({
+                       amount: body.amount
+                    })
+                } else {
+                    this.setState({
+                       amount: 0
+                    })
+                }
+            })
+        })
+        /*
         fetch('/user', {credentials: 'include'}).then((response) => {
             response.json().then(body => {
+                console.log(body);
                 if (!body.username) {
                     this.props.history.push('/login');
                 }
@@ -38,7 +74,8 @@ class UserPage extends Component {
                     avatar: body.avatar ? body.avatar : "/profile.jpg",
                 })
             });
-        }); 
+        });
+        */
     }
 
     cancel() {
@@ -121,7 +158,7 @@ class UserPage extends Component {
                                                 <div className="card-group pl-3 pb-3 text-center">
                                                     <div className="card mr-3 text-dark rounded">
                                                         <div className="card-body">
-                                                            <p className="lead font-weight-bold display-4 purple-text">$50 </p>
+                                                            <p className="lead font-weight-bold display-4 purple-text">${this.state.amount} </p>
                                                             <p className="font-weight-bold"> requested sprout amount </p>
                                                         </div>
                                                     </div>
@@ -140,7 +177,7 @@ class UserPage extends Component {
                                                 </div>
                                         
                                                 <div className="text-center">
-                                                    <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
+                                                    <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
