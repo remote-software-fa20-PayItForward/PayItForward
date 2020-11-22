@@ -235,7 +235,7 @@ class UserPage extends Component {
                                                         </div>
                                                  
                                                         : <form id="firstform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first}/>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditFirst : false })}/></div>
                                                         </form>
@@ -254,7 +254,7 @@ class UserPage extends Component {
                                                         </div>
                                                  
                                                         : <form id="lastform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last}/>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditLast : false })}/></div>
                                                         </form>
@@ -273,7 +273,7 @@ class UserPage extends Component {
                                                         </div>
                                                  
                                                         : <form id="emailform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputEmail" placeholder="Enter username" defaultValue={this.state.username}/>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputEmail" placeholder="Enter username" defaultValue={this.state.username} required />
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditEmail : false })}/></div>
                                                         </form>
@@ -292,7 +292,8 @@ class UserPage extends Component {
                                                         </div>
                                                  
                                                         : <form id="passwordform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputPass" placeholder="Enter password" />
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" placeholder="Enter password" required />
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" placeholder="Confirm password" required />
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditPass : false })}/></div>
                                                         </form>
