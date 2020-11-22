@@ -2,6 +2,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import React, { Component } from "react";
 import NavBar from './Navbar'
+import Button from 'react-bootstrap/Button';
 
 
 
@@ -38,7 +39,7 @@ class StripeOnboarding extends Component {
                 <NavBar />
                 <div className="Donate">
                     <h1></h1>
-                    
+                    <Button onClick={(e)=>{this.submit();}}>Onboard</Button>
                 </div>
             </div>
         )
