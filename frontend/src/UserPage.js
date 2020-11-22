@@ -65,7 +65,7 @@ class UserPage extends Component {
     		 },
     		 body: JSON.stringify({bio: newBio, first: newFirst, last: newLast, username: newEmail, passwordHash: newPass})
     	})
-        
+        window.location.reload(false);
     	this.setState({
     		bio: newBio,
             firstname: newFirst,

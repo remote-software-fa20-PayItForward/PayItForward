@@ -47,6 +47,7 @@ class ProfilePic extends React.Component{
         
       });
     }
+    window.location.reload(false);
     this.setState({
     	avatar: this.state.file,
     	addPic: false
