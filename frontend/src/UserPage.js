@@ -291,9 +291,9 @@ class UserPage extends Component {
                                                         <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditPass : true })}/></div>
                                                         </div>
                                                  
-                                                        : <form id="passwordform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" placeholder="Enter password" required />
-                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" placeholder="Confirm password" required />
+                                                        : <form id="passwordform" onSubmit={(e)=>{this.save(e);e.preventDefault();}} onInput={(e)=>{if (e.target.form.elements.password1.value == e.target.form.elements.password2.value) e.target.form.elements.password2.setCustomValidity(""); else e.target.form.elements.password2.setCustomValidity("Passwords do not match");}}>
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" name="password1" placeholder="Enter password" required />
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" name="password2" placeholder="Confirm password" required />
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditPass : false })}/></div>
                                                         </form>
