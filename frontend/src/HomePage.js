@@ -105,7 +105,7 @@ class HomePage extends Component{
                                         <h3 className="font-weight-bold">Send a Sprout</h3>
                                         <p className="lead mt-3">Feeling generous? Choose to donate your change and help grow a fellow sprout!</p>
                                         <div class="card-footer bg-white p-0" style={{border: "none"}}>
-                                            <Link to="/donate"><Button className="purple-btn font-weight-bold">Let's grow!</Button></Link>
+                                            <Link to="/donation-requests"><Button className="purple-btn font-weight-bold">Let's grow!</Button></Link>
                                             <img src="/grow.png" style={{width: "30%"}} className="float-right"/>
                                         </div>
                                     </div>

@@ -14,6 +14,8 @@ import SuccessfulPayment from './SuccessfulPayment'
 import Donate from './Donate'
 import DonationRequest from './DonationRequest'
 import MySprout from './MySprout'
+import Requests from './Requests';
+import Sprout from './Sprout';
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
       <Route exact path="/transactions/:month" component={Transactions} />
       <Route exact path="/donation-request" component={DonationRequest} />
       <Route exact path="/my-sprout" component={MySprout} />
+      <Route exact path="/donation-requests" component={Requests} />
+      <Route exact path="/sprout/:id" component={Sprout} />
     </Router>
   );
 }
