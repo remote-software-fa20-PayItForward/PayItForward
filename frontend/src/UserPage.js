@@ -85,8 +85,6 @@ class UserPage extends Component {
     cancel() {
         this.setState({
             showEditBio: false,
-            showEditFirst: false, 
-            showEditLast: false,
             showEditName: false,
             showEditEmail: false,
             showEditPass: false
@@ -96,12 +94,10 @@ class UserPage extends Component {
     save(e) {
         var body = {};
         switch (e.target.id) {
-            case "firstform":
+            case "nameform":
                 var newFirst = this.refs.inputFirst.value;
-                body.first = newFirst;
-                break;
-            case "lastform":
                 var newLast = this.refs.inputLast.value;
+                body.first = newFirst;
                 body.last = newLast;
                 break;
             case "emailform":
@@ -128,8 +124,7 @@ class UserPage extends Component {
             if (response.ok) {
                 this.setState(body);
                 this.setState({
-                    showEditFirst: false, 
-                    showEditLast: false,
+                    showEditName: false,
                     showEditEmail: false, 
                     showEditBio: false,
                     showEditPass: false
@@ -226,7 +221,7 @@ class UserPage extends Component {
                               
                                 <Tab eventKey="settings" title="User Settings">
                                     <div className="py-5">
-                                        
+                                            {/*
                                             <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">First name</label>
                                                 <Col lg={9}>
@@ -260,6 +255,28 @@ class UserPage extends Component {
                                                         <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditLast : false })}/></div>
+                                                        </form>
+                                                    }
+                                                </Col>
+                                            </Row>
+                                            */}
+                                            <Row className="form-group">
+                                                <label className="col-lg-3 col-form-label form-control-label">Name</label>
+                                                <Col lg={9}>
+                                                    { !this.state.showEditName 
+                                                        ? <div> 
+                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.first} </Card>
+                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.last} </Card>
+                                                        <input type="text" ref="inputFirst" defaultValue={this.state.first} type="hidden"/>
+                                                        <input type="text" ref="inputLast" defaultValue={this.state.last} type="hidden"/>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditName : true })}/></div>
+                                                        </div>
+                                                 
+                                                        : <form id="nameform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
+                                                        <input className="form-control float-left col-5" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
+                                                        <input className="form-control float-left col-5" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditName : false })}/></div>
                                                         </form>
                                                     }
                                                 </Col>
