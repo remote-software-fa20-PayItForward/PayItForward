@@ -150,6 +150,22 @@ class UserPage extends Component {
         });
     }
 
+    privacy() {
+        fetch('/user/update', {
+            method: "POST",
+             headers: {
+                'Content-type': 'application/json'
+             },
+             body: JSON.stringify({privacy: !this.state.privacy})
+        }).then((response) => {
+            if (response.ok) {
+                this.setState({
+                    privacy: !this.state.privacy
+                })
+            }
+        });
+    }
+
     render() {
     	return (
         
@@ -349,6 +365,13 @@ class UserPage extends Component {
                                                 </Col>
                                             </Row>
                                             
+                                            <Row className="form-group">
+                                                <label className="col-lg-3 col-form-label form-control-label">Private Profile</label>
+                                                <Col lg={9}>
+                                                    <Card className="card-title bg-light p-2 col-10 float-left">{this.state.privacy ? "Enabled" : "Disabled"}</Card>
+                                                    <div className="col-2 float-right"><input type="button" className="btn" value={this.state.privacy ? "Disable" : "Enable"} onClick={(e)=>{this.privacy();}} /></div>
+                                                </Col>
+                                            </Row>
                                     </div>
                                 </Tab>
                                 
