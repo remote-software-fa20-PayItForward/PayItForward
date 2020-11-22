@@ -14,7 +14,9 @@ const UserSchema = new mongoose.Schema({
 	mfaEnabled: {type: Boolean, default: false},
 	bio: {type: String, required: false},
 	privacy: {type: Boolean, default: false, required: false},
-	avatar: {type: String}
+	avatar: {type: String},
+	stripeAccountId: {type: String},
+    hasStripeAccount: {type: Boolean, default:false}
 });
 
 //apply uniqueValidator to UserSchema

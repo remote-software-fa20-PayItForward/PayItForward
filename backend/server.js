@@ -98,7 +98,8 @@ app.post('/login', function(req, res, next) {
       if (err) { 
 		return res.status(500).json({error: 'Issue with Passport authentication2'});
 	  }
-		return res.json({success: 'Successfully logged in user'})
+	  	//console.log(req.user.stripeAccountId);
+		return res.json({success: 'Successfully logged in user'});
     });
   })(req, res, next);
 });
@@ -486,16 +487,68 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 });
 
 app.post("/create-payment-intent", async (req, res) => {
-	const { items } = req.body;
+	//const { items } = req.body;
 	// Create a PaymentIntent with the order amount and currency
 	const paymentIntent = await stripe.paymentIntents.create({
-	  amount: 2000,
-	  currency: "usd"
+	    payment_method_types: ['card'],
+		amount: 1000,
+		currency: 'usd',
+		application_fee_amount: 1000*0.029+30,
+		transfer_data: {
+		//destination:
+  },
 	});
 	res.send({
 	  clientSecret: paymentIntent.client_secret
 	});
 });
+
+
+app.post("/onboard-user", async (req, res) => {
+	try {
+	  const account = await stripe.accounts.create({type: "express"});
+	  req.session.accountID = account.id;
+	  User.findOne({username:req.user.username}, (err,result)=>{
+		  result.hasStripeAccount = true;
+		  result.stripeAccountId = account.id;
+	  })
+	  const origin = `${req.headers.origin}`;
+	  const accountLinkURL = await generateAccountLink(account.id, origin);
+	  res.send({url: accountLinkURL});
+	} catch (err) {
+	  res.status(500).send({
+		error: err.message
+	  });
+	}
+  });
+
+  app.get("/onboard-user/refresh", async (req, res) => {
+  if (!req.session.accountID) {
+    res.redirect("/");
+    return;
+  }
+  try {
+    const {accountID} = req.session;
+    const origin = `${req.secure ? "https://" : "https://"}${req.headers.host}`;
+    
+    const accountLinkURL = await generateAccountLink(accountID, origin)
+    res.redirect(accountLinkURL);
+  } catch (err) {
+    res.status(500).send({
+      error: err.message
+    });
+  }
+});
+
+function generateAccountLink(accountID, origin) {
+	return stripe.accountLinks.create({
+	  type: "account_onboarding",
+	  account: accountID,
+	  refresh_url: `${origin}/onboard-user/refresh`,
+	  return_url: `${origin}/success.html`,
+	}).then((link) => link.url);
+  }
+  
 
 app.get('/current-month-transactions-and-roundup', async (req, res, next) => {
 	const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
@@ -508,14 +561,6 @@ app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
 	const endOfMonth = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
 	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
 });
-
-
-  /*
-  if user creates new donation fund 
-  const account = await stripe.accounts.create({
-  type: 'express',
-});*/
-
 
 
 _fetchTransactionsAndRoundup = async (req, res, next, startDate, endDate) => {
