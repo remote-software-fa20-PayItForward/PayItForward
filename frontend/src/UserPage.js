@@ -145,10 +145,13 @@ class UserPage extends Component {
     		 	'Content-type': 'application/json'
     		 },
     		 body: JSON.stringify({mfaEnabled: !this.state.mfaEnabled})
-        })
-        this.setState({
-            mfaEnabled: !this.state.mfaEnabled
-        })
+        }).then((response) => {
+            if (response.ok) {
+                this.setState({
+                    mfaEnabled: !this.state.mfaEnabled
+                })
+            }
+        });
     }
 
     render() {
@@ -321,9 +324,11 @@ class UserPage extends Component {
                                             </Row>
 
                                             <Row className="form-group">
-                                                <label className="col-lg-3 col-form-label form-control-label">2 Factor Authentication</label>
-                                                <Card className="card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</Card>
-                                                <div className="col-2 float-right"><input type="button" className="btn" value={this.state.mfaEnabled ? "Disable" : "Enable"} onClick={(e)=>{this.mfa();}} /></div>
+                                                <label className="col-lg-3 col-form-label form-control-label">Two-Factor Authentication</label>
+                                                <Col lg={9}>
+                                                    <Card className="card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</Card>
+                                                    <div className="col-2 float-right"><input type="button" className="btn" value={this.state.mfaEnabled ? "Disable" : "Enable"} onClick={(e)=>{this.mfa();}} /></div>
+                                                </Col>
                                             </Row>
                                             
                                     </div>
