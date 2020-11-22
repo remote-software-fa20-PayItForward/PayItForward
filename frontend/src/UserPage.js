@@ -25,6 +25,7 @@ class UserPage extends Component {
             showEditEmail: false, 
             showEditBio: false, 
             showEditPass: false,
+            showEditAvatar: false,
             username: "",
             first: "",
             last: "",
@@ -374,9 +375,16 @@ class UserPage extends Component {
                         </Col>
                     
                         <Col lg={4} className="order-lg-1 text-center">
-                            <img src={this.state.avatar} className="mx-auto img-fluid img-circle d-block border" alt="avatar" />
+                            <img src={this.state.avatar} className="mx-auto img-fluid img-circle d-block border" onClick={(e)=>{this.setState({showEditAvatar: true})}} alt="avatar" />
                             <br />
+                            { this.state.showEditAvatar ?
                             <ProfilePic />
+                            :
+                            <small>Click to change your profile picture</small>
+                            }
+                            { this.state.showEditAvatar &&
+                            <Button onClick={(e)=>{this.setState({showEditAvatar: false})}}>Close</Button>
+                            }
                         </Col>
                     </Row>
                 </Container>
