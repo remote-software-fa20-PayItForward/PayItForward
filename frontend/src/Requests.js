@@ -135,7 +135,7 @@ class Requests extends Component{
                             </Col>
                             
                             <div className="text-center">
-                                <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="success"><h6>Grow Sprout</h6></Button></Link>
+                                <Link to="/donate"><Button className="font-weight-bold px-3 mb-3" variant="success"><h6>Grow Sprout</h6></Button></Link>
                                 <br />
                             </div>
                         </Card>
