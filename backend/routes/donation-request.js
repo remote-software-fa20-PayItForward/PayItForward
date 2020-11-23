@@ -75,7 +75,7 @@ router.get('/:id', (req, res, next) => {
 
 router.get('/category/:category', (req, res, next) => {
 	DonationRequest.find( {category: req.params.category} )
-	.populate('user' , '-passwordHash')
+	.populate('user' , '-passwordHash -mfaEnabled')
 	.then((donationRequests) => {
 		console.log(donationRequests);
         if (donationRequests) {
