@@ -9,7 +9,6 @@ import Row from 'react-bootstrap/Row';
 import CardGroup from 'react-bootstrap/CardGroup';
 import Badge from 'react-bootstrap/Badge';
 
-
 class MySprout extends Component{
 	
 	 constructor(props) {
