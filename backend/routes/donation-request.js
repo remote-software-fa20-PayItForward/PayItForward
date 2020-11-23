@@ -62,9 +62,9 @@ router.get('/all', (req, res) => {
 })
 
 router.get('/:id', (req, res, next) => {
-    DonationRequest.findById(req.params.id).then((donationRequest) => {
-        if (donationRequest) {
-            return res.json( JSON.parse(JSON.stringify(donationRequest)) );
+    DonationRequest.find({ user: req.user._id}).then((donationRequests) => {
+        if (donationRequests) {
+            return res.json( JSON.parse(JSON.stringify(donationRequests)) );
         } else {
             return res.status(404).json({error: "The donation request was not found"});
         }
@@ -74,7 +74,10 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.get('/category/:category', (req, res, next) => {
-	DonationRequest.find( {category: req.params.category} ).then((donationRequests) => {
+	DonationRequest.find( {category: req.params.category} )
+	.populate('user' , '-passwordHash')
+	.then((donationRequests) => {
+		console.log(donationRequests);
         if (donationRequests) {
             return res.json(donationRequests);
         }
