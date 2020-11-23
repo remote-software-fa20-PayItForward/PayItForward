@@ -109,7 +109,7 @@ class DonationRequest extends Component{
 							<Col md={6}>
 								<Form.Group>
 									<Form.Label className="font-weight-bold lead" for="image">Upload Sprout Image</Form.Label>
-									<input type="file"  name="image" accept="image/*" onChange={this.handleUpload}/>
+									<input type="file"  name="image" accept="image/*" onChange={this.handleUpload} required/>
 								</Form.Group>
 			  
 								<Form.Group>

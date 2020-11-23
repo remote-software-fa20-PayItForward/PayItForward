@@ -5,12 +5,15 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
 import ProfilePic from './ProfilePic';
+import { findAllByTestId } from '@testing-library/react';
 
 class UserPage extends Component {
 	 constructor(props) {
@@ -18,12 +21,14 @@ class UserPage extends Component {
         this.state = {
             showEditFirst: false, 
             showEditLast: false,
+            showEditName: false,
             showEditEmail: false, 
             showEditBio: false, 
             showEditPass: false,
+            showEditAvatar: false,
             username: "",
-            firstname: "",
-            lastname: "",
+            first: "",
+            last: "",
             bio: "",
             avatar: "/profile.jpg",
             amount: 0
@@ -32,37 +37,36 @@ class UserPage extends Component {
 
 	componentDidMount() {
         Promise.all([
-           fetch('/user', {credentials: 'include'}),
-           fetch('/donation-request')
-        ]).then(allResponses => {
-            allResponses[0].json().then(body => {
-                if (!body.username) {
-                    this.props.history.push('/login');
-                }
-                this.setState({
-                    username: body.username,
-                    firstname: body.first,
-                    lastname: body.last,
-                    bio: body.bio,
-                    avatar: body.avatar ? body.avatar : "/profile.jpg",
-                })
-            })
-            allResponses[1].json().then(body => {
-                if (body) {
-                    this.setState({
-                       amount: body.amount
-                    })
-                } else {
-                    this.setState({
-                       amount: 0
-                    })
-                }
-            })
-        })
-        /*
+            fetch('/user', {credentials: 'include'}),
+            fetch('/donation-request')
+         ]).then(allResponses => {
+             allResponses[0].json().then(body => {
+                 if (!body.username) {
+                     this.props.history.push('/login');
+                 }
+                 this.setState({
+                     username: body.username,
+                     first: body.first,
+                     last: body.last,
+                     bio: body.bio,
+                     avatar: body.avatar ? body.avatar : "/profile.jpg",
+                 })
+             })
+             allResponses[1].json().then(body => {
+                 if (body) {
+                     this.setState({
+                        amount: body.amount
+                     })
+                 } else {
+                     this.setState({
+                        amount: 0
+                     })
+                 }
+             })
+         })
+         /*
         fetch('/user', {credentials: 'include'}).then((response) => {
             response.json().then(body => {
-                console.log(body);
                 if (!body.username) {
                     this.props.history.push('/login');
                 }
@@ -72,48 +76,94 @@ class UserPage extends Component {
                     lastname: body.last,
                     bio: body.bio,
                     avatar: body.avatar ? body.avatar : "/profile.jpg",
+                    mfaEnabled: body.mfaEnabled
                 })
             });
-        });
+        }); 
         */
     }
 
     cancel() {
         this.setState({
             showEditBio: false,
-            showEditFirst: false, 
-            showEditLast: false,
+            showEditName: false,
             showEditEmail: false,
             showEditPass: false
         })
     }
 
-    save() {
-    	var newBio = this.refs.inputBio.value;
-        var newFirst = this.refs.inputFirst.value;
-        var newLast = this.refs.inputLast.value;
-        var newEmail = this.refs.inputEmail.value;
-        var newPass = this.refs.inputPass.value;
+    save(e) {
+        var body = {};
+        switch (e.target.id) {
+            case "nameform":
+                var newFirst = this.refs.inputFirst.value;
+                var newLast = this.refs.inputLast.value;
+                body.first = newFirst;
+                body.last = newLast;
+                break;
+            case "emailform":
+                var newEmail = this.refs.inputEmail.value;
+                body.username = newEmail;
+                break;
+            case "passwordform":
+                var newPass = this.refs.inputPass.value;
+                body.password = newPass;
+                break;
+            case "bioform":
+                var newBio = this.refs.inputBio.value;
+                body.bio = newBio;
+                break;
+        }
         
-        fetch('/UserPage', {
+        fetch('/user/update', {
     		method: "POST",
     		 headers: {
     		 	'Content-type': 'application/json'
     		 },
-    		 body: JSON.stringify({bio: newBio, first: newFirst, last: newLast, username: newEmail, passwordHash: newPass})
-    	})
-        
-    	this.setState({
-    		bio: newBio,
-            firstname: newFirst,
-            lastname: newLast,
-            email: newEmail,
-            showEditFirst: false, 
-            showEditLast: false,
-            showEditEmail: false, 
-            showEditBio: false,
-            showEditPass: false
-    	});
+    		 body: JSON.stringify(body)
+    	}).then((response) => {
+            if (response.ok) {
+                this.setState(body);
+                this.setState({
+                    showEditName: false,
+                    showEditEmail: false, 
+                    showEditBio: false,
+                    showEditPass: false
+                });
+            }
+        })
+    }
+
+    mfa() {
+        fetch('/user/update', {
+    		method: "POST",
+    		 headers: {
+    		 	'Content-type': 'application/json'
+    		 },
+    		 body: JSON.stringify({mfaEnabled: !this.state.mfaEnabled})
+        }).then((response) => {
+            if (response.ok) {
+                this.setState({
+                    mfaEnabled: !this.state.mfaEnabled
+                })
+            }
+        });
+    }
+
+    privacy() {
+        fetch('/user/update', {
+            method: "POST",
+             headers: {
+                'Content-type': 'application/json'
+             },
+             body: JSON.stringify({privacy: !this.state.privacy})
+        }).then((response) => {
+            if (response.ok) {
+                this.setState({
+                    privacy: !this.state.privacy
+                })
+            }
+        });
     }
 
     render() {
@@ -122,17 +172,17 @@ class UserPage extends Component {
     		<div>
         		<NavBar />
                 
-                <div className="container pt-5">
-                    <div className="row my-2">
-                        <div className="col-lg-8 order-lg-2">
+                <Container className="pt-5">
+                    <Row className="my-2">
+                        <Col lg={8} className="order-lg-2">
                       
                             <Tabs defaultActiveKey="profile" transition={false} id="noanim-tab-example">
                                 <Tab eventKey="profile" title="Profile">
                                     <div className="py-4">
-                                        <h3 className="mb-3 purple-text font-weight-bold">{this.state.firstname} {this.state.lastname}</h3>
-                                        <div className="row">
+                                        <h3 className="mb-3 purple-text font-weight-bold">{this.state.first} {this.state.last}</h3>
+                                        <Row>
                                         
-                                            <div className="col-md-6 border mr-5 pt-3 rounded">
+                                            <Col md={6} className="border mr-5 pt-3 rounded">
                                                 <h5>About</h5>
                                                 <hr />
                                                 <p className="text-break">
@@ -141,183 +191,226 @@ class UserPage extends Component {
                                                     {!this.state.bio &&
                                                         "No bio here yet!"}
                                                 </p>
-                                            </div>
+                                            </Col>
                                             
-                                            <div className="col-md-5 border pt-3 rounded">
+                                            <Col className="border pt-3 rounded">
                                                 <h5> Achievements </h5>
                                                 <hr />
-                                                <h5><span class="badge badge-success ">Top 5% donor</span></h5> 
-                                                <h5><span class="badge badge-primary">Top 10% donor</span></h5>
-                                                <h5><span class="badge badge-dark">Top 20% donor</span></h5>
-                                            </div>
+                                                <h5><Badge variant="success ">Top 5% donor</Badge></h5> 
+                                                <h5><Badge variant="primary">Top 10% donor</Badge></h5>
+                                                <h5><Badge variant="dark">Top 20% donor</Badge></h5>
+                                            </Col>
                                             
-                                            <div className="col-md-12 mt-4 border rounded purple-bg">
+                                            <Col md={12} className="mt-4 border rounded purple-bg">
                                             
                                                 <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Sprout Stats</h5>
                                                 <hr />
-                                                <div className="card-group pl-3 pb-3 text-center">
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body">
+                                                <CardGroup className="pl-3 pb-3 text-center">
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text">${this.state.amount} </p>
                                                             <p className="font-weight-bold"> requested sprout amount </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body">
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text"> 8 </p>
                                                             <p className="font-weight-bold"> planters growing your sprout </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="card mr-3 text-dark rounded">
-                                                        <div className="card-body ">
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
                                                             <p className="lead font-weight-bold display-4 purple-text"> $35 </p>
                                                             <p className="font-weight-bold"> current sprout amount </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                        </Card.Body>
+                                                    </Card>
+                                                </CardGroup>
                                         
                                                 <div className="text-center">
                                                     <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
-                                            </div>
-                                        </div>
+                                            </Col>
+                                        </Row>
                                     </div>
                                 </Tab>
                               
                                 <Tab eventKey="settings" title="User Settings">
                                     <div className="py-5">
-                                        <form role="form">
-                                        
-                                            <div className="form-group row">
+                                            {/*
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">First name</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditFirst
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.firstname} </div>
-                                                        <input type="text" ref="inputFirst" defaultValue={this.state.firstname} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditFirst : true })}/></div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.first} </Card>
+                                                        <input type="text" ref="inputFirst" defaultValue={this.state.first} type="hidden"/>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditFirst : true })}/></div>
                                                         </div>
                                                  
-                                                        : <div>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.firstname}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
-                                                        </div>
+                                                        : <form id="firstform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditFirst : false })}/></div>
+                                                        </form>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Last name</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditLast 
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.lastname} </div>
-                                                        <input type="text" ref="inputLast" defaultValue={this.state.lastname} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditLast : true })}/></div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.last} </Card>
+                                                        <input type="text" ref="inputLast" defaultValue={this.state.last} type="hidden"/>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditLast : true })}/></div>
                                                         </div>
                                                  
-                                                        : <div>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.lastname}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
-                                                        </div>
+                                                        : <form id="lastform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditLast : false })}/></div>
+                                                        </form>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
+                                            */}
+                                            <Row className="form-group">
+                                                <label className="col-lg-3 col-form-label form-control-label">Name</label>
+                                                <Col lg={9}>
+                                                    { !this.state.showEditName 
+                                                        ? <div> 
+                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.first} </Card>
+                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.last} </Card>
+                                                        <input type="text" ref="inputFirst" defaultValue={this.state.first} type="hidden"/>
+                                                        <input type="text" ref="inputLast" defaultValue={this.state.last} type="hidden"/>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditName : true })}/></div>
+                                                        </div>
+                                                 
+                                                        : <form id="nameform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
+                                                        <input className="form-control float-left col-5" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
+                                                        <input className="form-control float-left col-5" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditName : false })}/></div>
+                                                        </form>
+                                                    }
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Email</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditEmail
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.username} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.username} </Card>
                                                         <input type="text" ref="inputEmail" defaultValue={this.state.username} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditEmail : true })}/></div>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditEmail : true })}/></div>
                                                         </div>
                                                  
-                                                        : <div>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputEmail" placeholder="Enter username" defaultValue={this.state.username}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
-                                                        </div>
+                                                        : <form id="emailform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
+                                                        <input className="form-control float-left col-10" type="text" ref="inputEmail" placeholder="Enter username" defaultValue={this.state.username} required />
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditEmail : false })}/></div>
+                                                        </form>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Password</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditPass
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> ●●●●●●●●● </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> ●●●●●●●●● </Card>
                                                         <input type="text" ref="inputPass" type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditPass : true })}/></div>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditPass : true })}/></div>
                                                         </div>
                                                  
-                                                        : <div>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputPass" placeholder="Enter password" />
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
-                                                        </div>
+                                                        : <form id="passwordform" onSubmit={(e)=>{this.save(e);e.preventDefault();}} onInput={(e)=>{if (e.target.form.elements.password1.value == e.target.form.elements.password2.value) e.target.form.elements.password2.setCustomValidity(""); else e.target.form.elements.password2.setCustomValidity("Passwords do not match");}}>
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" name="password1" placeholder="Enter password" required />
+                                                        <input className="form-control float-left col-10" type="password" ref="inputPass" name="password2" placeholder="Confirm password" required />
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditPass : false })}/></div>
+                                                        </form>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
                                             
-                                            <div className="form-group row">
+                                            <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Bio</label>
-                                                <div className="col-lg-9">
+                                                <Col lg={9}>
                                                     { !this.state.showEditBio
                                                         ? <div> 
-                                                        <div className="card card-title bg-light p-2 col-10 float-left"> {this.state.bio} </div>
+                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.bio} </Card>
                                                         <input type="text" ref="inputBio" defaultValue={this.state.bio} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" defaultValue="✎" onClick={() => this.setState({ showEditBio : true })}/></div>
+                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditBio : true })}/></div>
                                                         </div>
                                                  
-                                                        : <div>
+                                                        : <form id="bioform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
                                                         <input className="form-control float-left col-10" type="text" ref="inputBio" placeholder="Enter bio" defaultValue={this.state.bio}/>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="✔️" onClick={(e)=>{this.save();}}/></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" defaultValue="❌" onClick={(e)=>{this.cancel();}}/></div>
-                                                        </div>
+                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️"/></div>
+                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditBio : false })}/></div>
+                                                        </form>
                                                     }
-                                                </div>
-                                            </div>
+                                                </Col>
+                                            </Row>
+
+                                            <Row className="form-group">
+                                                <label className="col-lg-3 col-form-label form-control-label">Two-Factor Authentication</label>
+                                                <Col lg={9}>
+                                                    <Card className="card-title bg-light p-2 col-10 float-left">{this.state.mfaEnabled ? "Enabled" : "Disabled"}</Card>
+                                                    <div className="col-2 float-right"><input type="button" className="btn" value={this.state.mfaEnabled ? "Disable" : "Enable"} onClick={(e)=>{this.mfa();}} /></div>
+                                                </Col>
+                                            </Row>
                                             
-                                        </form>
+                                            <Row className="form-group">
+                                                <label className="col-lg-3 col-form-label form-control-label">Private Profile</label>
+                                                <Col lg={9}>
+                                                    <Card className="card-title bg-light p-2 col-10 float-left">{this.state.privacy ? "Enabled" : "Disabled"}</Card>
+                                                    <div className="col-2 float-right"><input type="button" className="btn" value={this.state.privacy ? "Disable" : "Enable"} onClick={(e)=>{this.privacy();}} /></div>
+                                                </Col>
+                                            </Row>
                                     </div>
                                 </Tab>
                                 
                                 <Tab eventKey="donation" title="Donation Settings">
-                                    <div className="col-md-12 mt-4 border rounded bg-light">
+                                    <Col md={12} className="mt-4 border rounded bg-light">
                                             
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Linked Accounts</h4>
                                         
-                                        <div className="card mr-3 shadow p-3 mb-3 purple-bg rounded">
-                                                        <div className="card-body ">
+                                        <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
+                                                        <Card.Body>
                                                             <h4 className="lead font-weight-bold"> CHASE COLLEGE </h4>
                                                             <h5 className="font-weight-bold"> **** 1234 </h5>
-                                                        </div>
-                                        </div>
+                                                        </Card.Body>
+                                        </Card>
                                         
                                         <div className="text-center">
                                                     <Link to="#"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
                                                     <br />
                                                 </div>
-                                    </div>
+                                    </Col>
 
                                 </Tab>
                             </Tabs>
-                        </div>
+                        </Col>
                     
-                        <div className="col-lg-4 order-lg-1 text-center">
-                            <img src={this.state.avatar} className="mx-auto img-fluid img-circle d-block border" alt="avatar" />
+                        <Col lg={4} className="order-lg-1 text-center">
+                            <img src={this.state.avatar} className="mx-auto img-fluid img-circle d-block border" onClick={(e)=>{this.setState({showEditAvatar: true})}} alt="avatar" />
                             <br />
+                            { this.state.showEditAvatar ?
                             <ProfilePic />
-                        </div>
-                    </div>
-                </div>
+                            :
+                            <small>Click to change your profile picture</small>
+                            }
+                            { this.state.showEditAvatar &&
+                            <Button onClick={(e)=>{this.setState({showEditAvatar: false})}}>Close</Button>
+                            }
+                        </Col>
+                    </Row>
+                </Container>
             </div>
     	);
     }
