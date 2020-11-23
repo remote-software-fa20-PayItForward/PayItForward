@@ -548,7 +548,8 @@ function generateAccountLink(accountID, origin) {
 	  account: accountID,
 	  refresh_url: `${origin}/onboard-user/refresh`,
 	  //change to https://payforwardapp.com/successful-onboard when deployed
-	  return_url: `http://localhost:3000/successful-onboard`,
+	  //change to http://localhost:3000/successful-onboard when testing
+	  return_url: `https://payforwardapp.com/successful-onboard`,
 	}).then((link) => link.url);
   }
   
