@@ -470,7 +470,7 @@ function generateAccountLink(accountID, origin) {
 	return stripe.accountLinks.create({
 	  type: "account_onboarding",
 	  account: accountID,
-	  refresh_url: `${origin}/onboard-user/refresh`,
+	  refresh_url: `${origin}/stripe-onboarding`,
 	  //change to https://payforwardapp.com/successful-onboard when deployed
 	  //change to http://localhost:3000/successful-onboard when testing
 	  return_url: `https://payforwardapp.com/successful-onboard`,
