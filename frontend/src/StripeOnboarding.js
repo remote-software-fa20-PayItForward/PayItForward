@@ -3,6 +3,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import React, { Component } from "react";
 import NavBar from './Navbar'
 import Button from 'react-bootstrap/Button';
+import ReactDOM from 'react-dom';
+//import ScriptTag from 'react-script-tag';
 
 
 
@@ -26,18 +28,24 @@ class StripeOnboarding extends Component {
               if (data.url) {
                 window.location = data.url;
               } else {
-                elmButton.removeAttribute("disabled");
-                elmButton.textContent = "<Something went wrong>";
+                //elmButton.removeAttribute("disabled");
+                //elmButton.textContent = "<Something went wrong>";
                 console.log("data", data);
               }
             });
     }
-
+    componentDidMount(){
+      const script = document.createElement("script");
+      script.src = "https://js.stripe.com/v3/";
+      script.async = true;
+  
+      document.body.appendChild(script);
+    }
     render() {
         return (
             <div>
                 <NavBar />
-                <div className="Donate">
+                <div>
                     <h1></h1>
                     <Button onClick={(e)=>{this.submit();}}>Onboard</Button>
                 </div>

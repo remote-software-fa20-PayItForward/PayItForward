@@ -14,6 +14,8 @@ import SuccessfulPayment from './SuccessfulPayment'
 import Donate from './Donate'
 import DonationRequest from './DonationRequest'
 import MySprout from './MySprout'
+import StripeOnboarding from './StripeOnboarding';
+import SuccessfulOnboard from './SuccessfulOnboard'
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
       <Route exact path="/transactions/:month" component={Transactions} />
       <Route exact path="/donation-request" component={DonationRequest} />
       <Route exact path="/my-sprout" component={MySprout} />
+      <Route exact path="/stripe-onboarding" component={StripeOnboarding} />
+      <Route exact path="/successful-onboard" component={SuccessfulOnboard} />
     </Router>
   );
 }

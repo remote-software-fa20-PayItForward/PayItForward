@@ -495,7 +495,7 @@ app.post("/create-payment-intent", async (req, res) => {
 		currency: 'usd',
 		application_fee_amount: 1000*0.029+30,
 		transfer_data: {
-		//destination:
+		destination:'acct_1HqWTpQLXrRrQtsS',
   },
 	});
 	res.send({
@@ -507,10 +507,12 @@ app.post("/create-payment-intent", async (req, res) => {
 app.post("/onboard-user", async (req, res) => {
 	try {
 	  const account = await stripe.accounts.create({type: "express"});
+	  console.log('stripe account id: ' + account.id)
 	  req.session.accountID = account.id;
-	  User.findOne({username:req.user.username}, (err,result)=>{
-		  result.hasStripeAccount = true;
-		  result.stripeAccountId = account.id;
+	  console.log('req session: '+req.session.accountID);
+	  const addStripeAccount = { $set: {hasStripeAccount: true, stripeAccountId: account.id}}
+	  User.updateOne({username:req.user.username}, addStripeAccount, (err,result)=>{
+		 console.log('in mongo query: '+result);
 	  })
 	  const origin = `${req.headers.origin}`;
 	  const accountLinkURL = await generateAccountLink(account.id, origin);
@@ -545,7 +547,8 @@ function generateAccountLink(accountID, origin) {
 	  type: "account_onboarding",
 	  account: accountID,
 	  refresh_url: `${origin}/onboard-user/refresh`,
-	  return_url: `${origin}/success.html`,
+	  //change to https://payforwardapp.com/successful-onboard when deployed
+	  return_url: `http://localhost:3000/successful-onboard`,
 	}).then((link) => link.url);
   }
   
