@@ -227,7 +227,7 @@ class UserPage extends Component {
                                                 </CardGroup>
                                         
                                                 <div className="text-center">
-                                                    <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
+                                                    <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
