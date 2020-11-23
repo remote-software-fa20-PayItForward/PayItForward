@@ -16,6 +16,8 @@ import DonationRequest from './DonationRequest'
 import MySprout from './MySprout'
 import Requests from './Requests';
 import Sprout from './Sprout';
+import StripeOnboarding from './StripeOnboarding';
+import SuccessfulOnboard from './SuccessfulOnboard'
 
 function App() {
   return (
