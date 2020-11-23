@@ -73,6 +73,25 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
+router.get('/category/:category', (req, res, next) => {
+	DonationRequest.find( {category: req.params.category} ).then((donationRequests) => {
+        if (donationRequests) {
+            return res.json(donationRequests);
+        }
+    }).catch(() => {
+        return res.status(500).json({error: "Cannot get donation requests"});
+    });
+	/*
+	if (req.user) {
+		DonationRequest.findOne ( { user: req.user._id} ).then(donationRequest => {
+			return res.json( JSON.parse(JSON.stringify(donationRequest)) );
+		})
+	} else {
+        return res.status(401).json({error: "Not logged in"});
+    }
+	*/
+});
+
 router.post('/image', upload.single('myFile'), (req, res, next) => {
     Image.create({data: req.file.buffer, name: req.file.originalname, mime: req.file.mimetype}, function(err, image) {
 		if (err) {
