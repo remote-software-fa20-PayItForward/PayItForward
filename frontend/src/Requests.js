@@ -49,8 +49,9 @@ class Requests extends Component{
 				if (body.length > 0) {
                     let nonUserSprouts = [];
                     for (let i = 0; i < body.length; i++) {
-                        if (body[i].user['_id'] != this.state._id) {
-                            //check if already subscribed to request
+                        //check if request is not user's and is currently active
+                        if (body[i].user['_id'] != this.state._id && body[i].status == "active") { 
+                            //check if user already subscribed to request
                             if(body[i].subscribers.includes(this.state._id)) {
                                 this.setState({
                                     subscribed: true,
@@ -118,12 +119,7 @@ class Requests extends Component{
                         {this.state.requests.map((request, i) => (
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
 								<Row className="justify-content-center mt-3">
-									{request.status == "active" ? 
-										<h4><Badge variant="success">Active</Badge></h4>
-									: request.status == "completed" ?
-										<h4><Badge variant="secondary">Completed</Badge></h4> 
-									: <h2><Badge variant="danger">Canceled</Badge></h2>
-									}
+                                    <h4><Badge variant="success">Active</Badge></h4>
 								</Row>
                                 
                             <div className="border mt-3 bg-white" >
