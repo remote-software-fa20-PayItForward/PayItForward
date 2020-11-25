@@ -440,13 +440,23 @@ app.post("/onboard-user", async (req, res) => {
 	  })
 	  const origin = `${req.headers.origin}`;
 	  const accountLinkURL = await generateAccountLink(account.id, origin);
-	  res.send({url: accountLinkURL});
+	  res.json({url: accountLinkURL});
 	} catch (err) {
-	  res.status(500).send({
+	  res.status(500).json({
 		error: err.message
 	  });
 	}
   });
+
+  app.get("/stripe/account", async (req, res) => {
+	  if (req.user) {
+		const user = await User.findById(req.user._id).exec();
+		const account = await stripe.accounts.retrieve(user.stripeAccountId);
+		res.json(account);
+	  } else {
+		  res.status(401).json({error: "Not logged in"});
+	  }
+  })
 
   app.get("/onboard-user/refresh", async (req, res) => {
   if (!req.session.accountID) {
@@ -470,10 +480,10 @@ function generateAccountLink(accountID, origin) {
 	return stripe.accountLinks.create({
 	  type: "account_onboarding",
 	  account: accountID,
-	  refresh_url: `${origin}/stripe-onboarding`,
-	  //change to https://payforwardapp.com/successful-onboard when deployed
-	  //change to http://localhost:3000/successful-onboard when testing
-	  return_url: `https://payforwardapp.com/successful-onboard`,
+	  refresh_url: `https://payforwardapp.com/stripe_refresh.html`,
+	  //change to https://payforwardapp.com/stripe_return.html when deployed
+	  //change to http://localhost:3000/stripe_return.html when testing
+	  return_url: `https://payforwardapp.com/stripe_return.html`,
 	}).then((link) => link.url);
   }
   
