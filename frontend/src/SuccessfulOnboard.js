@@ -6,21 +6,16 @@ class SuccessfulOnboard extends Component {
     constructor(props) {
         super(props);
         this.flash = true;
-        this.state = {
-        }
     }
 
     componentDidMount(){
-        const script = document.createElement("script");
-        script.src = "https://js.stripe.com/v3/";
-        script.async = true;
-        document.body.appendChild(script);
-        const script1 = document.createElement("script");
-        script1.src = "/connectStripe.js";
-        script1.async = true;
-        //script1.attributes.appendChild("defer");
-        document.body.appendChild(script1);
-
+        fetch('/user').then((response) => {
+			response.json().then((body) => {
+				if (!body.username) {
+					this.props.history.push('/login');
+				}
+			})
+		})
     }
 
     render() {
