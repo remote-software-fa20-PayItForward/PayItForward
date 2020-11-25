@@ -60,7 +60,6 @@ class Requests extends Component{
                             nonUserSprouts.push(body[i]);
                         }
                     }
-                    console.log(nonUserSprouts);
 					this.setState({
 						empty: false,
 						requests: nonUserSprouts

@@ -21,7 +21,8 @@ router.post('/', upload.single('image'), (req, res, next) => {
                         description: req.body.description,
                         category: req.body.category,
                         amount: req.body.amount,
-                        user: user._id
+                        user: user._id,
+						status: "active"
                     }
                     DonationRequest.create(newDonation, function(err, donationRequest) {
                         if (donationRequest) {

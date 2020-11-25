@@ -53,7 +53,16 @@ class MySprout extends Component{
                         {this.state.requests.map((request, i) => (
 							<div className="col-6">
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
-                            <div className="border mt-5 bg-white" >
+								<Row className="justify-content-center mt-3">
+									{request.status == "active" ? 
+										<h4><Badge variant="success">Active</Badge></h4>
+									: request.status == "completed" ?
+										<h4><Badge variant="secondary">Completed</Badge></h4> 
+									: <h2><Badge variant="danger">Canceled</Badge></h2>
+									}
+								</Row>
+							
+                            <div className="border mt-3 bg-white" >
                                 <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
                             </div>
                             
@@ -64,7 +73,9 @@ class MySprout extends Component{
                                         <Card.Body>
                                             <p className="lead font-weight-bold purple-text">Sprout Description: </p>
                                             <p className=""> {request.description} </p>
-                                            <h4><Badge variant="primary">#{request.category}</Badge></h4> 
+											
+                                            <h4 className="float-left"><Badge variant="primary">#{request.category}</Badge></h4> 
+											
                                         </Card.Body>
                                     </Card>
                                 </CardGroup>
