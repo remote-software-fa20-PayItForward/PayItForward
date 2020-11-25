@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
 	privacy: {type: Boolean, default: false, required: false},
 	avatar: {type: String},
 	stripeAccountId: {type: String},
-    hasStripeAccount: {type: Boolean, default:false}
+    hasStripeAccount: {type: Boolean, default:false},
 });
 
 //apply uniqueValidator to UserSchema
