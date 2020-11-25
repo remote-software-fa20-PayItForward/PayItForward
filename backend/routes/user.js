@@ -8,7 +8,6 @@ var upload = multer();
 const saltRounds = 10;
 
 router.get('/', (req, res, next) => {
-	console.log(req.user);
 	if (req.user) {
 		let loggedInUser = JSON.parse(JSON.stringify(req.user));
 		delete loggedInUser.passwordHash;

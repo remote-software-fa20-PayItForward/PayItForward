@@ -27,7 +27,7 @@ router.get('/:id/', function(req, res) {
             */
             res.set('Content-Type', data.mime);
             //res.set('Content-Disposition', 'inline');
-            console.log(data.data);
+            //console.log(data.data);
             res.end(data.data);
         }
     })

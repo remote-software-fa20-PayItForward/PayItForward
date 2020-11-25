@@ -20,14 +20,9 @@ class Requests extends Component{
 		this.state = {
 			category: 'books',
             requests: [],
-            empty: false
+            empty: false,
+            subscribed: false
 		}
-        /*
-       super(props); 
-       this.state = {
-           requests: []
-       }
-       */
     }
 
     componentDidMount() {
@@ -35,18 +30,13 @@ class Requests extends Component{
             response.json().then(body => {
                 if (!body.username) {
                     this.props.history.push('/login');
+                } else {
+                    this.setState({
+						_id: body._id
+					})
                 }
             })
         })
-        /*
-        fetch('/donation-request/all').then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-        }).then((body) => {
-            this.setState({requests: body});
-        })
-        */
     }
     
     handleChange(e) {
@@ -56,11 +46,24 @@ class Requests extends Component{
     select() {
 		fetch(`/donation-request/category/${this.state.category}`).then((response) => {
             response.json().then(body => {
-				console.log(body);
 				if (body.length > 0) {
+                    let nonUserSprouts = [];
+                    for (let i = 0; i < body.length; i++) {
+                        //check if request is not user's and is currently active
+                        if (body[i].user['_id'] != this.state._id && body[i].status == "active") { 
+                            //check if user already subscribed to request
+                            if(body[i].subscribers.includes(this.state._id)) {
+                                this.setState({
+                                    subscribed: true,
+                                    request: body[i]._id
+                                })
+                            }
+                            nonUserSprouts.push(body[i]);
+                        }
+                    }
 					this.setState({
 						empty: false,
-						requests: body
+						requests: nonUserSprouts
 					})
 				} else {
 					this.setState({
@@ -71,6 +74,23 @@ class Requests extends Component{
             });
         })
 	}
+    
+    grow(e, id) {
+        e.currentTarget.classList.remove('btn-success');
+        e.currentTarget.classList.add('btn-warning');
+        e.currentTarget.innerHTML = 'Subscribed';
+        
+        fetch(`/donation-request/request/${id}`, {
+    		method: "POST",
+    		 headers: {
+    		 	'Content-type': 'application/json'
+    		 },
+    	}).then((response) => {
+            if (response.ok) {
+                console.log('successfully subscribed');
+            }
+        })
+    }
 
     render() {
         return(
@@ -98,7 +118,11 @@ class Requests extends Component{
                     <CardColumns className="justify-content-center m-5">
                         {this.state.requests.map((request, i) => (
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
-                            <div className="border mt-5 bg-white" >
+								<Row className="justify-content-center mt-3">
+                                    <h4><Badge variant="success">Active</Badge></h4>
+								</Row>
+                                
+                            <div className="border mt-3 bg-white" >
                                 <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
                             </div>
                             
@@ -134,22 +158,23 @@ class Requests extends Component{
                                 </CardGroup>
                             </Col>
                             
+                            {this.state.subscribed == false ?
                             <div className="text-center">
-                                <Link to="/donate"><Button className="font-weight-bold px-3 mb-3" variant="success"><h6>Grow Sprout</h6></Button></Link>
+                                <Button className="font-weight-bold px-3 mb-3" variant="success" onClick={(e) => {this.grow(e, this.state.requests[i]._id )}}><h6>Grow Sprout</h6></Button>
                                 <br />
                             </div>
+                            : this.state.request == request._id ?
+                            <div className="text-center">
+                                <Button className="font-weight-bold px-3 mb-3" variant="warning"><h6>Subscribed</h6></Button>
+                                <br />
+                            </div>
+                            : <div className="text-center">
+                                <Button className="font-weight-bold px-3 mb-3" variant="secondary"><h6>Unavailable</h6></Button>
+                                <br />
+                            </div>}
+                            
                         </Card>
                         ))}
-                        
-                        {/*
-                        <Card className="my-5  shadow-lg" style={{width: '50%'}}>
-                            <ListGroup>
-                                {this.state.requests.map((request, i) => (
-                                    <Link to={"/sprout/" + request._id}><ListGroup.Item>{request.name}</ListGroup.Item></Link>
-                                ))}
-                            </ListGroup>
-                        </Card>
-                        */}
                     </CardColumns>
                 ) : (
                     <Row className="justify-content-center">
