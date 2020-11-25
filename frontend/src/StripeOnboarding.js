@@ -40,7 +40,7 @@ class StripeOnboarding extends Component {
             .then(data => {
               if (data.url) {
                 //window.location = data.url;
-                var onboardingWindow = window.open(data.url, "stripeConnect", "position=top,resizable=no,width=500,height=725.5");
+                var onboardingWindow = window.open(data.url, "stripeConnect", "position=top,resizable=no,width=500,height=725.5,left=" + (window.screen.width / 2 - 250));
                 var timer = window.setInterval(function() {
                   if (onboardingWindow.closed) {
                       window.clearInterval(timer);
