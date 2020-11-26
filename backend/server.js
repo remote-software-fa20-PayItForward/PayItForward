@@ -436,9 +436,6 @@ app.post("/onboard-user", async (req, res) => {
 		account = await stripe.accounts.retrieve(user.stripeAccountId);
 	  } else {
 		account = await stripe.accounts.create({type: "express"});
-		console.log('stripe account id: ' + account.id)
-		req.session.accountID = account.id;
-		console.log('req session: '+req.session.accountID);
 		user.hasStripeAccount = true;
 		user.stripeAccountId = account.id;
 		const result = await user.save();
@@ -469,24 +466,6 @@ app.post("/onboard-user", async (req, res) => {
 		  res.status(401).json({error: "Not logged in"});
 	  }
   })
-
-  app.get("/onboard-user/refresh", async (req, res) => {
-  if (!req.session.accountID) {
-    res.redirect("/");
-    return;
-  }
-  try {
-    const {accountID} = req.session;
-    const origin = `${req.secure ? "https://" : "https://"}${req.headers.host}`;
-    
-    const accountLinkURL = await generateAccountLink(accountID, origin)
-    res.redirect(accountLinkURL);
-  } catch (err) {
-    res.status(500).send({
-      error: err.message
-    });
-  }
-});
 
 function generateAccountLink(accountID, origin) {
 	return stripe.accountLinks.create({
