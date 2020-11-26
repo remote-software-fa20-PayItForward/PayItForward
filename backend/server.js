@@ -430,15 +430,27 @@ app.post("/create-payment-intent", async (req, res) => {
 
 app.post("/onboard-user", async (req, res) => {
 	try {
-	  const account = await stripe.accounts.create({type: "express"});
-	  console.log('stripe account id: ' + account.id)
-	  req.session.accountID = account.id;
-	  console.log('req session: '+req.session.accountID);
-	  const addStripeAccount = { $set: {hasStripeAccount: true, stripeAccountId: account.id}}
-	  User.updateOne({username:req.user.username}, addStripeAccount, (err,result)=>{
-		 console.log('in mongo query: '+result);
-	  })
-	  const origin = `${req.headers.origin}`;
+	  const user = await User.findById(req.user._id).exec();
+	  var account;
+	  if (user.hasStripeAccount) {
+		account = await stripe.accounts.retrieve(user.stripeAccountId);
+	  } else {
+		account = await stripe.accounts.create({type: "express"});
+		console.log('stripe account id: ' + account.id)
+		req.session.accountID = account.id;
+		console.log('req session: '+req.session.accountID);
+		user.hasStripeAccount = true;
+		user.stripeAccountId = account.id;
+		const result = await user.save();
+		console.log('in mongo query: '+result);
+		/*
+		const addStripeAccount = { $set: {hasStripeAccount: true, stripeAccountId: account.id}}
+		User.updateOne({username:req.user.username}, addStripeAccount, (err,result)=>{
+			console.log('in mongo query: '+result);
+		})
+		*/
+	  }
+	  const origin = req.headers.origin;
 	  const accountLinkURL = await generateAccountLink(account.id, origin);
 	  res.json({url: accountLinkURL});
 	} catch (err) {
