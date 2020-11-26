@@ -41,18 +41,23 @@ class StripeOnboarding extends Component {
               if (data.url) {
                 //window.location = data.url;
                 var onboardingWindow = window.open(data.url, "stripeConnect", "position=top,resizable=no,width=500,height=725.5,left=" + (window.screen.width / 2 - 250));
-                var timer = window.setInterval(function() {
-                  if (onboardingWindow.closed) {
-                      window.clearInterval(timer);
-                      e.target.removeAttribute("disabled");
-                      e.target.textContent = "Onboard";
-                      fetch("/stripe/account").then(response => response.json()).then(body => {
-                        if (body.details_submitted && body.payments_enabled) {
-                          this.props.history.push('/successful-onboard');
-                        }
-                      })
-                  }
-              }, 200);
+                if (onboardingWindow) {
+                  var timer = window.setInterval(function() {
+                    if (onboardingWindow.closed) {
+                        window.clearInterval(timer);
+                        e.target.removeAttribute("disabled");
+                        e.target.textContent = "Onboard";
+                        fetch("/stripe/account").then(response => response.json()).then(body => {
+                          if (body.details_submitted && body.payments_enabled) {
+                            this.props.history.push('/successful-onboard');
+                          }
+                        })
+                    }
+                  }, 200);
+                } else {
+                  e.target.removeAttribute("disabled");
+                  e.target.textContent = "Onboard";
+                }
               } else {
                 e.target.removeAttribute("disabled");
                 e.target.textContent = "<Something went wrong>";
