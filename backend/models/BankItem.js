@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const BankAccountSchema = new mongoose.Schema({
-	account_id: {type: Object, required: true},
+	account_id: {type: String, required: true},
 	name: {type: String, required: true},
 	official_name: {type: String, required: true},
 	type: {type: String, required: true},
@@ -10,7 +10,7 @@ const BankAccountSchema = new mongoose.Schema({
 
 
 const BankItemSchema = new mongoose.Schema({
-	user_id: {type: Object, required: true},
+	user_id: {type: mongoose.Schema.ObjectId, required: true},
 	itemId: {type: String, required: true},
 	accessToken: {type: String, required: true},
 	institutionName: {type: String, required: true},
