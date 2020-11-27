@@ -10,7 +10,7 @@ const BankAccountSchema = new mongoose.Schema({
 
 
 const BankItemSchema = new mongoose.Schema({
-	user_id: {type: mongoose.Schema.ObjectId, required: true},
+	user_id: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
 	itemId: {type: String, required: true},
 	accessToken: {type: String, required: true},
 	institutionName: {type: String, required: true},
