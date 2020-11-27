@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const plaid = require('plaid');
 const duo_web = require('@duosecurity/duo_web');
 const moment = require('moment');
 const multer = require('multer');
@@ -16,6 +15,8 @@ require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+
+const client = require('./plaidclient');
 
 //=========set up app================================
 const app = express();
@@ -60,16 +61,6 @@ const local = new LocalStrategy((username, password, done) => {
 });
 passport.use('local', local);
 
-//setup plaid
-const plaid_id = process.env.PLAID_CLIENT_ID;
-const plaid_secret = process.env.PLAID_SECRET;
-const plaid_env = plaid.environments.sandbox;
-
-const client = new plaid.Client({
-	clientID: plaid_id,
-	secret: plaid_secret,
-	env: plaid_env
-});
 
 //============app routes============================
 /*
@@ -81,6 +72,8 @@ app.get('/', (req, res, next) => {
 app.use('/images/', require("./routes/images"));
 app.use('/donation-request/', require('./routes/donation-request'));
 app.use('/user/', require("./routes/user"));
+app.use('/plaidwebhooks/', require("./routes/plaidwebhooks"));
+
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -210,6 +203,7 @@ app.get('/obtain-plaid-link-token', async (req, res, next) => {
 			user: {
 				client_user_id: req.user._id
 			},
+			webhook: 'https://payforwardapp.com/plaidwebhooks/',
 			client_name: 'PayItForward App',
 			products: ['auth', 'transactions'],
 			country_codes: ['US'],
@@ -325,7 +319,7 @@ app.post('/banks/:bankId/link-bank-accounts', async (req, res, next) => {
 		}
 
 		matchingBankItem.bank_accounts = bank_accounts_to_persist;
-		let ala = await matchingBankItem.save();
+		await matchingBankItem.save();
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
@@ -490,6 +484,22 @@ app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
 	const endOfMonth = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
 	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
 });
+
+
+
+// this endpoint triggers sandbox DEFAULT_UPDATE webhook invocation from Plaid for specific itemid
+app.get('/trigger-webhook/:itemid', (req, res, next) => {
+	BankItem.findOne( {_id: req.params.itemid} ).then(bankItem => {		
+		const response = client.sandboxItemFireWebhook(bankItem.accessToken, 'DEFAULT_UPDATE').then(() => {
+			return res.status(201).json({});
+		}).catch((err) => {
+			console.log(err);
+			return res.status(500).json({}); 
+		})
+	});
+});
+/**/
+
 
 
 _fetchTransactionsAndRoundup = async (req, res, next, startDate, endDate) => {
