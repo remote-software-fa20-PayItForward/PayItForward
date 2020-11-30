@@ -92,6 +92,15 @@ class Requests extends Component{
         })
     }
 
+    goToUser(e, id) {
+        console.log(id);
+        fetch(`/user/${id}`).then((response) => {
+            response.json().then(body=> {
+                this.props.history.push(`/user/${body.id}`)
+            })
+        })
+    }
+
     render() {
         return(
             <div>
@@ -128,14 +137,27 @@ class Requests extends Component{
                             
                             <Col md={12}>
                                 <h3 className="my-4 text-center">{request.name}</h3>
-                                <CardGroup className="pl-3 pb-1 text-center">
-                                    <Card className="mr-3 text-dark rounded text-center">
-                                        <Card.Body>
-                                             <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> </span>
-                                            sprout by <span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span>
-                                        </Card.Body>
-                                    </Card>
-                                </CardGroup>
+
+                                { request.user.privacy == true ? (
+                                    <CardGroup className="pl-3 pb-1 text-center">
+                                        <Card className="mr-3 text-dark rounded text-center">
+                                            <Card.Body>
+                                                sprout by <span className="font-weight-bold purple-text"> anonymous </span>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                ) : (
+                                    <CardGroup className="pl-3 pb-1 text-center">
+                                        <Card className="mr-3 text-dark rounded text-center">
+                                            <Card.Body>
+                                                <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> 
+                                                </span>
+                                                sprout by <Link to={"/user/" + request.user._id}><span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span></Link>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                )}
+
                                 <CardGroup className="pl-3 pb-3 text-center">
                                     <Card className="mr-3 text-dark rounded text-left">
                                         <Card.Body>

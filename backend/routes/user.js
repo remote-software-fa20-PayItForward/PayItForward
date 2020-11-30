@@ -17,6 +17,20 @@ router.get('/', (req, res, next) => {
 	}
 })
 
+ router.get('/:id', (req, res, next) => {
+ 	console.log('hi');
+ 	User.findOne({_id: req.params.id}).then(user => {
+ 		if(user) {
+ 			let viewedUser = JSON.parse(JSON.stringify(user));
+			delete viewedUser.passwordHash;
+			delete viewedUser.mfaEnabled;
+ 			return res.json(viewedUser);
+ 		} else {
+ 			return res.status(500).json({error: 'issue finding user'});
+ 		}
+ 	})
+ }) 
+
 router.post('/update', (req, res, next) => {
 	let updateUser = req.body; /*
 	let hash = '';

@@ -6,6 +6,7 @@ import Register from './Register';
 import Login from './Login';
 import MFA from './MFA';
 import UserPage from './UserPage';
+import User from './User';
 import AccountsSummary from './AccountsSummary';
 import ManageBanks from './ManageBanks';
 import BankAccounts from './BankAccounts';
@@ -28,6 +29,7 @@ function App() {
       <Route exact path="/register" component={Register} />
       <Route exact path="/mfa" component={MFA} />
       <Route exact path="/userpage" component={UserPage} />
+      <Route exact path="/user/:id" component={User}/>
       <Route exact path="/donate" component={Donate} />
       <Route exact path="/accounts-summary" component={AccountsSummary} />
       <Route exact path="/manage-banks" component={ManageBanks} />
