@@ -13,7 +13,7 @@ import Button from 'react-bootstrap/Button';
 import CardColumns from 'react-bootstrap/CardColumns';
 
 class Requests extends Component{
-	
+
     constructor(props) {
         super(props);
 		this.handleChange = this.handleChange.bind(this);
@@ -38,11 +38,11 @@ class Requests extends Component{
             })
         })
     }
-    
+
     handleChange(e) {
 		this.setState({[e.target.name]: e.target.value });
 	}
-    
+
     select() {
 		fetch(`/donation-request/category/${this.state.category}`).then((response) => {
             response.json().then(body => {
@@ -50,7 +50,7 @@ class Requests extends Component{
                     let nonUserSprouts = [];
                     for (let i = 0; i < body.length; i++) {
                         //check if request is not user's and is currently active
-                        if (body[i].user['_id'] != this.state._id && body[i].status == "active") { 
+                        if (body[i].user['_id'] != this.state._id && body[i].status == "active") {
                             //check if user already subscribed to request
                             if(body[i].subscribers.includes(this.state._id)) {
                                 this.setState({
@@ -74,12 +74,12 @@ class Requests extends Component{
             });
         })
 	}
-    
+
     grow(e, id) {
         e.currentTarget.classList.remove('btn-success');
         e.currentTarget.classList.add('btn-warning');
         e.currentTarget.innerHTML = 'Subscribed';
-        
+
         fetch(`/donation-request/request/${id}`, {
     		method: "POST",
     		 headers: {
@@ -107,7 +107,7 @@ class Requests extends Component{
                 <NavBar />
                 <h1 className="purple-text text-center font-weight-bold mt-5" >Grow A Sprout</h1>
                  <Row className="justify-content-center">
-                    <Form onSubmit={(e) => { this.select(); e.preventDefault(); }} className="bg-light rounded border my-5  shadow-lg p-3" style={{width: '50%'}}> 
+                    <Form onSubmit={(e) => { this.select(); e.preventDefault(); }} className="bg-light rounded border my-5  shadow-lg p-3" style={{width: '50%'}}>
                         <Form.Group>
                             <Form.Label className="font-weight-bold lead" for="category">Select Sprout Category</Form.Label>
                             <Form.Control as="select" name="category" onChange={this.handleChange}>
@@ -116,25 +116,25 @@ class Requests extends Component{
                                 <option value="groceries">Groceries</option>
                             </Form.Control>
                         </Form.Group>
-                    
+
                         <Form.Group className="float-right">
                             <input type="submit" name="btnSubmit" className="btnContact purple-bg rounded border-0 p-2" value="View Sprouts" />
                         </Form.Group>
                     </Form>
                 </Row>
-                
+
                 { this.state.empty == false ? (
                     <CardColumns className="justify-content-center m-5">
                         {this.state.requests.map((request, i) => (
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
 								<Row className="justify-content-center mt-3">
-                                    <h4><Badge variant="success">Active</Badge></h4>
+                                    <h2><Badge variant="success">Active</Badge></h2>
 								</Row>
-                                
+
                             <div className="border mt-3 bg-white" >
                                 <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
                             </div>
-                            
+
                             <Col md={12}>
                                 <h3 className="my-4 text-center">{request.name}</h3>
 
@@ -150,7 +150,7 @@ class Requests extends Component{
                                     <CardGroup className="pl-3 pb-1 text-center">
                                         <Card className="mr-3 text-dark rounded text-center">
                                             <Card.Body>
-                                                <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> 
+                                                <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} />
                                                 </span>
                                                 sprout by <Link to={"/user/" + request.user._id}><span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span></Link>
                                             </Card.Body>
@@ -163,12 +163,12 @@ class Requests extends Component{
                                         <Card.Body>
                                             <p className="lead font-weight-bold purple-text">Sprout Description: </p>
                                             <p className=""> {request.description} </p>
-                                            <h4><Badge variant="primary">#{request.category}</Badge></h4> 
+                                            <h4><Badge variant="primary">#{request.category}</Badge></h4>
                                         </Card.Body>
                                     </Card>
                                 </CardGroup>
                             </Col>
-                            
+
                             <Col md={12}>
                                 <CardGroup className="pl-3 pb-3 text-center">
                                     <Card className="mr-3 text-dark rounded">
@@ -179,7 +179,7 @@ class Requests extends Component{
                                     </Card>
                                 </CardGroup>
                             </Col>
-                            
+
                             {this.state.subscribed == false ?
                             <div className="text-center">
                                 <Button className="font-weight-bold px-3 mb-3" variant="success" onClick={(e) => {this.grow(e, this.state.requests[i]._id )}}><h6>Grow Sprout</h6></Button>
@@ -194,7 +194,7 @@ class Requests extends Component{
                                 <Button className="font-weight-bold px-3 mb-3" variant="secondary"><h6>Unavailable</h6></Button>
                                 <br />
                             </div>}
-                            
+
                         </Card>
                         ))}
                     </CardColumns>
@@ -203,7 +203,7 @@ class Requests extends Component{
                         <h2 className="purple-text">No current sprouts available</h2>
                     </Row>
                 )}
-                
+
             </div>
         )
     }

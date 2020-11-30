@@ -28,6 +28,14 @@ class DonationRequest extends Component{
 			response.json().then((body) => {
 				if (!body.username) {
 					this.props.history.push('/login');
+				} else if (!body.hasStripeAccount) {
+					this.props.history.push('/stripe-onboarding')
+				} else {
+					fetch("/stripe/account").then(response => response.json()).then(body => {
+						if (!body.details_submitted || !body.payments_enabled) {
+						  	this.props.history.push('/stripe-onboarding');
+						}
+					})
 				}
 			})
 		})
