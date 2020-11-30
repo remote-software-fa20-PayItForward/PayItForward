@@ -152,7 +152,7 @@ class Requests extends Component{
                                             <Card.Body>
                                                 <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> 
                                                 </span>
-                                                sprout by <span className="font-weight-bold purple-text" onClick={(e) => {this.goToUser(e, this.state.requests[i].user.id )}} > {request.user.first} {request.user.last} </span>
+                                                sprout by <Link to={"/user/" + request.user._id}><span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span></Link>
                                             </Card.Body>
                                         </Card>
                                     </CardGroup>
