@@ -19,7 +19,7 @@ router.get('/', (req, res, next) => {
 
  router.get('/:id', (req, res, next) => {
  	console.log('hi');
- 	User.findOne({id: req.id}).then(user => {
+ 	User.findOne({_id: req.params.id}).then(user => {
  		if(user) {
  			let viewedUser = JSON.parse(JSON.stringify(user));
 			delete viewedUser.passwordHash;
