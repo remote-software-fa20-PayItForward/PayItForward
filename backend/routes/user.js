@@ -17,6 +17,18 @@ router.get('/', (req, res, next) => {
 	}
 })
 
+ router.get('/:username', (req, res, next) => {
+ 	console.log('hi');
+ 	User.findOne({username: req.username}).then(user => {
+ 		if(user) {
+ 			let viewedUser = JSON.parse(JSON.stringify(user));
+ 			return res.json(viewedUser);
+ 		} else {
+ 			return res.status(500).json({error: 'issue finding user'});
+ 		}
+ 	})
+ }) 
+
 router.post('/update', (req, res, next) => {
 	let updateUser = req.body; /*
 	let hash = '';

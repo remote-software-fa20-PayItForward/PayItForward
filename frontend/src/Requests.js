@@ -92,6 +92,15 @@ class Requests extends Component{
         })
     }
 
+    goToUser(e, username) {
+        console.log(username);
+        fetch(`/user/${username}`).then((response) => {
+            response.json().then(body=> {
+                this.props.history.push(`/user/${body.username}`)
+            })
+        })
+    }
+
     render() {
         return(
             <div>
@@ -128,14 +137,27 @@ class Requests extends Component{
                             
                             <Col md={12}>
                                 <h3 className="my-4 text-center">{request.name}</h3>
-                                <CardGroup className="pl-3 pb-1 text-center">
-                                    <Card className="mr-3 text-dark rounded text-center">
-                                        <Card.Body>
-                                             <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> </span>
-                                            sprout by <span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span>
-                                        </Card.Body>
-                                    </Card>
-                                </CardGroup>
+
+                                { request.user.privacy == true ? (
+                                    <CardGroup className="pl-3 pb-1 text-center">
+                                        <Card className="mr-3 text-dark rounded text-center">
+                                            <Card.Body>
+                                                sprout by <span className="font-weight-bold purple-text"> anonymous </span>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                ) : (
+                                    <CardGroup className="pl-3 pb-1 text-center">
+                                        <Card className="mr-3 text-dark rounded text-center">
+                                            <Card.Body>
+                                                <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> 
+                                                </span>
+                                                sprout by <span className="font-weight-bold purple-text" onClick={(e) => {this.goToUser(e, this.state.requests[i].user.username )}} > {request.user.first} {request.user.last} </span>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                )}
+
                                 <CardGroup className="pl-3 pb-3 text-center">
                                     <Card className="mr-3 text-dark rounded text-left">
                                         <Card.Body>
