@@ -36,7 +36,7 @@ class User extends Component {
 		console.log(this.props);
         Promise.all([
             fetch('/user', {credentials: 'include'}),
-            fetch('/user/' + this.props.match.params.username)
+            fetch('/user/' + this.props.match.params.id)
          ]).then(allResponses => {
              allResponses[0].json().then(body => {
                  if (!body.username) {

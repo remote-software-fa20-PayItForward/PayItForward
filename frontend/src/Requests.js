@@ -92,11 +92,11 @@ class Requests extends Component{
         })
     }
 
-    goToUser(e, username) {
-        console.log(username);
-        fetch(`/user/${username}`).then((response) => {
+    goToUser(e, id) {
+        console.log(id);
+        fetch(`/user/${id}`).then((response) => {
             response.json().then(body=> {
-                this.props.history.push(`/user/${body.username}`)
+                this.props.history.push(`/user/${body.id}`)
             })
         })
     }
@@ -152,7 +152,7 @@ class Requests extends Component{
                                             <Card.Body>
                                                 <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} /> 
                                                 </span>
-                                                sprout by <span className="font-weight-bold purple-text" onClick={(e) => {this.goToUser(e, this.state.requests[i].user.username )}} > {request.user.first} {request.user.last} </span>
+                                                sprout by <span className="font-weight-bold purple-text" onClick={(e) => {this.goToUser(e, this.state.requests[i].user.id )}} > {request.user.first} {request.user.last} </span>
                                             </Card.Body>
                                         </Card>
                                     </CardGroup>

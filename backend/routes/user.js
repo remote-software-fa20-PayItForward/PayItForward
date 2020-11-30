@@ -17,9 +17,9 @@ router.get('/', (req, res, next) => {
 	}
 })
 
- router.get('/:username', (req, res, next) => {
+ router.get('/:id', (req, res, next) => {
  	console.log('hi');
- 	User.findOne({username: req.username}).then(user => {
+ 	User.findOne({id: req.id}).then(user => {
  		if(user) {
  			let viewedUser = JSON.parse(JSON.stringify(user));
  			return res.json(viewedUser);
