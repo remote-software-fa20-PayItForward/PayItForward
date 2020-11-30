@@ -5,8 +5,10 @@ import NavBar from './Navbar'
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import ReactDOM from 'react-dom';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
+import Row from 'react-bootstrap/Row';
 //import ScriptTag from 'react-script-tag';
-
 
 
 class StripeOnboarding extends Component {
@@ -70,10 +72,24 @@ class StripeOnboarding extends Component {
         return (
             <div>
                 <NavBar />
-                <div style={{textAlign: "center"}}>
-                    <h1></h1>
-                    <Button onClick={(e)=>{this.submit(e);}}>Onboard</Button>
-                </div>
+
+                <Row className="justify-content-center mt-5">
+                	<CardGroup className="pl-3 pb-3 text-center">
+                		<Card className="mr-3 text-dark rounded text-left shadow p-3">
+                			<Card.Body>
+                				<h3 className="font-weight-bold purple-text">Wait a sec!</h3>
+                				<hr />
+                				<p className="lead">You need to connect your bank account in order to receive donations. <br />
+                					Click on the button below to connect your account.
+                				</p>
+                				<div style={{textAlign: "center"}}>
+                				<Button onClick={(e)=>{this.submit(e);}}>Onboard</Button>
+                				</div>
+                			</Card.Body>
+                	  </Card>
+                	</CardGroup>
+                </Row>
+
             </div>
         )
     }
