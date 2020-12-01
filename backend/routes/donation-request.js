@@ -5,6 +5,7 @@ const upload = multer();
 const Image = require( '../models/Image' );
 const DonationRequest = require('../models/DonationRequest');
 const User = require('../models/User');
+const donationProgress = require("../services/donationProgress");
 
 
 router.post('/', upload.single('image'), (req, res, next) => {
@@ -75,8 +76,12 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/request/:request_id', (req, res, next) => {
-	DonationRequest.findOneAndUpdate({ _id: req.params.request_id}, {$addToSet: { subscribers: req.user._id }}).then((donationRequest) => {
+	DonationRequest.findOneAndUpdate({ _id: req.params.request_id}, {$addToSet: { subscribers: req.user._id }}, { new: true }).then((donationRequest) => {
 		if (donationRequest) {
+            donationProgress.triggerDonationProgressCalculaton(donationRequest).then(() => {
+                console.log('calculation has been triggered');
+            });
+
 			return res.json();
 		} else {
 			return res.status(400).json({error: "The donation request subscription was unsuccessful"});

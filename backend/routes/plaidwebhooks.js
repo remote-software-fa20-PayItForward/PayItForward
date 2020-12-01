@@ -4,6 +4,7 @@ const BankItem = require("../models/BankItem");
 const moment = require('moment');
 const client = require('../plaidclient');
 const Transaction = require("../models/Transaction");
+const donationProgress = require("../services/donationProgress");
 
 router.post('/', async (req, res, next) => {
     handleTransactionsWebhook(req.body);
@@ -47,7 +48,6 @@ const storeTransactions = async (bankItem, transactionsToStore) => {
             date: transactionToStore.date
         });
     }
-    console.log("transasctionRecordsToStore", transasctionRecordsToStore.length);
     if (transasctionRecordsToStore.length > 0) {
         await Transaction.insertMany(transasctionRecordsToStore).catch((error) => { 
             console.log(error);
@@ -56,12 +56,10 @@ const storeTransactions = async (bankItem, transactionsToStore) => {
 };
 
 const removeTransactions = async (transactionsToRemove) => {
-    console.log('transactionsToRemove', transactionsToRemove);
     const transasctionIdsToRemove = [];
     for (const transactionToStore of transactionsToRemove) {
         transasctionIdsToRemove.push(transactionToStore.transaction_id);
     }
-    console.log("transasctionIdsToRemove", transasctionIdsToRemove);
     if (transasctionIdsToRemove.length > 0) {
         await Transaction.deleteMany({'transaction_id': {'$in': transasctionIdsToRemove}}).catch((error) => { 
             console.log(error);
@@ -70,7 +68,6 @@ const removeTransactions = async (transactionsToRemove) => {
 }
 
 const removeTransactionByTransactionIds = async (transasctionIdsToRemove) => {
-    console.log('transasctionIdsToRemove', transasctionIdsToRemove);
     if (transasctionIdsToRemove.length > 0) {
         await Transaction.deleteMany({'transaction_id': {'$in': transasctionIdsToRemove}}).catch((error) => { 
             console.log(error);
@@ -82,22 +79,16 @@ const removeTransactionByTransactionIds = async (transasctionIdsToRemove) => {
 /**
  * Handles the fetching and storing of new transactions in response to an update webhook.
  *
- * @param {string} itemId the Plaid ID for the item.
+ * @param {string} bankItem the Plaid item.
  * @param {string} startDate the earliest date to retrieve ('YYYY-MM-DD').
  * @param {string} endDate the latest date to retrieve ('YYYY-MM-DD').
  */
-const handleTransactionsUpdate = async (itemId, startDate, endDate) => {
-    const bankItem = await BankItem.findOne({"itemId": itemId});
-    if (bankItem == null) {
-        console.log("Unable to find matching BankItem instance in our databse");
-        return;
-    }
+const handleTransactionsUpdate = async (bankItem, startDate, endDate) => {
     // Fetch new transactions from plaid api.
     const incomingTransactions = await fetchAllBankTransactionsPaginated(bankItem, startDate, endDate);
-    console.log('incomingTransactions list:', incomingTransactions);
 
     // Retrieve existing transactions from our db.
-    const existingTransactions = await Transaction.find({"bankItemId": itemId, "date": {$gte : startDate, $lte: endDate}})
+    const existingTransactions = await Transaction.find({"bankItemId": bankItem.itemId, "date": {$gte : startDate, $lte: endDate}})
 
     // Compare to find new transactions.
     const existingTransactionIds = existingTransactions.reduce(
@@ -156,6 +147,12 @@ const handleTransactionsWebhook = async (requestBody) => {
     } = requestBody;
   
     const logWebhook = (additionalInfo) => { console.log(`WEBHOOK: TRANSACTIONS: ${webhookCode}: Plaid_item_id ${itemId}: ${additionalInfo}` ) };
+
+    const bankItem = await BankItem.findOne({"itemId": itemId});
+    if (bankItem == null) {
+        console.log("Unable to find matching BankItem instance in our databse");
+        return;
+    }
   
     switch (webhookCode) {
       case 'INITIAL_UPDATE': {
@@ -166,7 +163,8 @@ const handleTransactionsWebhook = async (requestBody) => {
           .format('YYYY-MM-DD');
         const endDate = moment().format('YYYY-MM-DD');
         
-        await handleTransactionsUpdate(itemId, startDate, endDate);
+        await handleTransactionsUpdate(bankItem, startDate, endDate);
+        await donationProgress.triggerCalculateDonationProgressByBankItem(bankItem);
         logWebhook(`${newTransactions} transactions to add.`, itemId);
         break;
       }
@@ -185,7 +183,8 @@ const handleTransactionsWebhook = async (requestBody) => {
           .subtract(14, 'days')
           .format('YYYY-MM-DD');
         const endDate = moment().format('YYYY-MM-DD');
-        await handleTransactionsUpdate(itemId, startDate, endDate);
+        await handleTransactionsUpdate(bankItem, startDate, endDate);
+        await donationProgress.triggerCalculateDonationProgressByBankItem(bankItem);
         logWebhook(`${newTransactions} transactions to add.`, itemId);
         break;
       }
@@ -193,6 +192,7 @@ const handleTransactionsWebhook = async (requestBody) => {
         // Fired when posted transaction(s) for an Item are deleted. The deleted transaction IDs
         // are included in the webhook payload.
         await removeTransactionByTransactionIds(removedTransactions);
+        await donationProgress.triggerCalculateDonationProgressByBankItem(bankItem);
         logWebhook(`${removedTransactions.length} transactions to remove.`);
         break;
       }
