@@ -11,6 +11,7 @@ donationEventsEmitter.on('donationAmountLimitReached', (donationRequest, totalRo
   for(const userSpecificTotalRoundup of totalRoundupByUsers) {
       console.log(`Total roundup of ${userSpecificTotalRoundup.totalRoundup.toFixed(2)} for user ObjectId("${userSpecificTotalRoundup.user_id}")`);
       // TODO: charge the user's CC
+      
       // TODO: send donationRequest completion email notification to the user
   }
 });
