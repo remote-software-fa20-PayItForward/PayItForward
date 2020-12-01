@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const BankItem = require("../models/BankItem");
 const moment = require('moment');
-const plaid = require('plaid');
 const client = require('../plaidclient');
 const Transaction = require("../models/Transaction");
 
