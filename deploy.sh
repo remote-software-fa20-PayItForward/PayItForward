@@ -1,10 +1,10 @@
 ssh payitforward@68.183.120.255 "
+    set -e
     cd PayItForward
     git pull
     cd backend
-    npm ci
+    npm install
     cd ../frontend
-    npm ci
+    npm install
     pm2 restart \"backend\"
-    pm2 restart \"frontend\"
 "
