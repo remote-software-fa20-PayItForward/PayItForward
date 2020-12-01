@@ -1,4 +1,5 @@
 ssh payitforward@68.183.120.255 "
+    set -e
     cd PayItForward
     git pull
     cd backend

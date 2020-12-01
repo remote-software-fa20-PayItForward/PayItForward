@@ -37,14 +37,14 @@ class ProfilePic extends React.Component{
 
   submit() {
     if (this.state.data) {
-      const formData = new FormData(); 
-      formData.append( 
-        "myFile", 
-        this.state.data, 
-        this.state.data.name 
-      ); 
+      const formData = new FormData();
+      formData.append(
+        "myFile",
+        this.state.data,
+        this.state.data.name
+      );
       axios.post('/user/profilephoto', formData).then(function(response) {
-        
+
       });
     }
     this.setState({
@@ -58,13 +58,21 @@ class ProfilePic extends React.Component{
     	addPic: true
     	})
   }
-  
+
   render() {
     return (
-      <div className="ProfilePic">
-        <input type="file" onChange={this.handleChange}/>
-        <button onClick={this.submit}>Upload</button>
-        <img src={this.state.file}/>
+      <div>
+        <Row>
+            <Col lg={12} className="order-lg-1 ml-1">
+              <input type="file" style={{width: '80%'}} onChange={this.handleChange}/>
+            </Col>
+        </Row>
+        <Row className="my-3">
+            <Col lg={12} className="order-lg-1">
+              <button className="btn btn-success" style={{width: '80%'}} onClick={this.submit}>Upload Selected File</button>
+              {/*<img src={this.state.file}/>*/}
+            </Col>
+        </Row>
       </div>
     );
   }
