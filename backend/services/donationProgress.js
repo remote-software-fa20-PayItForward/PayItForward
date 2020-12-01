@@ -16,18 +16,19 @@ class DonationProgressCalculationException extends Error {
 
 
 const findEligibleTransactionsByBankItem = async (bankItem) => {
-    const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
     const linkedBankAccountIds = bankItem.bank_accounts.map(function(el) {return el.account_id});
-    return await Transaction.find({"isMarkedForDeletion": false, "bankAccountId": {$in: linkedBankAccountIds}, "date": {$gte : startDate}}).sort({date: 'asc'});
+    //const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    //return await Transaction.find({"isMarkedForDeletion": false, "bankAccountId": {$in: linkedBankAccountIds}, "date": {$gte : startDate}}).sort({date: 'asc'});
+    return await Transaction.find({"isMarkedForDeletion": false, "bankAccountId": {$in: linkedBankAccountIds}}).sort({date: 'asc'});
 }
 
 
 /**
- * Calculate Donation Progress by bankItemId.
+ * Calculate Donation Progress by bankItem.
  *
- * @param {string} bankItemId the Plaid ID for the item.
+ * @param {BankItem} Plaid bankItem instance.
  */
-const triggerCalculateDonationProgressByBankItemId = async (bankItem) => {
+const triggerCalculateDonationProgressByBankItem = async (bankItem) => {
 
     // the bankItem belongs to particular user, find a donationRequest for this user
     // (1 user can subscribe up to 1 active donation at any given time)
@@ -45,9 +46,10 @@ const triggerCalculateDonationProgressByBankItemId = async (bankItem) => {
  * transactionns beloning to 1 or more subcribers.
  * 
  *
- * @param {string} donationRequest the donationRequest object for which to trigger donation progress calculation.
+ * @param {DonationRequest} donationRequest the donationRequest object for which to trigger donation progress calculation.
  */
 const triggerDonationProgressCalculaton = async (donationRequest) => {
+    console.log(`DONATION PROGRESS CALCULATION TRIGGERED FOR ${donationRequest.name} ObjectId(${donationRequest._id})`);
     // Ensure the donationRequest is in active state
     if(donationRequest.status != 'active') {
         throw new DonationProgressCalculationException(`Can't calculate progress for donationRequest object whcih isn't in active status.`);
@@ -71,7 +73,9 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
                 donationTransactionIdBucketList.push(transaction._id);
                 const transactionRoundup = new Big(transaction.amount).round(0,3).minus(new Big(transaction.amount));
 
-                let userSpecificTotalRoundup = totalRoundupByUsers.find((element) => {return element.user_id == bankItem.user_id});
+                let userSpecificTotalRoundup = totalRoundupByUsers.find(element => {
+                    return (element.user_id.toString() == bankItem.user_id.toString())
+                });
                 if (userSpecificTotalRoundup == null) {
                     userSpecificTotalRoundup = {
                         "user_id": bankItem.user_id,
@@ -93,6 +97,9 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
         }
     }
 
+    await DonationRequest.findOneAndUpdate({"_id": donationRequest._id}, {$set: {"amountCollected": roundupSum}});
+    console.log(`DONATION PROGRESS CALCULATION RESULT FOR ${donationRequest.name} ObjectId(${donationRequest._id}): ROUNDUP SUM = ${roundupSum}`);
+
     if (roundupSum >= donationRequest.amount) {
         donationRequest = await DonationRequest.findOneAndUpdate({"_id": donationRequest._id}, {$set: {"status": "completed"}}, { new: true });
 
@@ -101,12 +108,6 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
         
         donationEventsEmitter.emit("donationAmountLimitReached", donationRequest, totalRoundupByUsers);
     }
-
-    return {
-        "donationRequest": donationRequest,
-        "roundupSumBigDecimal": roundupSum,
-        "roundupSumStr": roundupSum.toFixed(2)
-    }
 }
 
-module.exports = {triggerCalculateDonationProgressByBankItemId, triggerDonationProgressCalculaton};
+module.exports = {triggerCalculateDonationProgressByBankItem, triggerDonationProgressCalculaton};
