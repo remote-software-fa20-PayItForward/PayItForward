@@ -17,6 +17,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const client = require('./plaidclient');
+const donationProgress = require('./services/donationProgress');
+const Transaction = require('./models/Transaction');
 
 //=========set up app================================
 const app = express();
@@ -73,6 +75,7 @@ app.use('/images/', require("./routes/images"));
 app.use('/donation-request/', require('./routes/donation-request'));
 app.use('/user/', require("./routes/user"));
 app.use('/plaidwebhooks/', require("./routes/plaidwebhooks"));
+app.use('/transactions/', require("./routes/transactions"));
 
 
 app.post('/login', function(req, res, next) {
@@ -260,7 +263,7 @@ app.post('/link-bank', async (req, res, next) => {
 				return res.status(409).json({error: 'This Bank has been added already.'})
 			} else {
 				// if the item is not aleady stored within the DB, then persist it with its accessToken
-				BankItem.create({user_id: req.user._id, itemId: itemId, accessToken: accessToken, institutionName: institutionResponse.institution.name}, function(err, bankItem) {
+				const bankItem = BankItem.create({user_id: req.user._id, itemId: itemId, accessToken: accessToken, institutionName: institutionResponse.institution.name}, function(err, bankItem) {
 					if (err) {
 						console.log(err);
 						return res.status(500).json({error: 'Error creating BankItem. Please try again'});
@@ -320,6 +323,7 @@ app.post('/banks/:bankId/link-bank-accounts', async (req, res, next) => {
 
 		matchingBankItem.bank_accounts = bank_accounts_to_persist;
 		await matchingBankItem.save();
+		await donationProgress.triggerCalculateDonationProgressByBankItem(matchingBankItem);
 	} else {
 		return res.status(401).json({error: 'You are not authenticated.'});
 	}
@@ -347,14 +351,17 @@ app.get('/banks/:bankId/accounts', async (req, res, next) => {
 			return res.status(500).json({error: 'There has been an error obtaining the list accounts within this bank. Please try again later.'});
 		}
 
-		/*const bankAccountsResponse = [];
-		for (bankAccount of bankAccounts['accounts']) {
-			if ()bankAccount.account_id)
-		}
-		*/
+		console.log(matchingBankItem.bank_accounts);
+		const bankAccountsResult = bankAccounts['accounts'].map((bankAccount) => {
+			console.log(bankAccount);
+			console.log(matchingBankItem.bank_accounts.some((bankAccountOnFile) => {return bankAccountOnFile.account_id == bankAccount.account_id}));
+			return {
+			...bankAccount,
+			isChecked: matchingBankItem.bank_accounts.some((bankAccountOnFile) => {return bankAccountOnFile.account_id == bankAccount.account_id})
+		}});
 
 		res.json({
-			bankAccounts: bankAccounts['accounts'],
+			bankAccounts: bankAccountsResult,
 			bankItem: matchingBankItem
 		});
 	} else {
@@ -471,23 +478,26 @@ function generateAccountLink(accountID, origin) {
 	  return_url: `https://payforwardapp.com/stripe_return.html`,
 	}).then((link) => link.url);
   }
-  
 
-app.get('/current-month-transactions-and-roundup', async (req, res, next) => {
-	const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
-	const currentDate = moment().format('YYYY-MM-DD');
-	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, currentDate);
+
+
+// START: UTILITY ENDPOINTS USED FOR SANDBOX TESTING PURPOSES
+
+// sandbox DEFAULT_UPDATE webhook invocation from Plaid for all items on file
+app.get('/trigger-webhook', async (req, res, next) => {
+	const bankItems = await BankItem.find({});
+	for (const bankItem of bankItems) {
+		const response = client.sandboxItemFireWebhook(bankItem.accessToken, 'DEFAULT_UPDATE').then(() => {
+			return res.status(201).json({});
+		}).catch((err) => {
+			console.log(err);
+			return res.status(500).json({}); 
+		});
+	}
 });
 
-app.get('/last-month-transactions-and-roundup', async (req, res, next) => {
-	const startOfMonth = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
-	const endOfMonth = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
-	return await _fetchTransactionsAndRoundup(req, res, next, startOfMonth, endOfMonth);
-});
 
-
-
-// this endpoint triggers sandbox DEFAULT_UPDATE webhook invocation from Plaid for specific itemid
+// sandbox DEFAULT_UPDATE webhook invocation from Plaid for specific itemid
 app.get('/trigger-webhook/:itemid', (req, res, next) => {
 	BankItem.findOne( {_id: req.params.itemid} ).then(bankItem => {		
 		const response = client.sandboxItemFireWebhook(bankItem.accessToken, 'DEFAULT_UPDATE').then(() => {
@@ -498,81 +508,19 @@ app.get('/trigger-webhook/:itemid', (req, res, next) => {
 		})
 	});
 });
-/**/
 
-
-
-_fetchTransactionsAndRoundup = async (req, res, next, startDate, endDate) => {
-	if (req.user) {
-		plaidClientErrored = false;
-		const bankItems = await BankItem.find({user_id: req.user._id}).catch((err) => {
+// Instruct Plaid to switch the webhook endpoint fo all bankitems on file to point to the payforwardapp.com server
+app.get('/switch-webhooks', async (req, res, next) => {
+	const bankItems = await BankItem.find({});
+	for (const bankItem of bankItems) {
+		await client
+		.updateItemWebhook(bankItem.accessToken, 'https://payforwardapp.com/plaidwebhooks/')
+		.catch((err) => {
 			console.log(err);
-			plaidClientErrored = true;
-			
 		});
-		if (plaidClientErrored) {
-			return res.status(500).json({error: 'There has been an error obtaining the current month roundup. Please try again later.'});
-		}
-		
-		let transactions = [];
-		let totalRoundup = 0;
-		let transactionsTotalAmount = 0;
-
-		for (bankItem of bankItems) {
-			const account_ids = bankItem.bank_accounts.map(bankAccount => {return bankAccount.account_id});
-			if (account_ids.length > 0) {
-				const transactionsToAdd = await _fetchAllBankTransactionsPaginated(bankItem.accessToken, startDate, endDate, account_ids);
-				for (transaction of transactionsToAdd) {
-					if (transaction.amount > 0) {
-						// debit transactions only (money taken from account)
-						// credit transactions (money added to the account) in plaid (e.g. salary) are represented with negative amount value
-						let transactionRoundup = (((Math.ceil(transaction.amount)*100)) - (transaction.amount*100)).toFixed(10);
-						console.log(Math.ceil(transaction.amount)*100, (transaction.amount*100), transactionRoundup);
-						transactions.push(
-							{...transaction, bankName: bankItem.institutionName, roundup: transactionRoundup/100}
-						);
-						totalRoundup = totalRoundup + parseFloat(transactionRoundup);
-						transactionsTotalAmount = transactionsTotalAmount + parseFloat((transaction.amount*100).toFixed(10));
-					}
-				}
-			}
-		}
-
-		const numberOfTransactions =  transactions.length;
-
-		console.log(totalRoundup);
-		console.log(totalRoundup  / numberOfTransactions / 100);
-		res.json({
-			transactions: transactions,
-			transactionsTotalAmount: parseFloat((transactionsTotalAmount / 100).toFixed(2)),
-			numberOfTransactions: numberOfTransactions,
-			averageTransaction: parseFloat((transactionsTotalAmount / numberOfTransactions / 100).toFixed(4)),
-			totalRoundup: parseFloat((totalRoundup / 100).toFixed(2)),
-			averageRoundUp: parseFloat((totalRoundup  / numberOfTransactions / 100).toFixed(4)),
-		});
-	} else {
-		return res.status(401).json({error: 'You are not authenticated.'});
 	}
-}
-
-_fetchAllBankTransactionsPaginated = async (access_token, startDateStr, endDateStr, account_ids) => {
-	const response = await client.getTransactions(access_token, startDateStr, endDateStr, {account_ids: account_ids}).catch((err) => {
-		console.log('ERROR', err);
-	});
-	let transactions = response.transactions;
-	const total_transactions = response.total_transactions;
-
-	while (transactions.length < total_transactions) {
-		const paginatedTransactionsResponse = await client.getTransactions(
-			access_token, startDateStr, endDateStr,
-			{account_ids, offset: transactions.length}
-		);
-		
-		transactions = transactions.concat(paginatedTransactionsResponse.transactions);
-	}
-
-	return transactions;
-}
+});
+// END: UTILITY ENDPOINTS USED FOR SANDBOX TESTING PURPOSES
 
 
 app.listen(4000, () => {
