@@ -31,14 +31,16 @@ class UserPage extends Component {
             last: "",
             bio: "",
             avatar: "/profile.jpg",
-            amount: 0
+            amount: 0,
+            bankAccounts: []
         }
     }
 
 	componentDidMount() {
         Promise.all([
             fetch('/user', {credentials: 'include'}),
-            fetch('/donation-request')
+            fetch('/donation-request'),
+            fetch('/linked-bank-accounts', {credentials: 'include'})
          ]).then(allResponses => {
              allResponses[0].json().then(body => {
                  if (!body.username) {
@@ -62,6 +64,9 @@ class UserPage extends Component {
                         amount: 0
                      })
                  }
+             })
+             allResponses[2].json().then(body => {
+                this.setState({bankAccounts: body.bankAccounts})
              })
          })
          /*
@@ -380,15 +385,24 @@ class UserPage extends Component {
                                             
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Linked Accounts</h4>
                                         
+                                        {this.state.bankAccounts.map(bankAccount => (
+                                            <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
+                                                        <Card.Body>
+                                                            <h4 className="lead font-weight-bold">{bankAccount.bankName} {bankAccount.name}</h4>
+                                                            <h5 className="font-weight-bold"> {bankAccount.official_name} </h5>
+                                                        </Card.Body>
+                                            </Card>
+                                        ))}
+                                        {/* 
                                         <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
                                                         <Card.Body>
                                                             <h4 className="lead font-weight-bold"> CHASE COLLEGE </h4>
                                                             <h5 className="font-weight-bold"> **** 1234 </h5>
                                                         </Card.Body>
                                         </Card>
-                                        
+                                         */}
                                         <div className="text-center">
-                                                    <Link to="#"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
+                                                    <Link to="/manage-banks"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
                                                     <br />
                                                 </div>
                                     </Col>
