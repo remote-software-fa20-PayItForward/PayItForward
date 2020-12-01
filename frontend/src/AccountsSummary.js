@@ -12,7 +12,6 @@ class AccountsSummary extends Component{
             bankItems: null,
             bankAccounts: null,
             banks: null,
-            lastMonthTransactions: null,
             currentMonthTransactions: null
         }
     }
@@ -30,7 +29,6 @@ class AccountsSummary extends Component{
                     this.setState({bankAccounts: body.bankAccounts, banks: banks, hasAuthenticatedUser: true});
                     if (body.bankAccounts.length > 0) {
                         this.obtainCurrentMonthRoundup();
-                        this.obtainLastMonthRoundup();
                     }
                 });
             } else if (response.status == 401) {
@@ -42,24 +40,10 @@ class AccountsSummary extends Component{
     }
 
     obtainCurrentMonthRoundup = () => {
-        fetch('/current-month-transactions-and-roundup', {credentials: 'include'}).then((response) => {
+        fetch('/transactions/all-transactions', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
                     this.setState({currentMonthTransactions: body});
-                });
-            } else if (response.status == 401) {
-                this.setState({hasAuthenticatedUser: false});
-            }
-
-            this.setState({isLoading: false});
-        });
-    }
-
-    obtainLastMonthRoundup = () => {
-        fetch('/last-month-transactions-and-roundup', {credentials: 'include'}).then((response) => {
-            if (response.ok) {
-                response.json().then(body => {
-                    this.setState({lastMonthTransactions: body});
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
@@ -106,47 +90,7 @@ class AccountsSummary extends Component{
                         </div>
                         <div className="row">
 
-                            <div className="card text-center col-6">
-                                <div className="card-body">
-                                    <h5 className="card-title">Last Month Roundup</h5>
-                                    {lastMonthTransactions == null &&
-                                    <>
-                                    <div className="d-flex justify-content-center pt-3 pb-1">
-                                        <div className="spinner-border" role="status">
-                                            <span className="sr-only">Loading...</span>
-                                        </div>
-                                    </div>
-                                    <p className="pb-4">Calculating...</p>
-                                    </>
-                                    }
-                                    {lastMonthTransactions != null &&
-                                    <>
-                                    <p className="display-3">${lastMonthTransactions.totalRoundup}</p>
-                                    <table className="stats">
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Number Of Debit Transactions:</td>
-                                            <td style={{textAlign: 'right'}}>{lastMonthTransactions.numberOfTransactions}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Total Amount of Debit Transactions:</td>
-                                            <td style={{textAlign: 'right'}}>$ {lastMonthTransactions.transactionsTotalAmount.toFixed(2)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Average Debit Transaction:</td>
-                                            <td style={{textAlign: 'right'}}>$ {lastMonthTransactions.averageTransaction.toFixed(4)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Average Round Up:</td>
-                                            <td style={{textAlign: 'right'}}>$ {lastMonthTransactions.averageRoundUp.toFixed(4)}</td>
-                                        </tr>
-                                    </table>
-                                    </>
-                                    }
-                                    <Link to="/transactions/last-month" className="btn btn-primary">View Transactions</Link>
-                                </div>
-                            </div>
-
-                            <div className="card text-center col-6">
+                            <div className="card text-center col-12">
                                 <div className="card-body">
                                     <h5 className="card-title">Current Month Roundup</h5>
                                     {currentMonthTransactions == null &&
@@ -169,15 +113,15 @@ class AccountsSummary extends Component{
                                         </tr>
                                         <tr>
                                             <td style={{textAlign: 'left'}}>Total Amount of Debit Transactions:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.transactionsTotalAmount.toFixed(2)}</td>
+                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.transactionsTotalAmount}</td>
                                         </tr>
                                         <tr>
                                             <td style={{textAlign: 'left'}}>Average Debit Transaction:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageTransaction.toFixed(4)}</td>
+                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageTransaction}</td>
                                         </tr>
                                         <tr>
                                             <td style={{textAlign: 'left'}}>Average Round Up:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageRoundUp.toFixed(4)}</td>
+                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageRoundUp}</td>
                                         </tr>
                                     </table>
                                     </>

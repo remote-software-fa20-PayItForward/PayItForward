@@ -125,78 +125,113 @@ class Requests extends Component{
 
                 { this.state.empty == false ? (
                     <CardColumns className="justify-content-center m-5">
-                        {this.state.requests.map((request, i) => (
+                        {this.state.requests.map((request, i) => {
+                            let donationProgress = (request.amountCollected/request.amount)*100;
+                            console.log(donationProgress);
+                            if (donationProgress > 100) {
+                                donationProgress = 100;
+                            }
+                            donationProgress = donationProgress.toFixed(2);
+                            return (
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
 								<Row className="justify-content-center mt-3">
                                     <h2><Badge variant="success">Active</Badge></h2>
 								</Row>
 
-                            <div className="border mt-3 bg-white" >
-                                <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
-                            </div>
+                                <div className="border mt-3 bg-white" >
+                                    <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
+                                </div>
 
-                            <Col md={12}>
-                                <h3 className="my-4 text-center">{request.name}</h3>
+                                <Col md={12}>
+                                    <h3 className="my-4 text-center">{request.name}</h3>
 
-                                { request.user.privacy == true ? (
-                                    <CardGroup className="pl-3 pb-1 text-center">
-                                        <Card className="mr-3 text-dark rounded text-center">
+                                    { request.user.privacy == true ? (
+                                        <CardGroup className="pl-3 pb-1 text-center">
+                                            <Card className="mr-3 text-dark rounded text-center">
+                                                <Card.Body>
+                                                    sprout by <span className="font-weight-bold purple-text"> anonymous </span>
+                                                </Card.Body>
+                                            </Card>
+                                        </CardGroup>
+                                    ) : (
+                                        <CardGroup className="pl-3 pb-1 text-center">
+                                            <Card className="mr-3 text-dark rounded text-center">
+                                                <Card.Body>
+                                                    <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} />
+                                                    </span>
+                                                    sprout by <Link to={"/user/" + request.user._id}><span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span></Link>
+                                                </Card.Body>
+                                            </Card>
+                                        </CardGroup>
+                                    )}
+
+                                    <CardGroup className="pl-3 pb-3 text-center">
+                                        <Card className="mr-3 text-dark rounded text-left">
                                             <Card.Body>
-                                                sprout by <span className="font-weight-bold purple-text"> anonymous </span>
+                                                <p className="lead font-weight-bold purple-text">Sprout Description: </p>
+                                                <p className=""> {request.description} </p>
+                                                <h4><Badge variant="primary">#{request.category}</Badge></h4>
                                             </Card.Body>
                                         </Card>
                                     </CardGroup>
-                                ) : (
-                                    <CardGroup className="pl-3 pb-1 text-center">
-                                        <Card className="mr-3 text-dark rounded text-center">
+                                </Col>
+
+                                <Col md={12}>
+                                    <CardGroup className="pl-3 pb-3 text-center">
+                                        <Card className="mr-3 text-dark rounded">
                                             <Card.Body>
-                                                <span> <img src={request.user.avatar} className=" rounded-circle img-fluid " width={35} height={35} />
-                                                </span>
-                                                sprout by <Link to={"/user/" + request.user._id}><span className="font-weight-bold purple-text"> {request.user.first} {request.user.last} </span></Link>
+                                                <p className="lead font-weight-bold display-4 purple-text"> ${request.amount} </p>
+                                                <p className="font-weight-bold"> requested sprout amount </p>
                                             </Card.Body>
                                         </Card>
                                     </CardGroup>
-                                )}
+                                </Col>
 
-                                <CardGroup className="pl-3 pb-3 text-center">
-                                    <Card className="mr-3 text-dark rounded text-left">
-                                        <Card.Body>
-                                            <p className="lead font-weight-bold purple-text">Sprout Description: </p>
-                                            <p className=""> {request.description} </p>
-                                            <h4><Badge variant="primary">#{request.category}</Badge></h4>
-                                        </Card.Body>
-                                    </Card>
-                                </CardGroup>
-                            </Col>
 
-                            <Col md={12}>
-                                <CardGroup className="pl-3 pb-3 text-center">
-                                    <Card className="mr-3 text-dark rounded">
-                                        <Card.Body>
-                                            <p className="lead font-weight-bold display-4 purple-text"> ${request.amount} </p>
-                                            <p className="font-weight-bold"> requested sprout amount </p>
-                                        </Card.Body>
-                                    </Card>
-                                </CardGroup>
-                            </Col>
+                                <Col md={12}>
+                                    <CardGroup className="pl-3 pb-3 text-center">
+                                        <Card className="mr-3 text-dark rounded">
+                                            <Card.Body>
+                                                <p className="lead font-weight-bold display-4 purple-text"> {request.subscribers.length} </p>
+                                                <p className="font-weight-bold"> number of planters </p>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                </Col>
 
-                            {this.state.subscribed == false ?
-                            <div className="text-center">
-                                <Button className="font-weight-bold px-3 mb-3" variant="success" onClick={(e) => {this.grow(e, this.state.requests[i]._id )}}><h6>Grow Sprout</h6></Button>
-                                <br />
-                            </div>
-                            : this.state.request == request._id ?
-                            <div className="text-center">
-                                <Button className="font-weight-bold px-3 mb-3" variant="warning"><h6>Subscribed</h6></Button>
-                                <br />
-                            </div>
-                            : <div className="text-center">
-                                <Button className="font-weight-bold px-3 mb-3" variant="secondary"><h6>Unavailable</h6></Button>
-                                <br />
-                            </div>}
 
-                        </Card>
-                        ))}
+                                <Col md={12}>
+                                    <CardGroup className="pl-3 pb-3 text-center">
+                                        <Card className="mr-3 text-dark rounded">
+                                            <Card.Body>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style={{width: `${donationProgress}%`}} aria-valuenow={donationProgress} aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <p className="lead font-weight-bold display-4 purple-text"> ${request.amountCollected} </p>
+                                                <p className="font-weight-bold"> amount committed </p>
+                                            </Card.Body>
+                                        </Card>
+                                    </CardGroup>
+                                </Col>
+
+                                {this.state.subscribed == false ?
+                                <div className="text-center">
+                                    <Button className="font-weight-bold px-3 mb-3" variant="success" onClick={(e) => {this.grow(e, this.state.requests[i]._id )}}><h6>Grow Sprout</h6></Button>
+                                    <br />
+                                </div>
+                                : this.state.request == request._id ?
+                                <div className="text-center">
+                                    <Button className="font-weight-bold px-3 mb-3" variant="warning"><h6>Subscribed</h6></Button>
+                                    <br />
+                                </div>
+                                : <div className="text-center">
+                                    <Button className="font-weight-bold px-3 mb-3" variant="secondary"><h6>Unavailable</h6></Button>
+                                    <br />
+                                </div>}
+
+                            </Card>
+                            )}
+                        )}
                     </CardColumns>
                 ) : (
                     <Row className="justify-content-center">
