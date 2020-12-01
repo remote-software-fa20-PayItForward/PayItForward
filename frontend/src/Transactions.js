@@ -19,23 +19,9 @@ class Transactions extends Component{
     componentDidMount() {
         console.log('props', this.props);
 
-        console.log(this.props.match.params.month);
+        console.log(this.props.match.params.month);       
 
-        if(!(['current-month', 'last-month'].includes(this.props.match.params.month))){
-            this.props.history.push('/404');
-        }
-
-
-
-        let transactionsScopeUrl = '/current-month-transactions-and-roundup';
-        if (this.props.match.params.month == 'last-month') {
-            transactionsScopeUrl = '/last-month-transactions-and-roundup';
-            this.setState({transactionsScope: 'Last Month', transcationScopeCsvFileName: 'lm-transactins.csv'});
-        }
-
-        
-
-        fetch(transactionsScopeUrl, {credentials: 'include'}).then((response) => {
+        fetch('/transactions/all-transactions', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
                     console.log(body);
@@ -68,10 +54,10 @@ class Transactions extends Component{
     }
 
     csvDownload = () => {
-        let csvString = `"Bank Name","Name","Merchant Name","Categories","Type","Amount","Round Up Amount"` + '\n';
+        let csvString = `"Bank Name","Name","Merchant Name","Categories","Type","Marked For Deletion","Amount","Round Up Amount"` + '\n';
         for(let transaction of this.state.transactions.transactions) {
-            let categories = transaction.category !== null ? transaction.category.join(',') : '';
-            csvString = csvString + `"${transaction.bankName}","${transaction.name}","${transaction.merchant_name}","${categories}","${transaction.transaction_type}","${transaction.amount.toFixed(2)}","${transaction.roundup.toFixed(2)}"` + '\n';
+            let categories = transaction.categories !== null ? transaction.categories.join(',') : '';
+            csvString = csvString + `"${transaction.bankName}","${transaction.name}","${transaction.merchant_name}","${categories}","${transaction.transaction_type}","${transaction.isMarkedForDeletion ? 'YES' : 'NO'}","${transaction.amount}","${transaction.roundup}"` + '\n';
         }
         const csvData = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
 
@@ -112,6 +98,7 @@ class Transactions extends Component{
                                     <th>Merchant Name</th>
                                     <th>Category</th>
                                     <th>Type</th>
+                                    <th>Marked For Deletion</th>
                                     <th>Amount</th>
                                     <th>Round Up Amount</th>
                                 </tr>
@@ -120,10 +107,11 @@ class Transactions extends Component{
                                         <td>{transaction.bankName}</td>
                                         <td>{transaction.name}</td>
                                         <td>{transaction.merchant_name}</td>
-                                        <td>{transaction.category !== null ? transaction.category.map((categorystr) => <>{categorystr}&nbsp;</>) : <></>}</td>
+                                        <td>{transaction.categories !== null ? <>{transaction.categories.join(',')}&nbsp;</> : <></>}</td>
                                         <td>{transaction.transaction_type}</td>
-                                        <td style={{textAlign: 'right'}}>{transaction.amount.toFixed(2)}&nbsp;{transaction.iso_currency_code}</td>
-                                        <td style={{textAlign: 'right'}}>{transaction.roundup.toFixed(2)}&nbsp;{transaction.iso_currency_code}</td>
+                                        <td>{transaction.isMarkedForDeletion ? 'YES' : 'NO'}</td>
+                                        <td style={{textAlign: 'right'}}>{transaction.amount}&nbsp;{transaction.iso_currency_code}</td>
+                                        <td style={{textAlign: 'right'}}>{transaction.roundup}&nbsp;{transaction.iso_currency_code}</td>
                                     </tr>)}
                             </table>
                         </div>

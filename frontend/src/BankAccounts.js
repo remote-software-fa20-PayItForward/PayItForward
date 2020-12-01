@@ -23,8 +23,6 @@ class BankAccounts extends Component{
                 response.json().then(body => {
                     const eligibleBankAccounts = body.bankAccounts.filter(
                             bankAccount => {return ['checking', 'credit card'].includes(bankAccount.subtype)}
-                        ).map(
-                            bankAccount => {return {...bankAccount, isChecked: false}}
                         );
 
                     this.setState({bankItem: body.bankItem, bankAccounts: body.bankAccounts, eligibleBankAccounts: eligibleBankAccounts, hasAuthenticatedUser: true});

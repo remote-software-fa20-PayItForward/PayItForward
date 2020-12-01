@@ -36,7 +36,7 @@ function App() {
       <Route exact path="/banks/:bankId/accounts" component={BankAccounts} />
       <Route exact path="/donation-success" component={SuccessfulPayment} />
       {/* /transactions/current-month || /transactions/last-month */} 
-      <Route exact path="/transactions/:month" component={Transactions} />
+      <Route exact path="/transactions/current-month" component={Transactions} />
       <Route exact path="/donation-request" component={DonationRequest} />
       <Route exact path="/my-sprout" component={MySprout} />
       <Route exact path="/donation-requests" component={Requests} />
