@@ -10,8 +10,10 @@ class ManageCards extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            paymentMethods: []
+            paymentMethods: [],
+            customer: {}
         }
+        this.setDefault = this.setDefault.bind(this);
     }
 
     componentDidMount() {
@@ -25,6 +27,27 @@ class ManageCards extends Component {
                 this.setState({isLoading: false, paymentMethods: body.data});
             });
         })
+        fetch('stripe/customer').then((response) => {
+            response.json().then(body => {
+                console.log(body);
+                this.setState({customer: body});
+            });
+        });
+    }
+
+    setDefault(id) {
+        fetch('stripe/customer', {
+    		method: "POST",
+    		headers: {
+    		    'Content-type': 'application/json'
+    		},
+            body: JSON.stringify({invoice_settings: {default_payment_method: id}})
+            }).then((response) => {
+            response.json().then(body => {
+                console.log(body);
+                this.setState({customer: body});
+            });
+        });
     }
 
     render() {
@@ -45,7 +68,7 @@ class ManageCards extends Component {
                             <h2>Donation Cards</h2>
                         </div>
                         <div className="col-3">
-                            <Button>
+                            <Button onClick={() => {this.props.history.push('/add-card')}}>
                                 Connect New Card
                             </Button>
                         </div>
@@ -65,7 +88,14 @@ class ManageCards extends Component {
                                     <td>{paymentMethod.card.funding}</td>
                                     <td>************{paymentMethod.card.last4}</td>
                                     <td>{paymentMethod.card.exp_month}/{paymentMethod.card.exp_year}</td>
-                                    <td><input type="button" value="Set as Default" /></td>
+                                    <td>
+                                        {!(this.state.customer.invoice_settings.default_payment_method == paymentMethod.id) &&
+                                            <input type="button" value="Set as Default" onClick={() => {this.setDefault(paymentMethod.id)}}/>
+                                        }
+                                        {(this.state.customer.invoice_settings.default_payment_method == paymentMethod.id) &&
+                                            <input type="button" value="Default" disabled />
+                                        }
+                                    </td>
                                 </tr>
                             ))}
                         </table>
