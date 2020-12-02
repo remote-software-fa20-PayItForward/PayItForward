@@ -333,7 +333,7 @@ class UserPage extends Component {
                                 <Tab eventKey="donation" title="Linked Banks">
                                     <Col md={12} className="mt-4 border rounded bg-light">
                                             
-                                        <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Linked Accounts</h4>
+                                        <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Bank Accounts</h4>
                                         
                                         {this.state.bankAccounts.map(bankAccount => (
                                             <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
