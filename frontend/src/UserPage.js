@@ -214,7 +214,7 @@ class UserPage extends Component {
                                             
                                             <Col md={12} className="mt-4 border rounded purple-bg">
                                             
-                                                <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Sprout Stats</h5>
+                                                <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Latest Sprout Stats</h5>
                                                 <hr />
                                                 <CardGroup className="pl-3 pb-3 text-center">
                                                     <Card className="mr-3 text-dark rounded">
@@ -238,7 +238,7 @@ class UserPage extends Component {
                                                 </CardGroup>
                                         
                                                 <div className="text-center">
-                                                    <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprout</h6></Button></Link>
+                                                    <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-3" variant="outline-light"><h6>View My Sprouts</h6></Button></Link>
                                                     <br />
                                                 </div>
                                                 
@@ -249,60 +249,21 @@ class UserPage extends Component {
                               
                                 <Tab eventKey="settings" title="User Settings">
                                     <div className="py-5">
-                                            {/*
-                                            <Row className="form-group">
-                                                <label className="col-lg-3 col-form-label form-control-label">First name</label>
-                                                <Col lg={9}>
-                                                    { !this.state.showEditFirst
-                                                        ? <div> 
-                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.first} </Card>
-                                                        <input type="text" ref="inputFirst" defaultValue={this.state.first} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditFirst : true })}/></div>
-                                                        </div>
-                                                 
-                                                        : <form id="firstform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
-                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditFirst : false })}/></div>
-                                                        </form>
-                                                    }
-                                                </Col>
-                                            </Row>
-                                            
-                                            <Row className="form-group">
-                                                <label className="col-lg-3 col-form-label form-control-label">Last name</label>
-                                                <Col lg={9}>
-                                                    { !this.state.showEditLast 
-                                                        ? <div> 
-                                                        <Card className="card-title bg-light p-2 col-10 float-left"> {this.state.last} </Card>
-                                                        <input type="text" ref="inputLast" defaultValue={this.state.last} type="hidden"/>
-                                                        <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditLast : true })}/></div>
-                                                        </div>
-                                                 
-                                                        : <form id="lastform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-10" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
-                                                        <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
-                                                        <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditLast : false })}/></div>
-                                                        </form>
-                                                    }
-                                                </Col>
-                                            </Row>
-                                            */}
                                             <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Name</label>
                                                 <Col lg={9}>
                                                     { !this.state.showEditName 
                                                         ? <div> 
-                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.first} </Card>
-                                                        <Card className="card-title bg-light p-2 col-5 float-left"> {this.state.last} </Card>
+                                                        <Card className="card-title bg-light p-2 col-4 float-left mr-3"> {this.state.first} </Card>
+                                                        <Card className="card-title bg-light p-2 col-4 float-left"> {this.state.last} </Card>
                                                         <input type="text" ref="inputFirst" defaultValue={this.state.first} type="hidden"/>
                                                         <input type="text" ref="inputLast" defaultValue={this.state.last} type="hidden"/>
                                                         <div className="col-2 float-right"><input type="button" className="btn" value="✎" onClick={() => this.setState({ showEditName : true })}/></div>
                                                         </div>
                                                  
                                                         : <form id="nameform" onSubmit={(e)=>{this.save(e);e.preventDefault();}}>
-                                                        <input className="form-control float-left col-5" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
-                                                        <input className="form-control float-left col-5" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
+                                                        <input className="form-control float-left col-4 mr-3" type="text" ref="inputFirst" placeholder="Enter first name" defaultValue={this.state.first} required/>
+                                                        <input className="form-control float-left col-4" type="text" ref="inputLast" placeholder="Enter last name" defaultValue={this.state.last} required/>
                                                         <div className="col-1 float-right"><input type="submit" className="btn" value="✔️" /></div>
                                                         <div className="col-1 float-right"><input type="button" className="btn" value="❌" onClick={() => this.setState({ showEditName : false })}/></div>
                                                         </form>
@@ -441,7 +402,7 @@ class UserPage extends Component {
                             <small>Click to change your profile picture</small>
                             }
                             { this.state.showEditAvatar &&
-                            <Button onClick={(e)=>{this.setState({showEditAvatar: false})}}>Close</Button>
+                            <Button className="btn btn-danger" style={{width: '80%'}} onClick={(e)=>{this.setState({showEditAvatar: false})}}>Cancel</Button>
                             }
                         </Col>
                     </Row>
