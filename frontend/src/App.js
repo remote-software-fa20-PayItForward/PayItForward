@@ -9,6 +9,7 @@ import UserPage from './UserPage';
 import User from './User';
 import AccountsSummary from './AccountsSummary';
 import ManageBanks from './ManageBanks';
+import ManageCards from './ManageCards';
 import BankAccounts from './BankAccounts';
 import Transactions from './Transactions'
 import SuccessfulPayment from './SuccessfulPayment'
@@ -33,6 +34,7 @@ function App() {
       <Route exact path="/donate" component={Donate} />
       <Route exact path="/accounts-summary" component={AccountsSummary} />
       <Route exact path="/manage-banks" component={ManageBanks} />
+      <Route exact path="/manage-cards" component={ManageCards} />
       <Route exact path="/banks/:bankId/accounts" component={BankAccounts} />
       <Route exact path="/donation-success" component={SuccessfulPayment} />
       {/* /transactions/current-month || /transactions/last-month */} 
