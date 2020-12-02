@@ -493,10 +493,10 @@ app.get("/stripe/defaultpaymentmethod", async (req, res) => {
 				const paymentmethod = await stripe.paymentMethods.retrieve(customer.invoice_settings.default_payment_method);
 				res.json(paymentmethod);
 			} else {
-				res.json({})
+				res.json({card: null})
 			}
 		} else {
-			res.json({});
+			res.json({card: null});
 		}
 	} else {
 		res.status(401).json({error: "Not logged in"});
