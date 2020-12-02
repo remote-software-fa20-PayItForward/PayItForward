@@ -72,7 +72,7 @@ class UserPage extends Component {
              })
              
              allResponses[3].json().then(body => {
-                this.setState({paymentMethod: body})
+                this.setState({paymentMethod: body.card})
              })
          })
     }
@@ -362,10 +362,12 @@ class UserPage extends Component {
                                     <Col md={12} className="mt-4 border rounded bg-light">  
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Donation Card</h4>                                            
                                         <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
+                                            {this.state.paymentMethod &&
                                             <Card.Body>
-                                                <h4 className="lead font-weight-bold"> CHASE COLLEGE </h4>
-                                                <h5 className="font-weight-bold"> **** 1234 </h5>
+                                                <h4 className="lead font-weight-bold"> {this.state.paymentMethod.brand} {this.state.paymentMethod.funding} </h4>
+                                                <h5 className="font-weight-bold"> **** {this.state.paymentMethod.last4} </h5>
                                             </Card.Body>
+                                            }
                                         </Card>
                                         <div className="text-center">
                                             <Link to="/manage-cards"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
