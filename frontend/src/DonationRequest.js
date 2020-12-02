@@ -32,7 +32,7 @@ class DonationRequest extends Component{
 					this.props.history.push('/stripe-onboarding')
 				} else {
 					fetch("/stripe/account").then(response => response.json()).then(body => {
-						if (!body.details_submitted || !body.payments_enabled) {
+						if (!body.details_submitted || !body.charges_enabled) {
 						  	this.props.history.push('/stripe-onboarding');
 						}
 					})
