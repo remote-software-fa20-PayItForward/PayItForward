@@ -19,7 +19,8 @@ import MySprout from './MySprout'
 import Requests from './Requests';
 import Sprout from './Sprout';
 import StripeOnboarding from './StripeOnboarding';
-import SuccessfulOnboard from './SuccessfulOnboard'
+import SuccessfulOnboard from './SuccessfulOnboard';
+import AddCard from './AddCard';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
       <Route exact path="/sprout/:id" component={Sprout} />
       <Route exact path="/stripe-onboarding" component={StripeOnboarding} />
       <Route exact path="/successful-onboard" component={SuccessfulOnboard} />
+      <Route exact path="/add-card" component={AddCard} />
     </Router>
   );
 }

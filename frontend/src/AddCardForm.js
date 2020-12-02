@@ -1,3 +1,4 @@
+import "./AddCardForm.css";
 import React, { useState, useEffect } from "react";
 import {
   CardElement,
@@ -6,12 +7,13 @@ import {
 } from "@stripe/react-stripe-js";
 import { withRouter } from 'react-router-dom';
 
-export default withRouter(function AddCardForm() {
+export default withRouter(function AddCardForm(props) {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState('');
+  const [name, setName] = useState('');
   const stripe = useStripe();
   const elements = useElements();
   useEffect(() => {
@@ -31,6 +33,13 @@ export default withRouter(function AddCardForm() {
         setClientSecret(data.clientSecret);
       });
   }, []);
+  fetch('/user').then(response => {
+    response.json().then(body => {
+      if (body.username) {
+        setName(body.first + " " + body.last);
+      }
+    })
+  })
   const cardStyle = {
     style: {
       base: {
@@ -68,11 +77,14 @@ export default withRouter(function AddCardForm() {
     } else {
       setError(null);
       setProcessing(false);
-      this.props.history.push('/manage-cards');
+      props.history.push('/manage-cards');
     }
-  };
+  }
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+        <div className="card-element">
+          <input className="CardField" id="name" type="text" placeholder="Name" required defaultValue={name} />
+        </div>
       <CardElement id="card-element" options={cardStyle} onChange={handleChange} />
       <button
         disabled={processing || disabled || succeeded}
@@ -82,7 +94,7 @@ export default withRouter(function AddCardForm() {
           {processing ? (
             <div className="spinner" id="spinner"></div>
           ) : (
-            "Pay"
+            "Add Card"
           )}
         </span>
       </button>
