@@ -10,6 +10,13 @@ const promise = loadStripe("pk_test_51HhIVhKJyyCVsqcoeOjgBymqqNJRf5R1tt8U5D0Ksu0
 class Donate extends Component {
 
     constructor(props) {
+        fetch('/user').then((response) => {
+            response.json().then((body) => {
+              if (!body.username) {
+                this.props.history.push('/login');
+              }
+            })
+          })
         super(props);
         this.state = {
             donationAmount: ""

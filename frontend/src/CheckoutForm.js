@@ -58,7 +58,10 @@ export default function CheckoutForm() {
     setProcessing(true);
     const payload = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardElement)
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: document.getElementById("payment-form").firstChild.value + " " +document.getElementById("payment-form").lastChild.value,
+        }
       }
     });
     if (payload.error) {
@@ -72,6 +75,9 @@ export default function CheckoutForm() {
   };
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+      <input id="cardholder-name" placeholder="First Name" ref={this.firstName} type="text"></input>
+      <br></br>
+      <input id="cardholder-name" placeholder="Last Name" ref={this.lastName} type="text"></input>
       <CardElement id="card-element" options={cardStyle} onChange={handleChange} />
       <button
         disabled={processing || disabled || succeeded}

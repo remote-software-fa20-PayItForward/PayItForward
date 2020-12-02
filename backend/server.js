@@ -457,7 +457,9 @@ app.post("/onboard-user", async (req, res) => {
 	  });
 	}
   });
-
+  app.post("/subscription", async (req,res) => {
+	
+  });
   app.get("/stripe/account", async (req, res) => {
 	  if (req.user) {
 		const user = await User.findById(req.user._id).exec();
