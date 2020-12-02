@@ -457,6 +457,16 @@ app.get("/stripe/customer", async (req, res) => {
 	}
 })
 
+app.post("/stripe/customer", async (req, res) => {
+	if (req.user) {
+	  const user = await User.findById(req.user._id).exec();
+	  const customer = await stripe.customers.update(user.stripeCustomerId, req.body);
+	  res.json(customer);
+	} else {
+		res.status(401).json({error: "Not logged in"});
+	}
+})
+
 app.get("/stripe/paymentmethods", async (req, res) => {
 	if (req.user) {
 		const user = await User.findById(req.user._id).exec();
