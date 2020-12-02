@@ -75,23 +75,6 @@ class UserPage extends Component {
                 this.setState({paymentMethod: body})
              })
          })
-         /*
-        fetch('/user', {credentials: 'include'}).then((response) => {
-            response.json().then(body => {
-                if (!body.username) {
-                    this.props.history.push('/login');
-                }
-                this.setState({
-                    username: body.username,
-                    firstname: body.first,
-                    lastname: body.last,
-                    bio: body.bio,
-                    avatar: body.avatar ? body.avatar : "/profile.jpg",
-                    mfaEnabled: body.mfaEnabled
-                })
-            });
-        }); 
-        */
     }
 
     cancel() {
