@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const { model } = require('../models/BankItem');
-const User = require( './models/User' );
+const User = require( '../models/User' );
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
