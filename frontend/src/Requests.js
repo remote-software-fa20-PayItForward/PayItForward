@@ -146,9 +146,9 @@ class Requests extends Component{
                             donationProgress = donationProgress.toFixed(2);
                             return (
                             <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
-								<Row className="justify-content-center mt-3">
-                                    <h2><Badge variant="success">Active</Badge></h2>
-								</Row>
+								                    <Row className="justify-content-center mt-3">
+                                      <h2><Badge variant="success">Active</Badge></h2>
+								                    </Row>
 
                                 <div className="border mt-3 bg-white" >
                                     <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
