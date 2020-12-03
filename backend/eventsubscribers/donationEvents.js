@@ -8,13 +8,13 @@ class DonationEventsEmitter extends EventEmitter {}
 
 const donationEventsEmitter = new DonationEventsEmitter();
 
-donationEventsEmitter.on('donationAmountLimitReached', (donationRequest, totalRoundupByUsers) => {
+donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, totalRoundupByUsers) => {
   console.log('donationAmountLimitReached has been fired');
   console.log('donationRequest: ', donationRequest);
   for(const userSpecificTotalRoundup of totalRoundupByUsers) {
       console.log(`Total roundup of ${userSpecificTotalRoundup.totalRoundup.toFixed(2)} for user ObjectId("${userSpecificTotalRoundup.user_id}")`);
       // TODO: charge the user's CC
-      const user = User.findById(userSpecificTotalRoundup.user_id).exec();
+      const user = await User.findById(userSpecificTotalRoundup.user_id).exec();
       const paymentMethods = await stripe.paymentMethods.list({
         customer: user.stripeCustomerId,
         type: 'card',
