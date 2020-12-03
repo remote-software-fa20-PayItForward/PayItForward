@@ -17,6 +17,12 @@ class ManageCards extends Component {
     }
 
     componentDidMount() {
+        fetch('stripe/customer').then((response) => {
+            response.json().then(body => {
+                console.log(body);
+                this.setState({customer: body});
+            });
+        });
         fetch('/stripe/paymentmethods').then((response) => {
             if (!response.ok && response.status == 401) {
                 this.props.history.push("/login");
@@ -27,12 +33,6 @@ class ManageCards extends Component {
                 this.setState({isLoading: false, paymentMethods: body.data});
             });
         })
-        fetch('stripe/customer').then((response) => {
-            response.json().then(body => {
-                console.log(body);
-                this.setState({customer: body});
-            });
-        });
     }
 
     setDefault(id) {

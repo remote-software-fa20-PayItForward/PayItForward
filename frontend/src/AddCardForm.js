@@ -68,7 +68,10 @@ export default withRouter(function AddCardForm(props) {
     setProcessing(true);
     const payload = await stripe.confirmCardSetup(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardElement)
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: name,
+        }
       }
     });
     if (payload.error) {
@@ -83,7 +86,7 @@ export default withRouter(function AddCardForm(props) {
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
         <div className="card-element">
-          <input className="CardField" id="name" type="text" placeholder="Name" required defaultValue={name} />
+          <input className="CardField" id="name" type="text" placeholder="Name" required defaultValue={name} onChange={(e) => {setName(e.target.value);}} />
         </div>
       <CardElement id="card-element" options={cardStyle} onChange={handleChange} />
       <button
