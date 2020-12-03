@@ -435,7 +435,7 @@ app.post("/create-setup-intent", async (req, res) => {
 			email: user.username,
 			name: user.first + " " + user.last
 		});
-		user.stripeCustomerId = customer;
+		user.stripeCustomerId = customer.id;
 		const result = await user.save();
 		console.log('in mongo query: '+result);
 	}
@@ -450,8 +450,12 @@ app.post("/create-setup-intent", async (req, res) => {
 app.get("/stripe/customer", async (req, res) => {
 	if (req.user) {
 	  const user = await User.findById(req.user._id).exec();
-	  const customer = await stripe.customers.retrieve(user.stripeCustomerId);
-	  res.json(customer);
+	  if (user.stripeCustomerId) {
+	  	const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+	  	res.json(customer);
+	  } else {
+		res.json({});
+	  }
 	} else {
 		res.status(401).json({error: "Not logged in"});
 	}
