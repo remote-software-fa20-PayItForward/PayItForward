@@ -4,6 +4,7 @@ const moment = require('moment');
 const Transaction = require("../models/Transaction");
 const Big = require('big.js');
 const donationEventsEmitter = require("../eventsubscribers/donationEvents");
+const DonationRecord = require("../models/DonationRecord");
 
 
 class DonationProgressCalculationException extends Error {
@@ -105,6 +106,15 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
 
         // Mark all transactions for deletion (this means that they aren't going to be used to calculate roundupSum for any other donationRequest's)
         await Transaction.updateMany({"_id": {$in: donationTransactionIdBucketList}}, {$set: {"isMarkedForDeletion": true}});
+        const donationRecords = totalRoundupByUsers.map((userSpecificTotalRoundup) => {
+            return {
+                donationRequest: donationRequest,
+                user: userSpecificTotalRoundup.user_id,
+                donatedAmount: userSpecificTotalRoundup.totalRoundup,
+                date: moment().format('YYYY-MM-DD')
+            }
+        });
+        await DonationRecord.insertMany(donationRecords);
         
         donationEventsEmitter.emit("donationAmountLimitReached", donationRequest, totalRoundupByUsers);
     }

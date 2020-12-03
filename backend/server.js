@@ -19,6 +19,8 @@ const saltRounds = 10;
 const client = require('./plaidclient');
 const donationProgress = require('./services/donationProgress');
 const Transaction = require('./models/Transaction');
+const Agenda = require('agenda');
+const DonationRequest = require('./models/DonationRequest');
 
 //=========set up app================================
 const app = express();
@@ -62,6 +64,31 @@ const local = new LocalStrategy((username, password, done) => {
 		.catch(e => done(e));
 });
 passport.use('local', local);
+
+//=========set up agenda jobs============================
+const mongoConnectionString = 'mongodb://127.0.0.1/agenda';
+
+const agenda = new Agenda({db: {address: mongo_uri}, collection: 'agendaJobs', processEvery: '1 minute'});
+
+
+
+agenda.define('trigger progress re-calculation for all active donationRequests', async job => {
+	console.log('EXECUTION OF trigger progress re-calculation for all active donationRequests');
+	const activeDonationRequests = await DonationRequest.find({"status": "active"});
+	for(activeDonationRequest of activeDonationRequests) {
+		try {
+			await donationProgress.triggerDonationProgressCalculaton(activeDonationRequest);
+		} catch (err) {
+			//TODO: log the error approriately
+			console.log(err);
+		}
+	}
+});
+
+(async function() {
+  await agenda.start();
+  await agenda.every('30 minute', 'trigger progress re-calculation for all active donationRequests');
+})();
 
 
 //============app routes============================
