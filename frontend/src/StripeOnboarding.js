@@ -44,7 +44,7 @@ class StripeOnboarding extends Component {
                 //window.location = data.url;
                 var onboardingWindow = window.open(data.url, "stripeConnect", "position=top,resizable=no,width=500,height=725.5,left=" + (window.screen.width / 2 - 250));
                 if (onboardingWindow) {
-                  var timer = window.setInterval(function() {
+                  var timer = window.setInterval((function() {
                     if (onboardingWindow.closed) {
                         window.clearInterval(timer);
                         e.target.removeAttribute("disabled");
@@ -55,7 +55,7 @@ class StripeOnboarding extends Component {
                           }
                         })
                     }
-                  }, 200);
+                  }).bind(this), 200);
                 } else {
                   e.target.removeAttribute("disabled");
                   e.target.textContent = "Onboard";
