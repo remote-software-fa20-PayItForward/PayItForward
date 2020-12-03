@@ -32,8 +32,8 @@ class Requests extends Component{
                     this.props.history.push('/login');
                 } else {
                     this.setState({
-						_id: body._id
-					})
+						                _id: body._id
+					          })
                 }
             })
         })
@@ -57,6 +57,7 @@ class Requests extends Component{
                                     subscribed: true,
                                     request: body[i]._id
                                 })
+                                console.log(this.state.request);
                             }
                             nonUserSprouts.push(body[i]);
                         }
@@ -86,9 +87,20 @@ class Requests extends Component{
     		 	'Content-type': 'application/json'
     		 },
     	}).then((response) => {
-            if (response.ok) {
-                console.log('successfully subscribed');
-            }
+          response.json().then(body => {
+              console.log(body);
+              //go through all requests, if the id matches, then update amountCollected & # of planters
+              let allRequests = this.state.requests;
+              for (let i = 0; i < allRequests.length; i++) {
+                if (allRequests[i]._id == body._id) {
+                  allRequests[i].amountCollected = body.amountCollected;
+                  allRequests[i].subscribers = body.subscribers;
+                }
+              }
+              this.setState({
+    						requests: allRequests
+    					})
+          })
         })
     }
 

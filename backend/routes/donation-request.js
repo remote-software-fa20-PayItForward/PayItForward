@@ -15,10 +15,10 @@ router.post('/', upload.single('image'), (req, res, next) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({error: 'Error uploading image. Please try again'});
-                } else {                    
+                } else {
                     const newDonation = {
-                        name: req.body.name, 
-                        image: '/images/' + image._id, 
+                        name: req.body.name,
+                        image: '/images/' + image._id,
                         description: req.body.description,
                         category: req.body.category,
                         amount: req.body.amount,
@@ -30,14 +30,14 @@ router.post('/', upload.single('image'), (req, res, next) => {
                             console.log(donationRequest);
                             return res.json();
                         } else {
-                            console.log(err);	
+                            console.log(err);
                             return res.status(500).json({error: 'Error creating donation request object'})
                         }
                     })
                 }
             });
 		} else {
-			console.log('Error finding user in /donation-request');	
+			console.log('Error finding user in /donation-request');
 			return res.status(500).json({error: 'Error finding user to create donation request object'})
 		}
 	});
@@ -80,9 +80,10 @@ router.post('/request/:request_id', (req, res, next) => {
 		if (donationRequest) {
             donationProgress.triggerDonationProgressCalculaton(donationRequest).then(() => {
                 console.log('calculation has been triggered');
+								DonationRequest.findOne({ _id: donationRequest._id}).then((request) => {
+						        return res.json( JSON.parse(JSON.stringify(request)) );
+						    })
             });
-
-			return res.json();
 		} else {
 			return res.status(400).json({error: "The donation request subscription was unsuccessful"});
 		}

@@ -13,7 +13,7 @@ class DonationProgressCalculationException extends Error {
       this.name = "DonationProgressCalculationException";
     }
   }
-  
+
 
 
 const findEligibleTransactionsByBankItem = async (bankItem) => {
@@ -42,10 +42,10 @@ const triggerCalculateDonationProgressByBankItem = async (bankItem) => {
 
 /**
  * Triggers Calculation of Donation Progress for specific donationRequest.
- * 
- * Fires donationAmountLimitReached event in case the donation request amount has been covered by the total roundup sum of 
+ *
+ * Fires donationAmountLimitReached event in case the donation request amount has been covered by the total roundup sum of
  * transactionns beloning to 1 or more subcribers.
- * 
+ *
  *
  * @param {DonationRequest} donationRequest the donationRequest object for which to trigger donation progress calculation.
  */
@@ -58,14 +58,14 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
 
     // obtain list of bankItems for all donationRequest subscribers
     const bankItems = await BankItem.find({"user_id": {$in: donationRequest.subscribers}});
-    
+
     let roundupSum = new Big(0);
     const donationTransactionIdBucketList = [];
     const totalRoundupByUsers = [];
 
     // for each bankItem:
     for(const bankItem of bankItems) {
-        // obtain list of tranasctions which are eligible for rundup calculation 
+        // obtain list of tranasctions which are eligible for rundup calculation
         // that is transactions which aren't yet marked for deletion and which are ralated with linked bank accounts
         if (bankItem.bank_accounts.length > 0) {
             const transactions = await findEligibleTransactionsByBankItem(bankItem);
@@ -115,8 +115,10 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
             }
         });
         await DonationRecord.insertMany(donationRecords);
-        
+
         donationEventsEmitter.emit("donationAmountLimitReached", donationRequest, totalRoundupByUsers);
+
+        return donationRequest;
     }
 }
 
