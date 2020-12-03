@@ -20,7 +20,7 @@ class MySprout extends Component{
         this.state = {
             requests: [],
             empty: false
-		}
+				}
     }
 
 	componentDidMount() {
@@ -42,6 +42,21 @@ class MySprout extends Component{
             });
         });
     }
+
+		cancel(id) {
+			fetch(`/donation-request/cancel/${id}`, {
+				method: "POST",
+			 	headers: {
+				'Content-type': 'application/json'
+			 	},
+			}).then((response) => {
+				response.json().then(body => {
+					this.setState({
+						requests: body
+					})
+				})
+    	})
+		}
 
     render() {
         return(
@@ -126,10 +141,13 @@ class MySprout extends Component{
 																		</CardGroup>
 																</Col>
 
-		                            <div className="text-center">
-		                                <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="danger"><h6>Delete</h6></Button></Link>
-		                                <br />
-		                            </div>
+																{request.status == "active" ?
+			                            <div className="text-center">
+			                                <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="danger" onClick={(e) => {this.cancel(this.state.requests[i]._id)}}><h6>Cancel Sprout</h6></Button></Link>
+			                                <br />
+			                            </div>
+																: <div classname="m-5"></div>
+																}
 	                        		</Card>
 	                        )})}
 											</CardColumns>

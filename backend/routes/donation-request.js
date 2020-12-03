@@ -68,7 +68,7 @@ router.get('/:id', (req, res, next) => {
         if (donationRequests) {
             return res.json( JSON.parse(JSON.stringify(donationRequests)) );
         } else {
-            return res.status(404).json({error: "The donation requests was not found"});
+            return res.status(404).json({error: "The donation requests were not found"});
         }
     }).catch(() => {
         return res.status(400).json({error: "Invalid user ID"});
@@ -123,6 +123,26 @@ router.post('/image', upload.single('myFile'), (req, res, next) => {
             return res.json({success: "Uploaded image", id: image._id});
         }
     });
+});
+
+router.post('/cancel/:request_id', (req, res, next) => {
+	DonationRequest.findOneAndUpdate({ _id: req.params.request_id}, {status: "cancelled"}).then((donationRequest) => {
+		if (donationRequest) {
+			DonationRequest.find({ user: req.user._id}).then((donationRequests) => {
+					if (donationRequests) {
+							return res.json( JSON.parse(JSON.stringify(donationRequests)) );
+					} else {
+							return res.status(404).json({error: "The donation requests were not found"});
+					}
+			}).catch(() => {
+					return res.status(400).json({error: "Invalid user ID"});
+			});
+		} else {
+			return res.status(400).json({error: "The donation request subscription was unsuccessful"});
+		}
+	}).catch(() => {
+		return res.status(400).json({error: "Invalid donation request ID"});
+	});
 });
 
 module.exports = router;
