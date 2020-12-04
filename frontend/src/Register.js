@@ -20,11 +20,13 @@ class Register extends Component {
             passwordconfirm: "",
             firstname: "",
             lastname: "",
-            errorMsg: ""
+            errorMsg: "",
+
         }
     }
 
     handleChange(e) {
+        console.log(e.target.value);
         this.setState({[e.target.name]: e.target.value })
     }
 
@@ -70,7 +72,12 @@ class Register extends Component {
                             <input type="email" name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} required />
                             <input type="password" name="password" placeholder="create a password" value={this.state.password} onChange={this.handleChange} required />
                             <input type="password" name="passwordconfirm" placeholder="confirm password" value={this.state.passwordconfirm} onChange={this.handleChange} required />
+                            <label className="float-left">I am a:</label>
+                            <div onChange={this.handleChange}>
+                            <label className="radio-inline mr-5"><input type="radio" name="role" value="donee" defaultChecked />Student</label>
+                            <label className="radio-inline mb-3"><input type="radio" name="role" value="donor" />Donor</label>
                             <button type="submit">create account</button>
+                            </div>
                             <p className="message">Already registered? <Link to="/login">Sign In</Link></p>
                         </form>
                     </div>

@@ -131,12 +131,6 @@ class Requests extends Component{
       })
     }
 
-    test() {
-      this.setState({
-        goalReached: true
-      })
-    }
-
     render() {
 
       const handleClose = () => this.setShow(false);
