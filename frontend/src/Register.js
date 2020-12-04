@@ -39,7 +39,7 @@ class Register extends Component {
         .then((response) => {
             console.log(response);
             if (response.ok) {
-                this.props.history.push('/');
+                this.props.history.push('/login');
             } else {
                 response.json().then(body => {
                     this.setState({errorMsg: body.error})
@@ -50,12 +50,12 @@ class Register extends Component {
 
     render() {
         return(
-        
+
             <div>
                 <Navbar variant="dark" className="navbar-custom">
                     <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay It Forward</Navbar.Brand>
                 </Navbar>
-                
+
                 <div className="login">
                     <div className="form">
                         <form className="register-form" onSubmit={(e) => {this.submit();  e.preventDefault(); }}>
@@ -75,9 +75,9 @@ class Register extends Component {
                         </form>
                     </div>
                 </div>
-                
+
             </div>
-        
+
         );
     }
 }
