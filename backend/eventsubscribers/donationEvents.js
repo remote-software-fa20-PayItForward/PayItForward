@@ -15,16 +15,13 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
       console.log(`Total roundup of ${userSpecificTotalRoundup.totalRoundup.toFixed(2)} for user ObjectId("${userSpecificTotalRoundup.user_id}")`);
       // TODO: charge the user's CC
       const user = await User.findById(userSpecificTotalRoundup.user_id).exec();
-      const paymentMethods = await stripe.paymentMethods.list({
-        customer: user.stripeCustomerId,
-        type: 'card',
-      });
+      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
       try {
         const paymentIntent = await stripe.paymentIntents.create({
           amount: userSpecificTotalRoundup.totalRoundup.toFixed(2),
           currency: 'usd',
           customer: user.stripeCustomerId,
-          payment_method: paymentMethods.id,
+          payment_method:customer.invoice_settings.default_payment_method,
           off_session: true,
           confirm: true,
           application_fee_amount: userSpecificTotalRoundup.totalRoundup.toFixed(2) *0.029+30,
