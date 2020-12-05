@@ -18,13 +18,13 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
       const customer = await stripe.customers.retrieve(user.stripeCustomerId);
       try {
         const paymentIntent = await stripe.paymentIntents.create({
-          amount: userSpecificTotalRoundup.totalRoundup.toFixed(2),
+          amount: userSpecificTotalRoundup.totalRoundup.toFixed(2) *100,
           currency: 'usd',
           customer: user.stripeCustomerId,
           payment_method:customer.invoice_settings.default_payment_method,
           off_session: true,
           confirm: true,
-          application_fee_amount: userSpecificTotalRoundup.totalRoundup.toFixed(2) *0.029+30,
+          application_fee_amount: (userSpecificTotalRoundup.totalRoundup.toFixed(2)*100) *0.029+30,
           transfer_data: {
             destination: donationRequest.user.stripeAccountId,
         },
