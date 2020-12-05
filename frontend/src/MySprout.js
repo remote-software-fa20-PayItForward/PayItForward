@@ -67,7 +67,7 @@ class MySprout extends Component{
                 { this.state.empty == false ? (
                     <Row className="justify-content-center m-5">
 											<CardColumns>
-	                        {this.state.requests.map((request, i) => {
+	                        {this.state.requests.reverse().map((request, i) => {
 															let donationProgress = (request.amountCollected/request.amount)*100;
 															console.log(donationProgress);
 															if (donationProgress > 100) {

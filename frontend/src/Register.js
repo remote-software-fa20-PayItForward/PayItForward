@@ -26,7 +26,6 @@ class Register extends Component {
     }
 
     handleChange(e) {
-        console.log(e.target.value);
         this.setState({[e.target.name]: e.target.value })
     }
 
@@ -74,7 +73,7 @@ class Register extends Component {
                             <input type="password" name="passwordconfirm" placeholder="confirm password" value={this.state.passwordconfirm} onChange={this.handleChange} required />
                             <label className="float-left">I am a:</label>
                             <div onChange={this.handleChange}>
-                            <label className="radio-inline mr-5"><input type="radio" name="role" value="donee" defaultChecked />Student</label>
+                            <label className="radio-inline mr-5"><input type="radio" name="role" value="donee"/>Student</label>
                             <label className="radio-inline mb-3"><input type="radio" name="role" value="donor" />Donor</label>
                             <button type="submit">create account</button>
                             </div>

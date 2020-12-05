@@ -32,11 +32,14 @@ class UserPage extends Component {
             bio: "",
             avatar: "/profile.jpg",
             amount: 0,
-            bankAccounts: []
+            bankAccounts: [],
+						settingsKey: "profile"
         }
+				this.handleSelect = this.handleSelect.bind(this);
     }
 
 	componentDidMount() {
+
         Promise.all([
             fetch('/user', {credentials: 'include'}),
             fetch('/donation-request'),
@@ -69,6 +72,17 @@ class UserPage extends Component {
                 this.setState({bankAccounts: body.bankAccounts})
              })
          })
+				console.log(this.props.location.search);
+				if (this.props.location.search.split('=')[1] == "donation") {
+ 					this.setState({
+ 							settingsKey: "donation"
+ 					})
+				} else {
+					this.setState({
+							settingsKey: "profile"
+					})
+ 				}
+ 				console.log(this.state.settingsKey);
     }
 
     cancel() {
@@ -154,6 +168,12 @@ class UserPage extends Component {
         });
     }
 
+		handleSelect(key) {
+			this.setState({
+					settingsKey: key
+			})
+		}
+
     render() {
     	return (
 
@@ -163,8 +183,7 @@ class UserPage extends Component {
                 <Container className="pt-5">
                     <Row className="my-2">
                         <Col lg={8} className="order-lg-2">
-
-                            <Tabs defaultActiveKey="profile" transition={false} id="noanim-tab-example">
+                            <Tabs activeKey={this.state.settingsKey} transition={false} onSelect={this.handleSelect}>
                                 <Tab eventKey="profile" title="Profile">
                                     <div className="py-4">
                                         <h3 className="mb-3 purple-text font-weight-bold">{this.state.first} {this.state.last}</h3>
@@ -224,7 +243,7 @@ class UserPage extends Component {
                                     </div>
                                 </Tab>
 
-                                <Tab eventKey="settings" title="User Settings">
+                                <Tab eventKey="user" title="User Settings" onClick={(e) => { this.settings("user");}}>
                                     <div className="py-5">
                                             <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Name</label>
@@ -324,7 +343,7 @@ class UserPage extends Component {
                                     </div>
                                 </Tab>
 
-                                <Tab eventKey="donation" title="Donation Settings">
+                                <Tab eventKey="donation" title="Donation Settings" onClick={(e) => { this.settings("donation");}}>
                                     <Col md={12} className="mt-4 border rounded bg-light">
 
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Bank Accounts</h4>

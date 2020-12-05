@@ -21,6 +21,7 @@ const donationProgress = require('./services/donationProgress');
 const Transaction = require('./models/Transaction');
 const Agenda = require('agenda');
 const DonationRequest = require('./models/DonationRequest');
+const DonationRecord = require('./models/DonationRecord');
 
 //=========set up app================================
 const app = express();
@@ -95,6 +96,7 @@ agenda.define('trigger progress re-calculation for all active donationRequests',
 app.use('/images/', require("./routes/images"));
 app.use('/donation-request/', require('./routes/donation-request'));
 app.use('/user/', require("./routes/user"));
+app.use('/donation-record/', require('./routes/donation-record'));
 app.use('/plaidwebhooks/', require("./routes/plaidwebhooks"));
 app.use('/transactions/', require("./routes/transactions"));
 

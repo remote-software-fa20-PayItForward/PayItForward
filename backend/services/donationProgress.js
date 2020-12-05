@@ -111,7 +111,8 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
                 donationRequest: donationRequest,
                 user: userSpecificTotalRoundup.user_id,
                 donatedAmount: userSpecificTotalRoundup.totalRoundup,
-                date: moment().format('YYYY-MM-DD')
+                date: moment().format('YYYY-MM-DD'),
+                completed: true
             }
         });
         await DonationRecord.insertMany(donationRecords);
@@ -119,6 +120,17 @@ const triggerDonationProgressCalculaton = async (donationRequest) => {
         donationEventsEmitter.emit("donationAmountLimitReached", donationRequest, totalRoundupByUsers);
 
         return donationRequest;
+    } else {
+      //this is for record keeping donation subscriptions that dont complete donation request
+      const donationRecords = totalRoundupByUsers.map((userSpecificTotalRoundup) => {
+          return {
+              donationRequest: donationRequest,
+              user: userSpecificTotalRoundup.user_id,
+              donatedAmount: userSpecificTotalRoundup.totalRoundup,
+              date: moment().format('YYYY-MM-DD')
+          }
+      });
+      await DonationRecord.insertMany(donationRecords);
     }
 }
 
