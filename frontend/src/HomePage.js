@@ -24,7 +24,8 @@ class HomePage extends Component{
             errorMsg: "",
             role: "",
             finishedSprouts: [],
-            ongoingSprouts: []
+            ongoingSprouts: [],
+            latestAmount: 0
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -73,12 +74,44 @@ class HomePage extends Component{
                               ongoingSprouts.push(body[i]);
                             }
                           }
-                          this.setState({
-                            finishedSprouts: finishedSprouts,
-                            ongoingSprouts: ongoingSprouts,
-                            latestAmount: ongoingSprouts[ongoingSprouts.length-1].donatedAmount
-                          })
+                          if(ongoingSprouts.length == 0) {
+                            this.setState({
+                              finishedSprouts: finishedSprouts,
+                              ongoingSprouts: ongoingSprouts,
+                              latestAmount: 0
+                            })
+                          } else {
+                            this.setState({
+                              finishedSprouts: finishedSprouts,
+                              ongoingSprouts: ongoingSprouts,
+                              latestAmount: ongoingSprouts[ongoingSprouts.length-1].donatedAmount
+                            })
+                          }
 
+                        });
+                      });
+                    } else {
+                      //get # of active sprouts & latest amountCollected
+                      fetch('/donation-request/:id').then((response) => {
+                        response.json().then(body => {
+                          console.log(body);
+                          let ongoingSprouts = [];
+                  				for (let i = 0; i < body.length; i++) {
+                            if (body[i].status == "active") {
+                              ongoingSprouts.push(body[i]);
+                            }
+                          }
+                          if(ongoingSprouts.length == 0) {
+                            this.setState({
+                              ongoingSprouts: ongoingSprouts,
+                              latestAmount: 0
+                            })
+                          } else {
+                            this.setState({
+                              ongoingSprouts: ongoingSprouts,
+                              latestAmount: ongoingSprouts[ongoingSprouts.length-1].amountCollected
+                            })
+                          }
                         });
                       });
                     }
@@ -155,7 +188,47 @@ class HomePage extends Component{
                   </div>
                 }
 
-                
+                {/*user is a donee*/}
+                {!isLoading && hasAuthenticatedUser == true && this.state.role == "donee" &&
+                  <div class="container my-5">
+                    <div class="row mt-5 border">
+                      <div class="col-4 pt-3 text-center bg-white">
+                          <h3 className="font-weight-bold">You're currently growing {this.state.ongoingSprouts.length} Sprout(s).</h3>
+                          <img src="/sprout.png" style={{width: "50%"}}/>
+                      </div>
+                      <div class="col-8 purple-bg p-5">
+                        <h2 className="font-weight-bold">
+                              Hi {this.state.firstname},
+                              <br />
+                              your latest sprout currently has ${this.state.latestAmount} collected.
+                          </h2>
+                          <br />
+                          <a href="/UserPage?settings=donation" className="font-weight-bold purple-bg"><h5>Update my sprouting preferences→</h5></a>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                    <div className="card-deck mt-5">
+                      <div className="card p-5">
+                          <h3 className="font-weight-bold">Request a Sprout</h3>
+                          <p className="lead mt-3">Select from our donation categories and plant your very own sprout!</p>
+                          <div class="card-footer bg-white p-0" style={{border: "none"}}>
+                              <Link to="/donation-request"><Button className="purple-btn font-weight-bold">Let's plant!</Button></Link>
+                              <img src="/grow.png" style={{width: "30%"}} className="float-right"/>
+                          </div>
+                      </div>
+                      <div className="card p-5 text-center purple-bg">
+                          <h3 className="font-weight-bold mb-3">View My Sprouts</h3>
+                          <div class="card-footer purple-bg" style={{border: "none"}}>
+                              <Link to="/my-sprout"><Button className="font-weight-bold px-3 mb-5" variant="outline-light"><h4>View Sprouts</h4></Button></Link>
+                              <br />
+                              <img src="/cycle1.png" style={{width: "100%"}}/>
+                          </div>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                }
 
                                 {/*}
                                 <div class="container mt-5 p-5" style={{backgroundImage: "url('/forest.jpg')", backgroundSize: "contain"}}>
