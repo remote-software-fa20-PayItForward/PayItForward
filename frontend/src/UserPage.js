@@ -207,7 +207,7 @@ class UserPage extends Component {
                     <Row className="my-2">
                         <Col lg={8} className="order-lg-2">
                             <Tabs activeKey={this.state.settingsKey} transition={false} onSelect={this.handleSelect}>
-                                <Tab eventKey="profile" title="Profile" onClick={(e) => { this.settings("profile");}}>
+                                <Tab eventKey="profile" title="Profile">
                                     <div className="py-4">
                                         <h3 className="mb-3 purple-text font-weight-bold">{this.state.first} {this.state.last}</h3>
                                         <Row>
@@ -268,7 +268,7 @@ class UserPage extends Component {
                                     </div>
                                 </Tab>
 
-                                <Tab eventKey="user" title="User Settings" onClick={(e) => { this.settings("user");}}>
+                                <Tab eventKey="user" title="User Settings">
                                     <div className="py-5">
                                             <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Name</label>
@@ -370,7 +370,7 @@ class UserPage extends Component {
 
 																{/*user is a donor*/}
 																{this.state.role == "donor" &&
-                                <Tab eventKey="banks" title="Linked Banks" onClick={(e) => { this.settings("banks");}}>
+                                <Tab eventKey="banks" title="Linked Banks">
                                     <Col md={12} className="mt-4 border rounded bg-light">
                                             
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Bank Accounts</h4>
@@ -402,7 +402,7 @@ class UserPage extends Component {
 
 																{/*user is a donor*/}
 																{this.state.role == "donor" &&
-                                <Tab eventKey="card" title="Donation Card"  onClick={(e) => { this.settings("card");}}>
+                                <Tab eventKey="card" title="Donation Card">
                                     <Col md={12} className="mt-4 border rounded bg-light">  
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Donation Card</h4>                                            
                                         <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
