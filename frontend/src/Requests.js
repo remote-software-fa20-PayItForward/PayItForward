@@ -151,8 +151,7 @@ class Requests extends Component{
                     <h3>Awesome!</h3>
                   </div>
                   <Modal.Body className="text-center border-0 px-5 purple-bg">
-                    The most recent sprout you've subscribed to has successfully reached its goal amount!
-                    The sprout's owner will receive an email notifying that their sprout is successfully grown. <br /> <br />
+                    The most recent sprout you've subscribed to has successfully reached its goal amount! <br />
                     Thank you for supporting this sprout!
                   </Modal.Body>
                   <Modal.Footer className="text-center justify-content-center">
