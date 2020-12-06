@@ -455,6 +455,84 @@ app.post("/create-payment-intent", async (req, res) => {
 	});
 });
 
+app.post("/create-setup-intent", async (req, res) => {
+	const user = await User.findById(req.user._id).exec();
+	if (!user.stripeCustomerId) {
+		const customer = await stripe.customers.create({
+			email: user.username,
+			name: user.first + " " + user.last
+		});
+		user.stripeCustomerId = customer.id;
+		const result = await user.save();
+		console.log('in mongo query: '+result);
+	}
+	const setupIntent = await stripe.setupIntents.create({
+	    customer: user.stripeCustomerId
+	});
+	res.send({
+	  clientSecret: setupIntent.client_secret
+	});
+});
+
+app.get("/stripe/customer", async (req, res) => {
+	if (req.user) {
+	  const user = await User.findById(req.user._id).exec();
+	  if (user.stripeCustomerId) {
+	  	const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+	  	res.json(customer);
+	  } else {
+		res.json({});
+	  }
+	} else {
+		res.status(401).json({error: "Not logged in"});
+	}
+})
+
+app.post("/stripe/customer", async (req, res) => {
+	if (req.user) {
+	  const user = await User.findById(req.user._id).exec();
+	  const customer = await stripe.customers.update(user.stripeCustomerId, req.body);
+	  res.json(customer);
+	} else {
+		res.status(401).json({error: "Not logged in"});
+	}
+})
+
+app.get("/stripe/paymentmethods", async (req, res) => {
+	if (req.user) {
+		const user = await User.findById(req.user._id).exec();
+		if (user.stripeCustomerId) {
+			const paymentmethods = await stripe.paymentMethods.list({
+				customer: user.stripeCustomerId,
+				type: "card"
+			});
+			res.json(paymentmethods);
+		} else {
+			res.json({data: []});
+		}
+	} else {
+		res.status(401).json({error: "Not logged in"});
+	}
+})
+
+app.get("/stripe/defaultpaymentmethod", async (req, res) => {
+	if (req.user) {
+		const user = await User.findById(req.user._id).exec();
+		if (user.stripeCustomerId) {
+			const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+			if (customer.invoice_settings.default_payment_method) {
+				const paymentmethod = await stripe.paymentMethods.retrieve(customer.invoice_settings.default_payment_method);
+				res.json(paymentmethod);
+			} else {
+				res.json({card: null})
+			}
+		} else {
+			res.json({card: null});
+		}
+	} else {
+		res.status(401).json({error: "Not logged in"});
+	}
+})
 
 app.post("/onboard-user", async (req, res) => {
 	try {
@@ -463,7 +541,16 @@ app.post("/onboard-user", async (req, res) => {
 	  if (user.hasStripeAccount) {
 		account = await stripe.accounts.retrieve(user.stripeAccountId);
 	  } else {
-		account = await stripe.accounts.create({type: "express"});
+		account = await stripe.accounts.create({
+			type: "express",
+			email: user.username,
+			business_type: "individual",
+			individual: {
+				email: user.username,
+				first_name: user.first,
+				last_name: user.last
+			}
+		});
 		user.hasStripeAccount = true;
 		user.stripeAccountId = account.id;
 		const result = await user.save();
