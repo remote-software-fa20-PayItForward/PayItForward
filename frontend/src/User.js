@@ -100,7 +100,7 @@ class User extends Component {
                                                 <h5><Badge variant="dark">Top 20% donor</Badge></h5>
                                             </Col>
 
-                                            <Col md={12} className="mt-4 border rounded purple-bg">
+                                            {/* <Col md={12} className="mt-4 border rounded purple-bg">
 
                                                 <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />{this.state.vfirst}'s Latest Sprout Stats</h5>
                                                 <hr />
@@ -130,7 +130,7 @@ class User extends Component {
                                                     <br />
                                                 </div>
 
-                                            </Col>
+                                            </Col> */}
                                         </Row>
                                     </div>
                                 </Tab>
