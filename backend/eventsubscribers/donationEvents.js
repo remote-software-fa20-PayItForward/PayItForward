@@ -14,9 +14,16 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
   for(const userSpecificTotalRoundup of totalRoundupByUsers) {
       console.log(`Total roundup of ${userSpecificTotalRoundup.totalRoundup.toFixed(2)} for user ObjectId("${userSpecificTotalRoundup.user_id}")`);
       // TODO: charge the user's CC
+      //customer is the donor / user is the donee
       const user = await User.findById(userSpecificTotalRoundup.user_id).exec();
       const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      //kinda confusing to me, so i just created a separate donee object 
+      const donee = await User.findById(donationRequest.user).exec();
+
       try {
+        console.log('customer: ', customer);
+        console.log('user: ', user);
+        console.log('done: ', donee);
         const paymentIntent = await stripe.paymentIntents.create({
           amount: userSpecificTotalRoundup.totalRoundup.toFixed(2) *100,
           currency: 'usd',
@@ -24,10 +31,10 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
           payment_method:customer.invoice_settings.default_payment_method,
           off_session: true,
           confirm: true,
-          application_fee_amount: (userSpecificTotalRoundup.totalRoundup.toFixed(2)*100) *0.029+30,
+          application_fee_amount: Math.round((userSpecificTotalRoundup.totalRoundup.toFixed(2)*100) *0.029+30),
           transfer_data: {
-            destination: donationRequest.user.stripeAccountId,
-        },
+            destination: donee.stripeAccountId
+          },
         });
       } catch (err) {
         // Error code will be authentication_required if authentication is needed
@@ -35,7 +42,7 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
         const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(err.raw.payment_intent.id);
         console.log('PI retrieved: ', paymentIntentRetrieved.id);
       }
-      // TODO: send donationRequest completion email notification to the user 
+      // TODO: send donationRequest completion email notification to the user
       //enabled in stripe dashboard
   }
 });
