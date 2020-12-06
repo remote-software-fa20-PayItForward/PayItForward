@@ -19,7 +19,7 @@ import Requests from './Requests';
 import Sprout from './Sprout';
 import StripeOnboarding from './StripeOnboarding';
 import SuccessfulOnboard from './SuccessfulOnboard';
-//import DonationHistory from './DonationHistory'
+import DonationHistory from './DonationHistory'
 
 function App() {
   return (
@@ -44,7 +44,7 @@ function App() {
       <Route exact path="/sprout/:id" component={Sprout} />
       <Route exact path="/stripe-onboarding" component={StripeOnboarding} />
       <Route exact path="/successful-onboard" component={SuccessfulOnboard} />
-      {/*}<Route exact path="/donation-history" component={DonationHistory} />*/}
+      <Route exact path="/donation-history" component={DonationHistory} />
     </Router>
   );
 }
