@@ -161,7 +161,7 @@ class HomePage extends Component{
                               you've last helped a sprout grow by ${this.state.latestAmount}.
                           </h2>
                           <br />
-                          <a href="/UserPage?settings=donation" className="font-weight-bold purple-bg"><h5>Update my donation preferences →</h5></a>
+                          <a href="/UserPage#banks" className="font-weight-bold purple-bg"><h5>Update my donation preferences →</h5></a>
                       </div>
                     </div>
 
@@ -203,7 +203,7 @@ class HomePage extends Component{
                               your latest sprout currently has ${this.state.latestAmount} collected.
                           </h2>
                           <br />
-                          <a href="/UserPage?settings=donation" className="font-weight-bold purple-bg"><h5>Update my sprouting preferences→</h5></a>
+                          <a href="/UserPage#banks" className="font-weight-bold purple-bg"><h5>Update my sprouting preferences→</h5></a>
                       </div>
                     </div>
 
