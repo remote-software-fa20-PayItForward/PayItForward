@@ -9,7 +9,7 @@ import ProfilePic from './ProfilePic';
 
 class NavBar extends Component {
     constructor(props) {
-        super(props); 
+        super(props);
         this.state = {
             username: "",
             firstname: "",
@@ -27,7 +27,7 @@ class NavBar extends Component {
                     avatar: body.avatar ? body.avatar : "/profile.jpg"
                 })
             });
-        }); 
+        });
     }
 
     logout() {
@@ -35,7 +35,7 @@ class NavBar extends Component {
             this.props.history.push('/login');
         });
     }
-    
+
     checkAuth() {
         fetch('/user', {credentials: 'include'}).then((response) => {
             response.json().then(body => {
@@ -45,7 +45,7 @@ class NavBar extends Component {
                     this.props.history.push('/');
                 }
             });
-        }); 
+        });
     }
 
     render() {

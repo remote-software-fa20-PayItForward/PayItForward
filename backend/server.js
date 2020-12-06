@@ -21,6 +21,7 @@ const donationProgress = require('./services/donationProgress');
 const Transaction = require('./models/Transaction');
 const Agenda = require('agenda');
 const DonationRequest = require('./models/DonationRequest');
+const DonationRecord = require('./models/DonationRecord');
 
 //=========set up app================================
 const app = express();
@@ -34,7 +35,7 @@ const mongo_uri = process.env.MONGODB_KEY;
 mongoose.connect(mongo_uri, {useUnifiedTopology:true, useNewUrlParser:true})
 	.then((resolved) => console.log('The database has been successfully connected! :D'))
 	.catch((err) => console.log(err));
-	
+
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -51,14 +52,14 @@ passport.deserializeUser(function(userId, done) { //fetch user from database usi
 //local authentication strategy:
 //		* check if user is in database
 //		* check if hash of submitted password matches stored hash
-//		* call done or false 
+//		* call done or false
 const local = new LocalStrategy((username, password, done) => {
 	User.findOne( {username} )
 		.then(user => {
 			if (!user || !user.validPassword(password)) {
 				done(null, false);
 			} else {
-				done(null, user);	
+				done(null, user);
 			}
 		})
 		.catch(e => done(e));
@@ -92,22 +93,17 @@ agenda.define('trigger progress re-calculation for all active donationRequests',
 
 
 //============app routes============================
-/*
-app.get('/', (req, res, next) => {
-    res.send('Hello, world!');
-});
-*/
-
 app.use('/images/', require("./routes/images"));
 app.use('/donation-request/', require('./routes/donation-request'));
 app.use('/user/', require("./routes/user"));
+app.use('/donation-record/', require('./routes/donation-record'));
 app.use('/plaidwebhooks/', require("./routes/plaidwebhooks"));
 app.use('/transactions/', require("./routes/transactions"));
 
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-    if (err) { 
+    if (err) {
 		return res.status(500).json({error: 'Issue with Passport authentication1'});
 	}
     if (!user) {
@@ -118,7 +114,7 @@ app.post('/login', function(req, res, next) {
 		return res.status(200).json({mfa: sig_request})
 	}
     req.logIn(user, function(err) {
-      if (err) { 
+      if (err) {
 		return res.status(500).json({error: 'Issue with Passport authentication2'});
 	  }
 	  	//console.log(req.user.stripeAccountId);
@@ -135,7 +131,8 @@ app.post('/register', (req, res, next) => {
 			username: req.body.email,
 			password: req.body.password,
 			first: req.body.firstname,
-			last: req.body.lastname
+			last: req.body.lastname,
+			role: req.body.role
 		}
 		console.log(newUser);
 		User.findOne({ username: req.body.email }).then(user => {
@@ -166,7 +163,7 @@ app.post('/mfaverify', (req, res, next) => {
 		User.findOne({ username: username }).then(user => {
 			if (user) {
 				req.logIn(user, function(err) {
-					if (err) { 
+					if (err) {
 					  return res.status(500).json({error: 'Issue with Passport authentication2'});
 					}
 					  return res.json({success: 'Successfully logged in user'})
@@ -185,7 +182,7 @@ app.get('/logout', (req, res, next) => {
 
 
 app.get('/linked-banks', async (req, res, next) => {
-	
+
 	//await BankItem.deleteMany({});
 
 	if (req.user) {
@@ -257,7 +254,7 @@ app.post('/link-bank', async (req, res, next) => {
 		const tokenResponse = await client.exchangePublicToken(req.body.public_link_token).catch((err) => {
 			console.log(err);
 			plaidClientErrored = true;
-			
+
 		});
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'Error creating BankItem. Please try again'});
@@ -269,7 +266,7 @@ app.post('/link-bank', async (req, res, next) => {
 		const itemResponse = await client.getItem(accessToken).catch((err) => {
 			console.log(err);
 			plaidClientErrored = true;
-			
+
 		});
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'Error creating BankItem. Please try again'});
@@ -278,12 +275,12 @@ app.post('/link-bank', async (req, res, next) => {
 		const institutionResponse = await client.getInstitutionById(itemResponse.item.institution_id, ['US']).catch((err) => {
 			console.log(err);
 			plaidClientErrored = true;
-			
+
 		});
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'Error creating BankItem. Please try again'});
 		}
-		
+
 		return BankItem.findOne({ user_id: req.user._id, institutionName: institutionResponse.institution.name }).then(bankItem => {
 			// check if the item is already within the DB
 			if (bankItem) {
@@ -319,8 +316,8 @@ app.post('/banks/:bankId/link-bank-accounts', async (req, res, next) => {
 		});
 		if (dbError) {
 			return res.status(500).json({error: 'There has been an error saving the selected list of bank account for this bank. Please try again later.'});
-		
-		
+
+
 		}
 
 
@@ -364,7 +361,7 @@ app.get('/banks/:bankId/accounts', async (req, res, next) => {
 		const matchingBankItem = await BankItem.findOne({_id: req.params.bankId, user_id: req.user._id}).catch((err) => {
 			console.log(err);
 			plaidClientErrored = true;
-			
+
 		});
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'There has been an error obtaining the list accounts within this bank. Please try again later.'});
@@ -403,7 +400,7 @@ app.get('/banks/:bankId/accounts/:accountId/transactions', async (req, res, next
 		const matchingBankItem = await BankItem.findOne({_id: req.params.bankId, user_id: req.user._id}).catch((err) => {
 			console.log(err);
 			plaidClientErrored = true;
-			
+
 		});
 		if (plaidClientErrored) {
 			return res.status(500).json({error: 'There has been an error obtaining the transactions. Please try again later.'});
@@ -605,7 +602,7 @@ app.get('/trigger-webhook', async (req, res, next) => {
 			return res.status(201).json({});
 		}).catch((err) => {
 			console.log(err);
-			return res.status(500).json({}); 
+			return res.status(500).json({});
 		});
 	}
 });
@@ -613,12 +610,12 @@ app.get('/trigger-webhook', async (req, res, next) => {
 
 // sandbox DEFAULT_UPDATE webhook invocation from Plaid for specific itemid
 app.get('/trigger-webhook/:itemid', (req, res, next) => {
-	BankItem.findOne( {_id: req.params.itemid} ).then(bankItem => {		
+	BankItem.findOne( {_id: req.params.itemid} ).then(bankItem => {
 		const response = client.sandboxItemFireWebhook(bankItem.accessToken, 'DEFAULT_UPDATE').then(() => {
 			return res.status(201).json({});
 		}).catch((err) => {
 			console.log(err);
-			return res.status(500).json({}); 
+			return res.status(500).json({});
 		})
 	});
 });
@@ -639,5 +636,4 @@ app.get('/switch-webhooks', async (req, res, next) => {
 
 app.listen(4000, () => {
 	console.log('Server listening on port 4000.')
-}); 
-
+});

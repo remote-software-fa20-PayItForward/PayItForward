@@ -33,11 +33,15 @@ class UserPage extends Component {
             avatar: "/profile.jpg",
             amount: 0,
             bankAccounts: [],
-            paymentMethod: {}
+						settingsKey: "profile",
+            paymentMethod: {},
+            role: ""
         }
+				this.handleSelect = this.handleSelect.bind(this);
     }
 
 	componentDidMount() {
+
         Promise.all([
             fetch('/user', {credentials: 'include'}),
             fetch('/donation-request'),
@@ -54,6 +58,7 @@ class UserPage extends Component {
                      last: body.last,
                      bio: body.bio,
                      avatar: body.avatar ? body.avatar : "/profile.jpg",
+                     role: body.role
                  })
              })
              allResponses[1].json().then(body => {
@@ -75,6 +80,31 @@ class UserPage extends Component {
                 this.setState({paymentMethod: body.card})
              })
          })
+				console.log(this.props.location.search);
+				/* if (this.props.location.search.split('=')[1] == "donation") {
+ 					this.setState({
+ 							settingsKey: "donation"
+ 					})
+				} else {
+					this.setState({
+							settingsKey: "profile"
+					})
+                } */
+                switch (window.location.hash.substring(1)) {
+                    case "user":
+                        this.setState({settingsKey: "user"});
+                        break;
+                    case "banks":
+                        this.setState({settingsKey: "banks"});
+                        break;
+                    case "card":
+                        this.setState({settingsKey: "card"});
+                        break;
+                    default:
+                        this.setState({settingsKey: "profile"});
+                        break;
+                }
+ 				console.log(this.state.settingsKey);
     }
 
     cancel() {
@@ -160,6 +190,13 @@ class UserPage extends Component {
         });
     }
 
+		handleSelect(key) {
+            window.location.hash = key;
+			this.setState({
+					settingsKey: key
+			})
+		}
+
     render() {
     	return (
         
@@ -169,9 +206,8 @@ class UserPage extends Component {
                 <Container className="pt-5">
                     <Row className="my-2">
                         <Col lg={8} className="order-lg-2">
-                      
-                            <Tabs defaultActiveKey="profile" transition={false} id="noanim-tab-example">
-                                <Tab eventKey="profile" title="Profile">
+                            <Tabs activeKey={this.state.settingsKey} transition={false} onSelect={this.handleSelect}>
+                                <Tab eventKey="profile" title="Profile" onClick={(e) => { this.settings("profile");}}>
                                     <div className="py-4">
                                         <h3 className="mb-3 purple-text font-weight-bold">{this.state.first} {this.state.last}</h3>
                                         <Row>
@@ -194,9 +230,10 @@ class UserPage extends Component {
                                                 <h5><Badge variant="primary">Top 10% donor</Badge></h5>
                                                 <h5><Badge variant="dark">Top 20% donor</Badge></h5>
                                             </Col>
-                                            
-                                            <Col md={12} className="mt-4 border rounded purple-bg">
-                                            
+
+																						{/*
+																						<Col md={12} className="mt-4 border rounded purple-bg">
+
                                                 <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Latest Sprout Stats</h5>
                                                 <hr />
                                                 <CardGroup className="pl-3 pb-3 text-center">
@@ -226,11 +263,12 @@ class UserPage extends Component {
                                                 </div>
                                                 
                                             </Col>
+																						*/}
                                         </Row>
                                     </div>
                                 </Tab>
-                              
-                                <Tab eventKey="settings" title="User Settings">
+
+                                <Tab eventKey="user" title="User Settings" onClick={(e) => { this.settings("user");}}>
                                     <div className="py-5">
                                             <Row className="form-group">
                                                 <label className="col-lg-3 col-form-label form-control-label">Name</label>
@@ -329,8 +367,10 @@ class UserPage extends Component {
                                             </Row>
                                     </div>
                                 </Tab>
-                                
-                                <Tab eventKey="donation" title="Linked Banks">
+
+																{/*user is a donor*/}
+																{this.state.role == "donor" &&
+                                <Tab eventKey="banks" title="Linked Banks" onClick={(e) => { this.settings("banks");}}>
                                     <Col md={12} className="mt-4 border rounded bg-light">
                                             
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Bank Accounts</h4>
@@ -358,7 +398,11 @@ class UserPage extends Component {
                                     </Col>
 
                                 </Tab>
-                                <Tab eventKey="card" title="Donation Card">
+																}
+
+																{/*user is a donor*/}
+																{this.state.role == "donor" &&
+                                <Tab eventKey="card" title="Donation Card"  onClick={(e) => { this.settings("card");}}>
                                     <Col md={12} className="mt-4 border rounded bg-light">  
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Donation Card</h4>                                            
                                         <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
@@ -375,6 +419,7 @@ class UserPage extends Component {
                                         </div>
                                     </Col>
                                 </Tab>
+																}
                             </Tabs>
                         </Col>
                     

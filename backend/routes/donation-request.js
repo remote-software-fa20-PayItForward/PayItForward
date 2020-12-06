@@ -15,10 +15,10 @@ router.post('/', upload.single('image'), (req, res, next) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({error: 'Error uploading image. Please try again'});
-                } else {                    
+                } else {
                     const newDonation = {
-                        name: req.body.name, 
-                        image: '/images/' + image._id, 
+                        name: req.body.name,
+                        image: '/images/' + image._id,
                         description: req.body.description,
                         category: req.body.category,
                         amount: req.body.amount,
@@ -30,14 +30,14 @@ router.post('/', upload.single('image'), (req, res, next) => {
                             console.log(donationRequest);
                             return res.json();
                         } else {
-                            console.log(err);	
+                            console.log(err);
                             return res.status(500).json({error: 'Error creating donation request object'})
                         }
                     })
                 }
             });
 		} else {
-			console.log('Error finding user in /donation-request');	
+			console.log('Error finding user in /donation-request');
 			return res.status(500).json({error: 'Error finding user to create donation request object'})
 		}
 	});
@@ -68,7 +68,7 @@ router.get('/:id', (req, res, next) => {
         if (donationRequests) {
             return res.json( JSON.parse(JSON.stringify(donationRequests)) );
         } else {
-            return res.status(404).json({error: "The donation requests was not found"});
+            return res.status(404).json({error: "The donation requests were not found"});
         }
     }).catch(() => {
         return res.status(400).json({error: "Invalid user ID"});
@@ -80,9 +80,10 @@ router.post('/request/:request_id', (req, res, next) => {
 		if (donationRequest) {
             donationProgress.triggerDonationProgressCalculaton(donationRequest).then(() => {
                 console.log('calculation has been triggered');
+								DonationRequest.findOne({ _id: donationRequest._id}).then((request) => {
+						        return res.json( JSON.parse(JSON.stringify(request)) );
+						    })
             });
-
-			return res.json();
 		} else {
 			return res.status(400).json({error: "The donation request subscription was unsuccessful"});
 		}
@@ -122,6 +123,26 @@ router.post('/image', upload.single('myFile'), (req, res, next) => {
             return res.json({success: "Uploaded image", id: image._id});
         }
     });
+});
+
+router.post('/cancel/:request_id', (req, res, next) => {
+	DonationRequest.findOneAndUpdate({ _id: req.params.request_id}, {status: "cancelled"}).then((donationRequest) => {
+		if (donationRequest) {
+			DonationRequest.find({ user: req.user._id}).then((donationRequests) => {
+					if (donationRequests) {
+							return res.json( JSON.parse(JSON.stringify(donationRequests)) );
+					} else {
+							return res.status(404).json({error: "The donation requests were not found"});
+					}
+			}).catch(() => {
+					return res.status(400).json({error: "Invalid user ID"});
+			});
+		} else {
+			return res.status(400).json({error: "The donation request subscription was unsuccessful"});
+		}
+	}).catch(() => {
+		return res.status(400).json({error: "Invalid donation request ID"});
+	});
 });
 
 module.exports = router;

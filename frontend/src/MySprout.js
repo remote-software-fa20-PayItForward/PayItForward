@@ -20,7 +20,7 @@ class MySprout extends Component{
         this.state = {
             requests: [],
             empty: false
-		}
+				}
     }
 
 	componentDidMount() {
@@ -28,6 +28,7 @@ class MySprout extends Component{
             response.json().then(body => {
 				console.log(body);
 				if (body.length > 0) {
+					console.log(body);
 					this.setState({
 						empty: false,
 						requests: body
@@ -42,6 +43,21 @@ class MySprout extends Component{
         });
     }
 
+		cancel(id) {
+			fetch(`/donation-request/cancel/${id}`, {
+				method: "POST",
+			 	headers: {
+				'Content-type': 'application/json'
+			 	},
+			}).then((response) => {
+				response.json().then(body => {
+					this.setState({
+						requests: body
+					})
+				})
+    	})
+		}
+
     render() {
         return(
             <div>
@@ -50,71 +66,91 @@ class MySprout extends Component{
 
                 { this.state.empty == false ? (
                     <Row className="justify-content-center m-5">
-                        {this.state.requests.map((request, i) => (
-							<div className="col-6">
-                            <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
-								<Row className="justify-content-center mt-3">
-									{request.status == "active" ?
-										<h2><Badge variant="success">Active</Badge></h2>
-									: request.status == "completed" ?
-										<h2><Badge variant="secondary">Completed</Badge></h2>
-									: <h2><Badge variant="danger">Canceled</Badge></h2>
-									}
-								</Row>
+											<CardColumns>
+	                        {this.state.requests.reverse().map((request, i) => {
+															let donationProgress = (request.amountCollected/request.amount)*100;
+															console.log(donationProgress);
+															if (donationProgress > 100) {
+																	donationProgress = 100;
+															}
+															donationProgress = donationProgress.toFixed(2);
 
-                            <div className="border mt-3 bg-white" >
-                                <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
-                            </div>
+															return (
+	                            <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
+																<Row className="justify-content-center mt-3">
+																	{request.status == "active" ?
+																		<h2><Badge variant="success">Active</Badge></h2>
+																	: request.status == "completed" ?
+																		<h2><Badge variant="secondary">Completed</Badge></h2>
+																	: <h2><Badge variant="danger">Canceled</Badge></h2>
+																	}
+																</Row>
 
-                            <Col md={12}>
-                                <h3 className="my-4 text-center">{request.name}</h3>
-                                <CardGroup className="pl-3 pb-3 text-center">
-                                    <Card className="mr-3 text-dark rounded text-left">
-                                        <Card.Body>
-                                            <p className="lead font-weight-bold purple-text">Sprout Description: </p>
-                                            <p className=""> {request.description} </p>
+		                            <div className="border mt-3 bg-white" >
+		                                <Card.Img variant="top" src={request.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
+		                            </div>
 
-                                            <h4 className="float-left"><Badge variant="primary">#{request.category}</Badge></h4>
+		                            <Col md={12}>
+		                                <h3 className="my-4 text-center">{request.name}</h3>
+		                                <CardGroup className="pl-3 pb-3 text-center">
+		                                    <Card className="mr-3 text-dark rounded text-left">
+		                                        <Card.Body>
+		                                            <p className="lead font-weight-bold purple-text">Sprout Description: </p>
+		                                            <p className=""> {request.description} </p>
 
-                                        </Card.Body>
-                                    </Card>
-                                </CardGroup>
-                            </Col>
+		                                            <h4 className="float-left"><Badge variant="primary">#{request.category}</Badge></h4>
 
-						<Col md={12}>
-							<CardGroup className="pl-3 pb-3 text-center">
-								<Card className="mr-3 text-dark rounded">
-									<Card.Body>
-										<p className="lead font-weight-bold display-4 purple-text"> ${request.amount} </p>
-										<p className="font-weight-bold"> requested sprout amount </p>
-									</Card.Body>
-								</Card>
+		                                        </Card.Body>
+		                                    </Card>
+		                                </CardGroup>
+		                            </Col>
 
-								<Card className="mr-3 text-dark rounded">
-									<Card.Body>
-										<p className="lead font-weight-bold display-4 purple-text"> 8 </p>
-										<p className="font-weight-bold"> planters growing your sprout </p>
-									</Card.Body>
-								</Card>
+																<Col md={12}>
+																	<CardGroup className="pl-3 pb-1 text-center">
+																		<Card className="mr-3 text-dark rounded">
+																			<Card.Body>
+																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amount} </p>
+																				<p className="font-weight-bold"> requested sprout amount </p>
+																			</Card.Body>
+																		</Card>
+																	</CardGroup>
+																</Col>
 
-								<Card className="mr-3 text-dark rounded">
-									<Card.Body>
-										<p className="lead font-weight-bold display-4 purple-text"> $35 </p>
-										<p className="font-weight-bold"> current sprout amount </p>
-									</Card.Body>
-								</Card>
-							</CardGroup>
+																<Col md={12}>
+																	<CardGroup className="pl-3 pb-1 text-center">
+																		<Card className="mr-3 text-dark rounded">
+																			<Card.Body>
+																				<p className="lead font-weight-bold display-4 purple-text"> {request.subscribers.length} </p>
+																				<p className="font-weight-bold"> planters growing your sprout </p>
+																			</Card.Body>
+																		</Card>
+																	</CardGroup>
+																	</Col>
 
-						</Col>
+																	<Col md={12}>
+																		<CardGroup className="pl-3 pb-1 text-center">
+																		<Card className="mr-3 text-dark rounded">
+																			<Card.Body>
+																				<div class="progress">
+																						<div class="progress-bar" role="progressbar" style={{width: `${donationProgress}%`}} aria-valuenow={donationProgress} aria-valuemin="0" aria-valuemax="100"></div>
+																				</div>
+																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amountCollected} </p>
+																				<p className="font-weight-bold"> current sprout amount </p>
+																			</Card.Body>
+																		</Card>
+																		</CardGroup>
+																</Col>
 
-                            <div className="text-center">
-                                <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="warning"><h6>Edit My Sprout</h6></Button></Link>
-                                <br />
-                            </div>
-                        </Card>
-						</div>
-                        ))}
-
+																{request.status == "active" ?
+			                            <div className="text-center">
+			                                <Link to="#"><Button className="font-weight-bold px-3 mb-3" variant="danger" onClick={(e) => {this.cancel(this.state.requests[i]._id)}}><h6>Cancel Sprout</h6></Button></Link>
+			                                <br />
+			                            </div>
+																: <div classname="m-5"></div>
+																}
+	                        		</Card>
+	                        )})}
+											</CardColumns>
                     </Row>
                 ) : (
                     <Row className="justify-content-center">
