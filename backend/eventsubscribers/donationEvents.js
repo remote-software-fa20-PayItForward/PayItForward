@@ -25,7 +25,7 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
         console.log('user: ', user);
         console.log('done: ', donee);
         const paymentIntent = await stripe.paymentIntents.create({
-          amount: userSpecificTotalRoundup.totalRoundup.toFixed(2) *100,
+          amount: Math.round(userSpecificTotalRoundup.totalRoundup.toFixed(2) *100),
           currency: 'usd',
           customer: user.stripeCustomerId,
           payment_method:customer.invoice_settings.default_payment_method,
