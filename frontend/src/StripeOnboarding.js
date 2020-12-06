@@ -32,7 +32,7 @@ class StripeOnboarding extends Component {
     submit(e){
       e.target.setAttribute("disabled", "disabled");
       e.target.textContent = "Opening...";
-        fetch("/onboard-user", {
+        fetch("/stripe/onboard-user", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

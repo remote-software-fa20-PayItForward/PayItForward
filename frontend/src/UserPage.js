@@ -45,7 +45,7 @@ class UserPage extends Component {
         Promise.all([
             fetch('/user', {credentials: 'include'}),
             fetch('/donation-request'),
-            fetch('/linked-bank-accounts', {credentials: 'include'}),
+            fetch('/banks/accounts', {credentials: 'include'}),
             fetch('/stripe/defaultpaymentmethod')
          ]).then(allResponses => {
              allResponses[0].json().then(body => {

@@ -19,7 +19,7 @@ export default withRouter(function AddCardForm(props) {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     window
-      .fetch("/create-setup-intent", {
+      .fetch("/stripe/create-setup-intent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
