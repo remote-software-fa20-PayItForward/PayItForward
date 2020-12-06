@@ -32,6 +32,7 @@ donationEventsEmitter.on('donationAmountLimitReached', async (donationRequest, t
           off_session: true,
           confirm: true,
           application_fee_amount: Math.round((userSpecificTotalRoundup.totalRoundup.toFixed(2)*100) *0.029+30),
+          "receipt_email": user.username,
           transfer_data: {
             destination: donee.stripeAccountId
           },
