@@ -102,7 +102,7 @@ class User extends Component {
 
                                             <Col md={12} className="mt-4 border rounded purple-bg">
 
-                                                <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Latest Sprout Stats</h5>
+                                                <h5 className="mt-3 text-center"><span className="fa fa-clock-o ion-clock float-right" />{this.state.vfirst}'s Latest Sprout Stats</h5>
                                                 <hr />
                                                 <CardGroup className="pl-3 pb-3 text-center">
                                                     <Card className="mr-3 text-dark rounded">
