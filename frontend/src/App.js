@@ -22,6 +22,12 @@ import StripeOnboarding from './StripeOnboarding';
 import SuccessfulOnboard from './SuccessfulOnboard';
 import AddCard from './AddCard';
 import DonationHistory from './DonationHistory'
+import Welcome from './Welcome';
+import WelcomeAccount from './WelcomeAccount';
+import WelcomeBank from './WelcomeBank';
+import WelcomeBankAccounts from './WelcomeBankAccounts';
+import WelcomeCard from './WelcomeCard';
+import WelcomeDonationRequest from './WelcomeDonationRequest';
 
 function App() {
   return (
@@ -49,6 +55,12 @@ function App() {
       <Route exact path="/successful-onboard" component={SuccessfulOnboard} />
       <Route exact path="/add-card" component={AddCard} />
       <Route exact path="/donation-history" component={DonationHistory} />
+      <Route exact path="/welcome" component={Welcome} />
+      <Route exact path="/welcome/account" component={WelcomeAccount} />
+      <Route exact path="/welcome/bank" component={WelcomeBank} />
+      <Route exact path="/welcome/bank/accounts" component={WelcomeBankAccounts} />
+      <Route exact path="/welcome/card" component={WelcomeCard} />
+      <Route exact path="/welcome/donationrequest" component={WelcomeDonationRequest} />
     </Router>
   );
 }

@@ -6,22 +6,14 @@ const session = require('express-session')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const duo_web = require('@duosecurity/duo_web');
-const moment = require('moment');
-const multer = require('multer');
 const User = require( './models/User' );
 const BankItem = require( './models/BankItem' );
-const Image = require( './models/Image' );
 require('dotenv').config();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 const client = require('./plaidclient');
 const donationProgress = require('./services/donationProgress');
-const Transaction = require('./models/Transaction');
 const Agenda = require('agenda');
 const DonationRequest = require('./models/DonationRequest');
-const DonationRecord = require('./models/DonationRecord');
 
 //=========set up app================================
 const app = express();
@@ -148,7 +140,12 @@ app.post('/register', (req, res, next) => {
 					} else {
 						console.log('user', user);
 						console.log('Successfully created user');
-						return res.json({success: 'Successfully created user'});
+						req.logIn(user, function(err) {
+							if (err) {
+							  return res.status(500).json({error: 'Issue with Passport authentication'});
+							}
+							return res.json({success: 'Successfully created user'});
+						});
 					}
 				})
 			}
