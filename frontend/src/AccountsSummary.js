@@ -17,7 +17,7 @@ class AccountsSummary extends Component{
     }
 
     componentDidMount() {
-        fetch('/linked-bank-accounts', {credentials: 'include'}).then((response) => {
+        fetch('/banks/accounts', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
                     const banks = [];

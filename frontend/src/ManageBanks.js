@@ -27,7 +27,7 @@ class ManageBanks extends Component {
     }
 
     obtainPlaidLinkToken = () => {
-        fetch('/obtain-plaid-link-token', {credentials: 'include'}).then((response) => {
+        fetch('/banks/obtain-plaid-link-token', {credentials: 'include'}).then((response) => {
             if (!response.ok && response.status == 401) {
                 this.setState({isLoading: false, hasAuthenticatedUser: false});
                 return;
@@ -42,7 +42,7 @@ class ManageBanks extends Component {
     }
 
     obtainBankList = () => {
-        fetch('/linked-banks', {credentials: 'include'}).then((response) => {
+        fetch('/banks/', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
                     this.setState({bankItems: body.bankItems, hasAuthenticatedUser: true});
@@ -54,7 +54,7 @@ class ManageBanks extends Component {
     }
 
     obtainBankAccounts = () => {
-        fetch('/linked-bank-accounts', {credentials: 'include'}).then((response) => {
+        fetch('/banks/accounts', {credentials: 'include'}).then((response) => {
             if (response.ok) {
                 response.json().then(body => {
                     this.setState({bankAccounts: body.bankAccounts, hasAuthenticatedUser: true});
@@ -73,7 +73,7 @@ class ManageBanks extends Component {
             // pass public_link_token to the backend and obtain access_token and Plaid Item for it
             // (the backeng is going to register the newly linked bank account unless it is already stored to the user's bank account DB)
             this.setState({isLoading: true}, () => {
-                fetch('link-bank', {
+                fetch('/banks/link', {
                     credentials: 'include',
                     method: "POST",
                     headers: {
@@ -197,7 +197,7 @@ class ManageBanks extends Component {
                                 <tr>
                                     <th>Bank Name</th>
                                     <th>Name</th>
-                                    <th>Officaial Name</th>
+                                    <th>Official Name</th>
                                     <th>Type</th>
                                     <th>Subtype</th>
                                 </tr>
