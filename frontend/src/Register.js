@@ -40,7 +40,7 @@ class Register extends Component {
         .then((response) => {
             console.log(response);
             if (response.ok) {
-                this.props.history.push('/login');
+                this.props.history.push('/welcome');
             } else {
                 response.json().then(body => {
                     this.setState({errorMsg: body.error})
