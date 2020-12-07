@@ -37,7 +37,7 @@ class WelcomeDonationRequest extends Component {
                 <p>You have been successfully onboarded. You may now plant a sprout.</p>
                 }
                 {this.state.role == "donor" &&<Link to="/donation-requests"><Button>Choose a Sprout</Button></Link>}
-                {this.state.role == "donee" &&<Link to="/donation-requests"><Button>Plant a Sprout</Button></Link>}
+                {this.state.role == "donee" &&<Link to="/donation-request"><Button>Plant a Sprout</Button></Link>}
                 <Link to="/home"><Button variant="link">Skip</Button></Link>
             </div>
             
