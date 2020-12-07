@@ -2,9 +2,13 @@ import React, { Component } from "react";
 import NavBar from './Navbar'
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class Welcome extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -118,7 +122,7 @@ class Welcome extends Component {
             body: JSON.stringify({selectedBankAccountIds: selectedBankAccountIds})
         }).then((response) => {
             this.setState({isLoading: false});
-            
+
             if (!response.ok && response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
                 return;
@@ -152,44 +156,55 @@ class Welcome extends Component {
         return(
             <div>
                 <NavBar />
-                <h1>Authorized Banks</h1>
-                <p>Select the banks you want to use for round-ups</p>
-                <br />
-                <div className="container">
-                    {this.state.isLoading &&
-                        <p>Loading...</p>
-                    }
+                <Row className="justify-content-center mt-5">
+                  <Col md={8}>
+                  	<CardGroup className="pl-3 pb-3 text-center">
+                  		<Card className="mr-3 text-dark rounded text-left shadow p-3">
+                  			<Card.Body>
+                        <h1 className="purple-text">Authorized Banks</h1>
+                        <hr />
+                        <p className="lead">Select the banks you want to use for round-ups</p>
+                        <br />
+                        <div className="container">
+                            {this.state.isLoading &&
+                                <p>Loading...</p>
+                            }
 
-                    {!this.state.isLoading && this.state.hasAuthenticatedUser && this.state.eligibleBankAccounts != null &&
-                        <div>
-                            <h2>{this.state.bankItem.institutionName} Eligible Bank Accounts</h2>
-                            <table>
-                                <tr>
-                                    <th style={{textAlign: 'center'}}>
-                                        Check All<br />
-                                        <input onChange={this.handleCheckAllBankAccounts} type="checkbox" checked={this.state.allBanksChecked} />
-                                    </th>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Subtype</th>
-                                    <th>Available Balance</th>
-                                </tr>
-                                {this.state.eligibleBankAccounts.map((bankAccount) => 
-                                    <tr>
-                                        <td style={{textAlign: 'center'}}>
-                                            <input key={bankAccount.account_id} onChange={() => this.handleBankAccountCheckbox(bankAccount.account_id) } type="checkbox" checked={bankAccount.isChecked} value={bankAccount.account_id} />
-                                        </td>
-                                        <td>{bankAccount.name}</td>
-                                        <td>{bankAccount.type}</td>
-                                        <td>{bankAccount.subtype}</td>
-                                        <td style={{textAlign: 'right'}}>{bankAccount.balances.available} {bankAccount.balances.iso_currency_code}</td>
-                                    </tr>)}
-                            </table>
-                            <br />
-                            <Link to="#" onClick={this.handleSaveBankAccounts} className="btn btn-primary">Save Selected Bank Accounts</Link><Link to="/home"><Button variant="link">Skip</Button></Link>
+                            {!this.state.isLoading && this.state.hasAuthenticatedUser && this.state.eligibleBankAccounts != null &&
+                                <div>
+                                    <h2>{this.state.bankItem.institutionName} Eligible Bank Accounts</h2>
+                                    <table>
+                                        <tr>
+                                            <th style={{textAlign: 'center'}}>
+                                                Check All<br />
+                                                <input onChange={this.handleCheckAllBankAccounts} type="checkbox" checked={this.state.allBanksChecked} />
+                                            </th>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Subtype</th>
+                                            <th>Available Balance</th>
+                                        </tr>
+                                        {this.state.eligibleBankAccounts.map((bankAccount) =>
+                                            <tr>
+                                                <td style={{textAlign: 'center'}}>
+                                                    <input key={bankAccount.account_id} onChange={() => this.handleBankAccountCheckbox(bankAccount.account_id) } type="checkbox" checked={bankAccount.isChecked} value={bankAccount.account_id} />
+                                                </td>
+                                                <td>{bankAccount.name}</td>
+                                                <td>{bankAccount.type}</td>
+                                                <td>{bankAccount.subtype}</td>
+                                                <td style={{textAlign: 'right'}}>{bankAccount.balances.available} {bankAccount.balances.iso_currency_code}</td>
+                                            </tr>)}
+                                    </table>
+                                    <br />
+                                    <Link to="#" onClick={this.handleSaveBankAccounts} className="btn btn-primary">Save Selected Bank Accounts</Link><Link to="/home"><Button variant="link">Skip</Button></Link>
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
+                      </Card.Body>
+                    </Card>
+                  </CardGroup>
+                </Col>
+              </Row>
             </div>
         )
     }

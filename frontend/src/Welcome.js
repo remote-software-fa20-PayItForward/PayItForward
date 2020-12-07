@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import NavBar from './Navbar'
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
+import Row from 'react-bootstrap/Row';
 
 class Welcome extends Component {
     constructor(props) {
@@ -35,9 +38,21 @@ class Welcome extends Component {
         return(
             <div>
                 <NavBar />
-                <h1>Welcome to Pay it Forward!</h1>
-                <p>You will be guided through the steps to set up your Pay It Forward account</p>
-                <Link to={this.state.link}><Button>Next</Button></Link><Link to="/home"><Button variant="link">Skip</Button></Link>
+
+                <Row className="justify-content-center mt-5">
+                	<CardGroup className="pl-3 pb-3 text-center">
+                		<Card className="mr-3 text-dark rounded text-left shadow p-3">
+                			<Card.Body>
+                        <h1 className="purple-text">Welcome to Pay It Forward!</h1>
+                        <hr />
+                        <p className="lead">You will be guided through the steps to set up your Pay It Forward account.</p>
+                        <div className="text-center">
+                          <Link to={this.state.link}><Button>Next</Button></Link><Link to="/home"><Button variant="link">Skip</Button></Link>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </CardGroup>
+                </Row>
             </div>
         )
     }

@@ -70,12 +70,14 @@ class Welcome extends Component {
                 	<CardGroup className="pl-3 pb-3 text-center">
                 		<Card className="mr-3 text-dark rounded text-left shadow p-3">
                 			<Card.Body>
+                        <h1 className="purple-text">Connect A Bank Account</h1>
+                        <hr />
                 				<p className="lead">You need to connect your bank account in order to receive donations. <br />
                 					Click on the button below to connect your account.
                 				</p>
-                				<div style={{textAlign: "center"}}>
-                				<Button onClick={(e)=>{this.submit(e);}}>Onboard</Button>
-                                <Link to="/home"><Button variant="link">Skip</Button></Link>
+                				<div className="text-center">
+                				    <Button onClick={(e)=>{this.submit(e);}}>Onboard</Button>
+                            <Link to="/home"><Button variant="link">Skip</Button></Link>
                 				</div>
                 			</Card.Body>
                 	    </Card>
