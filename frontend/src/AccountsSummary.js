@@ -103,7 +103,7 @@ class AccountsSummary extends Component{
                                                 <CardGroup className="pl-3 pb-3 text-center">
                                                     <Card className="mr-3 text-dark rounded">
                                                         <Card.Body>
-                                                            <h1 className="font-weight-bold purple-text">${currentMonthTransactions.totalRoundup} </h1>
+                                                            <h1 className="font-weight-bold purple-text">${parseFloat(currentMonthTransactions.totalRoundup).toFixed(2)} </h1>
                                                             <h4 className="font-weight-bold"> current month round up </h4>
                                                         </Card.Body>
                                                     </Card>

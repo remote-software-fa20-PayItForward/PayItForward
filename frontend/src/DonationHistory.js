@@ -93,7 +93,10 @@ class DonationHistory extends Component{
     }, {
       dataField: 'donatedAmount',
       text: 'Donated Amount',
-      sort: true
+      sort: true,
+      formatter: (value, row) => (
+        <span>${value.toFixed(2)}</span>
+      )
     },  {
       dataField: 'status',
       text: 'Status',

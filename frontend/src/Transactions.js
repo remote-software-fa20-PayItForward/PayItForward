@@ -116,11 +116,17 @@ class Transactions extends Component{
       },  {
         dataField: 'amount',
         text: 'Amount',
-        sort: true
+        sort: true,
+        formatter: (value, row) => (
+          <span>${parseFloat(value).toFixed(2)}</span>
+        )
       },  {
         dataField: 'roundup',
         text: 'Round Up',
-        sort: true
+        sort: true,
+        formatter: (value, row) => (
+          <span>${parseFloat(value).toFixed(2)}</span>
+        )
       }];
 
         let { isLoading, transactions, transactionsScope, hasAuthenticatedUser } = this.state;
