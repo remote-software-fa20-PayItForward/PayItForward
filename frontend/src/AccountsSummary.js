@@ -1,7 +1,9 @@
 import './AccountsSummary.css';
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
-import NavBar from './Navbar'
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 
 class AccountsSummary extends Component{
     constructor(props) {
@@ -56,10 +58,8 @@ class AccountsSummary extends Component{
     render() {
         let { isLoading, bankAccounts, banks, lastMonthTransactions, currentMonthTransactions, hasAuthenticatedUser } = this.state;
         return(
-        
+
             <div>
-            <NavBar />
-            <br />
                 {isLoading &&
                     <div className="d-flex justify-content-center">
                         <div className="spinner-border" role="status">
@@ -69,10 +69,9 @@ class AccountsSummary extends Component{
                 }
 
                 {!isLoading &&
-                <div className="container">
-                    <h1>Accounts Summary</h1>
+                <div>
 
-                    {!hasAuthenticatedUser && 
+                    {!hasAuthenticatedUser &&
                         <p>Please, <Link to="/login">Log In</Link> to start managing your bank accounts.</p>
                     }
 
@@ -82,17 +81,8 @@ class AccountsSummary extends Component{
 
                     {hasAuthenticatedUser && bankAccounts && bankAccounts.length > 0 &&
                         <>
-                        <div className="row">
-                            <div>
-                                <p>You have connected {bankAccounts.length} bank accounts from {banks.length} banks.</p>
-                                <p>You can manage the connected bank accounts at <Link to="/manage-banks">Manage Bank Accounts</Link> page.</p>
-                            </div>
-                        </div>
-                        <div className="row">
 
-                            <div className="card text-center col-12">
-                                <div className="card-body">
-                                    <h5 className="card-title">Current Month Roundup</h5>
+
                                     {currentMonthTransactions == null &&
                                     <>
                                     <div className="d-flex justify-content-center pt-3 pb-1">
@@ -100,38 +90,48 @@ class AccountsSummary extends Component{
                                             <span className="sr-only">Loading...</span>
                                         </div>
                                     </div>
-                                    <p className="pb-4">Calculating...</p>
+                                    Calculating...
                                     </>
                                     }
                                     {currentMonthTransactions != null &&
                                     <>
-                                    <p className="display-3">${currentMonthTransactions.totalRoundup}</p>
-                                    <table className="stats">
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Number Of Debit Transactions:</td>
-                                            <td style={{textAlign: 'right'}}>{currentMonthTransactions.numberOfTransactions}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Total Amount of Debit Transactions:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.transactionsTotalAmount}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Average Debit Transaction:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageTransaction}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{textAlign: 'left'}}>Average Round Up:</td>
-                                            <td style={{textAlign: 'right'}}>$ {currentMonthTransactions.averageRoundUp}</td>
-                                        </tr>
-                                    </table>
+
+                                    <Col md={12} className="mt-4 border rounded purple-bg">
+
+                                                <h2 className="my-3 text-center">My Account Stats</h2>
+
+                                                <CardGroup className="pl-3 pb-3 text-center">
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
+                                                            <h1 className="font-weight-bold purple-text">${currentMonthTransactions.totalRoundup} </h1>
+                                                            <h4 className="font-weight-bold"> current month round up </h4>
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
+                                                            <h1 className="font-weight-bold purple-text"> {currentMonthTransactions.numberOfTransactions} </h1>
+                                                            <h4 className="font-weight-bold"> debit transactions </h4>
+                                                        </Card.Body>
+                                                    </Card>
+                                                    <Card className="mr-3 text-dark rounded">
+                                                        <Card.Body>
+                                                            <h1 className="font-weight-bold purple-text"> ${parseFloat(currentMonthTransactions.averageRoundUp).toFixed(2)} </h1>
+                                                            <h4 className="font-weight-bold"> average round up </h4>
+                                                        </Card.Body>
+                                                    </Card>
+                                                </CardGroup>
+
+                                                <div className="text-center pb-3">
+                                                    <Link to="/transactions/current-month" className="btn btn-primary">View Transactions</Link>
+                                                    <br />
+                                                </div>
+
+                                            </Col>
                                     </>
                                     }
-                                    <Link to="/transactions/current-month" className="btn btn-primary">View Transactions</Link>
-                                </div>
-                            </div>
 
-                            
-                        </div>
+
+
                         </>
                     }
                 </div>
