@@ -232,7 +232,10 @@ class UserPage extends Component {
                                                 <h5><Badge variant="dark">Top 20% donor</Badge></h5>
                                             </Col>
 
+																						{/*user is a donor*/}
+																						{this.state.role == "donor" &&
 																						<AccountsSummary />
+																						}
                                         </Row>
                                     </div>
                                 </Tab>

@@ -109,7 +109,7 @@ class MySprout extends Component{
 																	<CardGroup className="pl-3 pb-1 text-center">
 																		<Card className="mr-3 text-dark rounded">
 																			<Card.Body>
-																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amount} </p>
+																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amount.toFixed(2)} </p>
 																				<p className="font-weight-bold"> requested sprout amount </p>
 																			</Card.Body>
 																		</Card>
@@ -134,7 +134,7 @@ class MySprout extends Component{
 																				<div class="progress">
 																						<div class="progress-bar" role="progressbar" style={{width: `${donationProgress}%`}} aria-valuenow={donationProgress} aria-valuemin="0" aria-valuemax="100"></div>
 																				</div>
-																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amountCollected} </p>
+																				<p className="lead font-weight-bold display-4 purple-text"> ${request.amountCollected.toFixed(2)} </p>
 																				<p className="font-weight-bold"> current sprout amount </p>
 																			</Card.Body>
 																		</Card>

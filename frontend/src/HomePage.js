@@ -84,7 +84,7 @@ class HomePage extends Component{
                             this.setState({
                               finishedSprouts: finishedSprouts,
                               ongoingSprouts: ongoingSprouts,
-                              latestAmount: body[body.length-1].donatedAmount
+                              latestAmount: (body[body.length-1].donatedAmount).toFixed(2)
                             })
                           }
 
@@ -109,7 +109,7 @@ class HomePage extends Component{
                           } else {
                             this.setState({
                               ongoingSprouts: ongoingSprouts,
-                              latestAmount: ongoingSprouts[ongoingSprouts.length-1].amountCollected
+                              latestAmount: (ongoingSprouts[ongoingSprouts.length-1].amountCollected).toFixed(2)
                             })
                           }
                         });
