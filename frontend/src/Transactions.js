@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
 import FileSaver from 'file-saver'
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 
 class Transactions extends Component{
     constructor(props) {
@@ -19,7 +24,7 @@ class Transactions extends Component{
     componentDidMount() {
         console.log('props', this.props);
 
-        console.log(this.props.match.params.month);       
+        console.log(this.props.match.params.month);
 
         fetch('/transactions/all-transactions', {credentials: 'include'}).then((response) => {
             if (response.ok) {
@@ -65,33 +70,108 @@ class Transactions extends Component{
     }
 
     render() {
+      const pagination = paginationFactory({
+        page: 1,
+        alwaysShowAllBtns: true,
+        showTotal: true,
+        withFirstAndLast: false,
+        sizePerPageRenderer: ({ options, currSizePerPage, onSizePerPageChange }) => (
+          <div className="dataTables_length" id="datatable-basic_length" style={{width: '50%'}}>
+
+                <select
+                  name="datatable-basic_length"
+                  aria-controls="datatable-basic"
+                  className="form-control form-control-sm"
+                  onChange={e => onSizePerPageChange(e.target.value)}
+                >
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+
+          </div>
+        )
+      });
+
+      const columns = [{
+        dataField: 'bankName',
+        text: 'Bank Name',
+        sort: true
+      }, {
+        dataField: 'name',
+        text: 'Transaction Name',
+        sort: true
+      }, {
+        dataField: 'merchant_name',
+        text: 'Merchant Name',
+        sort: true
+      },  {
+        dataField: 'isMarkedForDeletion',
+        text: 'Active',
+        sort: true,
+        formatter: (value, row) => (
+          <span>{value ? <span>YES</span> : <span>NO</span>}</span>
+        )
+      },  {
+        dataField: 'amount',
+        text: 'Amount',
+        sort: true
+      },  {
+        dataField: 'roundup',
+        text: 'Round Up',
+        sort: true
+      }];
+
         let { isLoading, transactions, transactionsScope, hasAuthenticatedUser } = this.state;
+        console.log('hello: ', transactions);
         return(
-        
+
             <div>
-                
+
                 <NavBar />
 
                 <br />
 
-                <div className="container">
+                <div className="">
                     {isLoading &&
                         <p>Loading...</p>
                     }
 
-                    
-                    
-                    
-                    {!isLoading && !hasAuthenticatedUser && 
+
+
+
+                    {!isLoading && !hasAuthenticatedUser &&
                         <p>Please, <Link to="/login">Log In</Link> to start managing your bank accounts.</p>
                     }
 
 
                     {!isLoading && hasAuthenticatedUser && transactions != null &&
                         <div>
-                            <h2>{transactionsScope} Debit Transactions</h2>
-                            <Link to="#" onClick={this.csvDownload}>Download CSV</Link>
-                            <table>
+
+                          <Row className="justify-content-center mt-3 mb-5">
+
+                            <div className="row py-5">
+                              <div className="col-lg-10 mx-auto">
+                                <div className="card rounded shadow border-0">
+                                  <div className="card-body p-5 bg-white rounded">
+
+                                    <h1 className="purple-text text-center font-weight-bold mb-3">{transactionsScope} Debit Transactions</h1>
+
+                                    <Row className="justify-content-center mb-3">
+                                      <Button className="text-center" onClick={this.csvDownload}>Download CSV</Button>
+                                    </Row>
+
+                                    <BootstrapTable bootstrap4 keyField='id' data={ transactions.transactions } columns={ columns } pagination={ pagination } />
+
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            </Row>
+
+                            {/*}<table>
                                 <tr>
                                     <th>Bank Name</th>
                                     <th>Name</th>
@@ -102,7 +182,7 @@ class Transactions extends Component{
                                     <th>Amount</th>
                                     <th>Round Up Amount</th>
                                 </tr>
-                                {transactions.transactions.map((transaction) => 
+                                {transactions.transactions.map((transaction) =>
                                     <tr>
                                         <td>{transaction.bankName}</td>
                                         <td>{transaction.name}</td>
@@ -113,7 +193,7 @@ class Transactions extends Component{
                                         <td style={{textAlign: 'right'}}>{transaction.amount}&nbsp;{transaction.iso_currency_code}</td>
                                         <td style={{textAlign: 'right'}}>{transaction.roundup}&nbsp;{transaction.iso_currency_code}</td>
                                     </tr>)}
-                            </table>
+                            </table>*/}
                         </div>
                     }
                 </div>
