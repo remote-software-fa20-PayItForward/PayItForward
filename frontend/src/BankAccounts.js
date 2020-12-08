@@ -119,7 +119,7 @@ class BankAccounts extends Component{
             }
 
             response.json().then(body => {
-                this.props.history.push('/UserPage');
+                this.props.history.push('/manage-banks');
             });
         });
     }
