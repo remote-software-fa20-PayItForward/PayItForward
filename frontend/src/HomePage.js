@@ -74,7 +74,7 @@ class HomePage extends Component{
                               ongoingSprouts.push(body[i]);
                             }
                           }
-                          if(ongoingSprouts.length == 0) {
+                          if(body.length == 0) {
                             this.setState({
                               finishedSprouts: finishedSprouts,
                               ongoingSprouts: ongoingSprouts,
@@ -84,7 +84,7 @@ class HomePage extends Component{
                             this.setState({
                               finishedSprouts: finishedSprouts,
                               ongoingSprouts: ongoingSprouts,
-                              latestAmount: ongoingSprouts[ongoingSprouts.length-1].donatedAmount
+                              latestAmount: body[body.length-1].donatedAmount
                             })
                           }
 
@@ -155,7 +155,7 @@ class HomePage extends Component{
                           <img src="/sprout.png" style={{width: "50%"}}/>
                       </div>
                       <div class="col-8 purple-bg p-5">
-                        <h2 className="font-weight-bold">
+                          <h2 className="font-weight-bold">
                               Hi {this.state.firstname},
                               <br />
                               you've last helped a sprout grow by ${this.state.latestAmount}.

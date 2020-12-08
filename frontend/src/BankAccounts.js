@@ -94,7 +94,7 @@ class BankAccounts extends Component{
             body: JSON.stringify({selectedBankAccountIds: selectedBankAccountIds})
         }).then((response) => {
             this.setState({isLoading: false});
-            
+
             if (!response.ok && response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
                 return;
@@ -119,7 +119,7 @@ class BankAccounts extends Component{
             }
 
             response.json().then(body => {
-                this.props.history.push('/accounts-summary');
+                this.props.history.push('/manage-banks');
             });
         });
     }
@@ -127,9 +127,9 @@ class BankAccounts extends Component{
     render() {
         let { isLoading, bankItem, eligibleBankAccounts, bankAccounts, allBanksChecked, hasAuthenticatedUser } = this.state;
         return(
-        
+
             <div>
-                
+
                 <NavBar />
 
                 <br />
@@ -139,10 +139,10 @@ class BankAccounts extends Component{
                         <p>Loading...</p>
                     }
 
-                    
-                    
-                    
-                    {!isLoading && !hasAuthenticatedUser && 
+
+
+
+                    {!isLoading && !hasAuthenticatedUser &&
                         <p>Please, <Link to="/login">Log In</Link> to start managing your bank accounts.</p>
                     }
 
@@ -161,7 +161,7 @@ class BankAccounts extends Component{
                                     <th>Subtype</th>
                                     <th>Available Balance</th>
                                 </tr>
-                                {eligibleBankAccounts.map((bankAccount) => 
+                                {eligibleBankAccounts.map((bankAccount) =>
                                     <tr>
                                         <td style={{textAlign: 'center'}}>
                                             <input key={bankAccount.account_id} onChange={() => this.handleBankAccountCheckbox(bankAccount.account_id) } type="checkbox" checked={bankAccount.isChecked} value={bankAccount.account_id} />
@@ -187,7 +187,7 @@ class BankAccounts extends Component{
                                     <th>Subtype</th>
                                     <th>Available Balance</th>
                                 </tr>
-                                {bankAccounts.map((bankAccount) => 
+                                {bankAccounts.map((bankAccount) =>
                                     <tr>
                                         <td>{bankAccount.name}</td>
                                         <td>{bankAccount.type}</td>
