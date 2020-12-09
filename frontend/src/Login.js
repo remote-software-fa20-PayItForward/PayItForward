@@ -44,7 +44,7 @@ class Login extends Component {
                             state: {sig_response: body.mfa}
                         });
                     } else {
-                        var returnUrl = new URLSearchParams(document.location.search.substring(1)).get("returnurl");
+                        var returnUrl = new URLSearchParams(document.location.search.substring(1)).get("returnUrl");
                         if (returnUrl) {
                             this.props.history.push(decodeURIComponent(returnUrl));
                         } else {
