@@ -30,6 +30,7 @@ class ManageBanks extends Component {
         fetch('/banks/obtain-plaid-link-token', {credentials: 'include'}).then((response) => {
             if (!response.ok && response.status == 401) {
                 this.setState({isLoading: false, hasAuthenticatedUser: false});
+                this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
                 return;
             }
 

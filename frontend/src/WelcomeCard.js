@@ -20,7 +20,7 @@ class WelcomeCard extends Component {
         fetch('/user').then((response) => {
             response.json().then((body) => {
                 if (!body.username) {
-                    this.props.history.push('/login');
+                    this.props.history.push('/register');
                 }
             })
         })

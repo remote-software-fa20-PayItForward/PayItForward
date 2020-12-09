@@ -25,7 +25,7 @@ class ManageCards extends Component {
         });
         fetch('/stripe/paymentmethods').then((response) => {
             if (!response.ok && response.status == 401) {
-                this.props.history.push("/login");
+                this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
                 return;
             }
             response.json().then(body => {

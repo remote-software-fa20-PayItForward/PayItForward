@@ -29,6 +29,7 @@ class BankAccounts extends Component{
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
+                this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
             }
 
             if (!response.ok && response.status == 409) {

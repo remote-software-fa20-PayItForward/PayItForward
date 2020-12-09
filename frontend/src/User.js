@@ -40,7 +40,7 @@ class User extends Component {
          ]).then(allResponses => {
              allResponses[0].json().then(body => {
                  if (!body.username) {
-                     this.props.history.push('/login');
+                    this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
                  }
                  this.setState({
                      username: body.username,

@@ -26,7 +26,7 @@ class DonationHistory extends Component{
       if (response.ok) {
         response.json().then(body => {
             if (!body.username) {
-              this.props.history.push('/login');
+              this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
             } else {
               this.setState({
                 _id: body._id
