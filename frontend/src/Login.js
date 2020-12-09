@@ -44,7 +44,12 @@ class Login extends Component {
                             state: {sig_response: body.mfa}
                         });
                     } else {
-                        this.props.history.push('/home');
+                        var returnUrl = new URLSearchParams(document.location.search.substring(1)).get("returnurl");
+                        if (returnUrl) {
+                            this.props.history.push(decodeURIComponent(returnUrl));
+                        } else {
+                            this.props.history.push('/home');
+                        }
                     }
                 });
             } else {
