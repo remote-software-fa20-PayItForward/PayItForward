@@ -12,6 +12,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import Modal from 'react-bootstrap/Modal';
 import Badge from 'react-bootstrap/Badge';
 import CardGroup from 'react-bootstrap/CardGroup';
+import Alert from 'react-bootstrap/Alert';
 
 const stripePromise = loadStripe('pk_test_51HhIVhKJyyCVsqcoeOjgBymqqNJRf5R1tt8U5D0Ksu0AT3lyHSrkN55DHPjAm3rN2h1xHPtq1qVwUSJFbS8RF3tU00YKHhsdI9');
 
@@ -301,9 +302,9 @@ class HomePage extends Component{
 
                 {/*user is a donee*/}
                 {this.state.alerted &&
-                <div class="alert alert-success" role="alert">
+                <Alert variant="success" role="alert">
                   <h4>Congratulations! Your sprout has reached its goal amount - click <a href="#" onClick={(e) => {this.setShow(true)}}>here</a> to view it.</h4>
-                </div>
+                </Alert>
                 }
                 {!isLoading && hasAuthenticatedUser == true && this.state.role == "donee" &&
 
