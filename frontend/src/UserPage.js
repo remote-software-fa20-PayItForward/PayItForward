@@ -350,7 +350,7 @@ class UserPage extends Component {
                                         {this.state.bankAccounts.map(bankAccount => (
                                             <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
                                                         <Card.Body>
-                                                            <h4 className="lead font-weight-bold">{bankAccount.bankName} {bankAccount.name}</h4>
+                                                            <h4 className="lead font-weight-bold">{bankAccount.bankName} {bankAccount.name} ******{bankAccount.mask}</h4>
                                                             <h5 className="font-weight-bold"> {bankAccount.official_name} </h5>
                                                         </Card.Body>
                                             </Card>
@@ -364,7 +364,7 @@ class UserPage extends Component {
                                         </Card>
                                          */}
                                         <div className="text-center">
-                                                    <Link to="/manage-banks"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
+                                                    <Link to="/manage-banks"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>Manage Banks</h6></Button></Link>
                                                     <br />
                                                 </div>
                                     </Col>
@@ -377,16 +377,16 @@ class UserPage extends Component {
                                 <Tab eventKey="card" title="Donation Card">
                                     <Col md={12} className="mt-4 border rounded bg-light">
                                         <h4 className="mt-4 text-center"><span className="fa fa-clock-o ion-clock float-right" />My Donation Card</h4>
+                                        {this.state.paymentMethod &&
                                         <Card className="mr-3 shadow p-3 mb-3 purple-bg rounded">
-                                            {this.state.paymentMethod &&
                                             <Card.Body>
-                                                <h4 className="lead font-weight-bold"> {this.state.paymentMethod.brand} {this.state.paymentMethod.funding} </h4>
-                                                <h5 className="font-weight-bold"> **** {this.state.paymentMethod.last4} </h5>
+                                                <h4 className="lead font-weight-bold"> {this.state.paymentMethod.brand} {this.state.paymentMethod.funding}  **** {this.state.paymentMethod.last4} </h4>
+                                                <h5 className="font-weight-bold">Expires {this.state.paymentMethod.exp_month}/{this.state.paymentMethod.exp_year}</h5>
                                             </Card.Body>
-                                            }
                                         </Card>
+                                        }
                                         <div className="text-center">
-                                            <Link to="/manage-cards"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>+ Use Another Card</h6></Button></Link>
+                                            <Link to="/manage-cards"><Button className="font-weight-bold px-3 mb-3 btn btn-purple"><h6>Manage Cards</h6></Button></Link>
                                             <br />
                                         </div>
                                     </Col>

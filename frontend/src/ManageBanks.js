@@ -196,6 +196,7 @@ class ManageBanks extends Component {
                             <table>
                                 <tr>
                                     <th>Bank Name</th>
+                                    <th>Account Number</th>
                                     <th>Name</th>
                                     <th>Official Name</th>
                                     <th>Type</th>
@@ -205,6 +206,7 @@ class ManageBanks extends Component {
                                         return (
                                         <tr>
                                             <td>{bankAccount.bankName}</td>
+                                            <td>******{bankAccount.mask}</td>
                                             <td>{bankAccount.name}</td>
                                             <td>{bankAccount.official_name}</td>
                                             <td>{bankAccount.type}</td>

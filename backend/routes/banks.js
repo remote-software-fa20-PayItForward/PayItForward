@@ -36,6 +36,7 @@ router.get('/accounts', async (req, res, next) => {
 					bankId: bankItem._id,
 					bankName: bankItem.institutionName,
 					account_id: bankAccount.account_id,
+					mask: bankAccount.mask,
 					name: bankAccount.name,
 					official_name: bankAccount.official_name,
 					type: bankAccount.type,
@@ -162,6 +163,7 @@ router.post('/:bankId/link-bank-accounts', async (req, res, next) => {
 				if (req.body.selectedBankAccountIds.includes(bankAccount.account_id)) {
 					bank_accounts_to_persist.push({
 						account_id: bankAccount.account_id,
+						mask: bankAccount.mask,
 						name: bankAccount.name,
 						official_name: bankAccount.official_name,
 						type: bankAccount.type,
