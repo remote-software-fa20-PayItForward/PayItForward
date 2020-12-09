@@ -29,6 +29,7 @@ class BankAccounts extends Component{
                 });
             } else if (response.status == 401) {
                 this.setState({hasAuthenticatedUser: false});
+                this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
             }
 
             if (!response.ok && response.status == 409) {
@@ -156,6 +157,7 @@ class BankAccounts extends Component{
                                         Check All<br />
                                         <input onChange={this.handleCheckAllBankAccounts} type="checkbox" checked={allBanksChecked} />
                                     </th>
+                                    <th>Account Number</th>
                                     <th>Name</th>
                                     <th>Type</th>
                                     <th>Subtype</th>
@@ -166,6 +168,7 @@ class BankAccounts extends Component{
                                         <td style={{textAlign: 'center'}}>
                                             <input key={bankAccount.account_id} onChange={() => this.handleBankAccountCheckbox(bankAccount.account_id) } type="checkbox" checked={bankAccount.isChecked} value={bankAccount.account_id} />
                                         </td>
+                                        <td>******{bankAccount.mask}</td>
                                         <td>{bankAccount.name}</td>
                                         <td>{bankAccount.type}</td>
                                         <td>{bankAccount.subtype}</td>
@@ -182,6 +185,7 @@ class BankAccounts extends Component{
                             <h2>All {bankItem.institutionName} Bank Accounts</h2>
                             <table>
                                 <tr>
+                                    <th>Account Number</th>
                                     <th>Name</th>
                                     <th>Type</th>
                                     <th>Subtype</th>
@@ -189,6 +193,7 @@ class BankAccounts extends Component{
                                 </tr>
                                 {bankAccounts.map((bankAccount) =>
                                     <tr>
+                                        <td>******{bankAccount.mask}</td>
                                         <td>{bankAccount.name}</td>
                                         <td>{bankAccount.type}</td>
                                         <td>{bankAccount.subtype}</td>

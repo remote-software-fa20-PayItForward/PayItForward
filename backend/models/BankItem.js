@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const BankAccountSchema = new mongoose.Schema({
 	account_id: {type: String, required: true},
+	mask: {type: String},
 	name: {type: String, required: true},
 	official_name: {type: String, required: true},
 	type: {type: String, required: true},

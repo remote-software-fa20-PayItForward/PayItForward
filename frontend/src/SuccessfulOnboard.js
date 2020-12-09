@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Navbar from 'react-bootstrap/Navbar';
+import NavBar from './Navbar'
 import { Link } from 'react-router-dom';
 class SuccessfulOnboard extends Component {
 
@@ -12,7 +12,7 @@ class SuccessfulOnboard extends Component {
         fetch('/user').then((response) => {
 			response.json().then((body) => {
 				if (!body.username) {
-					this.props.history.push('/login');
+                    this.props.history.push('/login');
 				}
 			})
 		})
@@ -21,9 +21,7 @@ class SuccessfulOnboard extends Component {
     render() {
         return (
             <div>
-                <Navbar bg="dark" variant="dark">
-                    <Navbar.Brand onClick={(e) => {this.props.history.push('/')}} href="javascript:void(0)">Pay it Forward</Navbar.Brand>
-                </Navbar>
+               <NavBar />
                <h1>Successfully Onboarded!</h1>
                <Link to="/">Go to Homepage</Link>
             </div>

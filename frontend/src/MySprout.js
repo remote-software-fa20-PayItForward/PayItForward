@@ -24,6 +24,13 @@ class MySprout extends Component{
     }
 
 	componentDidMount() {
+		fetch('/user').then((response) => {
+			response.json().then((body) => {
+			  	if (!body.username) {
+					this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
+			  	}
+			})
+		})
         fetch('/donation-request/:id').then((response) => {
             response.json().then(body => {
 				console.log(body);

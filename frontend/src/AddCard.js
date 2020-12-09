@@ -15,6 +15,16 @@ class AddCard extends Component {
         }
     }
 
+    componentDidMount() {
+        fetch('/user').then((response) => {
+            response.json().then((body) => {
+                if (!body.username) {
+                    this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
+                }
+            })
+        })
+    }
+
     render() {
         return (
             <div>

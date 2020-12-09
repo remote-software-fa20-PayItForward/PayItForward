@@ -33,7 +33,7 @@ class Requests extends Component{
         fetch('/user').then((response) => {
             response.json().then(body => {
                 if (!body.username) {
-                    this.props.history.push('/login');
+                    this.props.history.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
                 } else {
                     this.setState({
 						                _id: body._id
