@@ -92,6 +92,18 @@ router.post('/request/:request_id', (req, res, next) => {
 	});
 });
 
+router.post('/alerted/:request_id', (req, res, next) => {
+	DonationRequest.findOneAndUpdate({ _id: req.params.request_id}, {alerted: true}).then((donationRequest) => {
+		if (donationRequest) {
+				return res.json( JSON.parse(JSON.stringify(donationRequest)) );
+		} else {
+			return res.status(400).json({error: "The donation request alert update was unsuccessful"});
+		}
+	}).catch(() => {
+		return res.status(400).json({error: "Invalid donation request ID"});
+	});
+});
+
 router.get('/category/:category', (req, res, next) => {
 	DonationRequest.find( {category: req.params.category} )
 	.populate('user' , '-passwordHash -mfaEnabled')

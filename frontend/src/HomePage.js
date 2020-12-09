@@ -9,6 +9,9 @@ import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import NavBar from './Navbar'
 import { loadStripe } from '@stripe/stripe-js';
+import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge';
+import CardGroup from 'react-bootstrap/CardGroup';
 
 const stripePromise = loadStripe('pk_test_51HhIVhKJyyCVsqcoeOjgBymqqNJRf5R1tt8U5D0Ksu0AT3lyHSrkN55DHPjAm3rN2h1xHPtq1qVwUSJFbS8RF3tU00YKHhsdI9');
 
@@ -25,7 +28,9 @@ class HomePage extends Component{
             role: "",
             finishedSprouts: [],
             ongoingSprouts: [],
-            latestAmount: 0
+            latestAmount: 0,
+            setShow: false,
+            alerted: null
         }
         this.triggerPlaidLinkOpen = this.triggerPlaidLinkOpen.bind(this);
     }
@@ -99,6 +104,12 @@ class HomePage extends Component{
                   				for (let i = 0; i < body.length; i++) {
                             if (body[i].status == "active") {
                               ongoingSprouts.push(body[i]);
+                            } else if (body[i].status == "completed" && body[i].alerted == false) {
+                              //hasn't been alerted yet about completed donation request
+                              this.setState({
+                                alerted: body[i]._id
+                              })
+                              console.log(this.state.alerted);
                             }
                           }
                           if(ongoingSprouts.length == 0) {
@@ -134,9 +145,36 @@ class HomePage extends Component{
       */}
     }
 
+    setShow(show) {
+      //set donation request alerted to true
+      if (show == true) {
+        fetch(`/donation-request/alerted/${this.state.alerted}`, {
+          method: "POST",
+          headers: {
+            'Content-type': 'application/json'
+          },
+        }).then((response) => {
+          response.json().then(body => {
+            console.log(body);
+            this.setState({
+              completed: body
+            })
+          });
+        });
+      }
+
+      //show completed donation request
+      this.setState({
+        setShow: show,
+        alerted: null
+      })
+    }
+
 
     render() {
         let { isLoading, bankItems, hasAuthenticatedUser } = this.state;
+        const handleClose = () => this.setShow(false);
+        const handleShow = () => this.setShow(true);
         return(
 
             <div className="bg-light" >
@@ -145,6 +183,79 @@ class HomePage extends Component{
                 {isLoading &&
                   <p>Loading...</p>
                 }
+
+                {this.state.completed &&
+                <Modal show={this.state.setShow} onHide={handleClose} className="mt-5 ">
+                  <Modal.Header closeButton className="border-0"></Modal.Header>
+                  <Modal.Body>
+                  <Card className="mt-3 shadow-lg purple-bg" style={{width: '100%'}}>
+                    <Row className="justify-content-center mt-3">
+                      <h2><Badge variant="secondary">Completed</Badge></h2>
+                    </Row>
+
+                    <div className="border mt-3 bg-white" >
+                        <Card.Img variant="top" src={this.state.completed.image} alt="Card image cap" style={{width: '50%', marginLeft: '25%'}}/>
+                    </div>
+
+                    <Col md={12}>
+                        <h3 className="my-4 text-center">{this.state.completed.name}</h3>
+                        <CardGroup className="pl-3 pb-3 text-center">
+                            <Card className="mr-3 text-dark rounded text-left">
+                                <Card.Body>
+                                    <p className="lead font-weight-bold purple-text">Sprout Description: </p>
+                                    <p className=""> {this.state.completed.description} </p>
+
+                                    <h4 className="float-left"><Badge variant="primary">#{this.state.completed.category}</Badge></h4>
+
+                                </Card.Body>
+                            </Card>
+                        </CardGroup>
+                    </Col>
+
+                    <Col md={12}>
+                      <CardGroup className="pl-3 pb-1 text-center">
+                        <Card className="mr-3 text-dark rounded">
+                          <Card.Body>
+                            <p className="lead font-weight-bold display-4 purple-text"> ${this.state.completed.amount} </p>
+                            <p className="font-weight-bold"> requested sprout amount </p>
+                          </Card.Body>
+                        </Card>
+                      </CardGroup>
+                    </Col>
+
+                    <Col md={12}>
+                      <CardGroup className="pl-3 pb-1 text-center">
+                        <Card className="mr-3 text-dark rounded">
+                          <Card.Body>
+                            <p className="lead font-weight-bold display-4 purple-text"> {this.state.completed.subscribers.length}</p>
+                            <p className="font-weight-bold"> planters growing your sprout </p>
+                          </Card.Body>
+                        </Card>
+                      </CardGroup>
+                      </Col>
+
+                      <Col md={12}>
+                        <CardGroup className="pl-3 pb-1 text-center">
+                        <Card className="mr-3 text-dark rounded">
+                          <Card.Body>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style={{width: `${100}%`}} aria-valuenow={100} aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p className="lead font-weight-bold display-4 purple-text"> ${this.state.completed.amountCollected} </p>
+                            <p className="font-weight-bold"> current sprout amount </p>
+                          </Card.Body>
+                        </Card>
+                        </CardGroup>
+                    </Col>
+                  </Card>
+                  </Modal.Body>
+                  <Modal.Footer className="text-center justify-content-center">
+                    <Button className="purple-bg" onClick={handleClose}>
+                      Got it!
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              }
 
                 {/*user is a donor*/}
                 {!isLoading && hasAuthenticatedUser == true && this.state.role == "donor" &&
@@ -189,7 +300,13 @@ class HomePage extends Component{
                 }
 
                 {/*user is a donee*/}
+                {this.state.alerted &&
+                <div class="alert alert-success" role="alert">
+                  <h4>Congratulations! Your sprout has reached its goal amount - click <a href="#" onClick={(e) => {this.setShow(true)}}>here</a> to view it.</h4>
+                </div>
+                }
                 {!isLoading && hasAuthenticatedUser == true && this.state.role == "donee" &&
+
                   <div class="container my-5">
                     <div class="row mt-5 border">
                       <div class="col-4 pt-3 text-center bg-white">

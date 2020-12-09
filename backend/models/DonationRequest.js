@@ -9,7 +9,8 @@ const DonationRequestSchema = new mongoose.Schema({
     amountCollected: {type: Number, required: true, default: 0},
     user: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     subscribers: {type:Array , "default":[]},
-    status: {type: String, required: true, enum: ["active", "completed", "cancelled"]}
+    status: {type: String, required: true, enum: ["active", "completed", "cancelled"]},
+    alerted: {type: Boolean, default: false}
 });
 
 module.exports = mongoose.model('DonationRequest', DonationRequestSchema);
