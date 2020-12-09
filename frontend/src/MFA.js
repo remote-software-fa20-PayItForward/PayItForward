@@ -34,7 +34,12 @@ class MFA extends Component {
         .then((response) => {
             console.log(response);
             if(response.ok) {
-                this.props.history.push('/');
+                var returnUrl = this.props.location.state.return_url;
+                if (returnUrl) {
+                    this.props.history.push(decodeURIComponent(returnUrl));
+                } else {
+                    this.props.history.push('/home');
+                }
             } else {
                 response.json().then(body => {
                     //this.setState({errorMsg: body.error})

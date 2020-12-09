@@ -39,9 +39,10 @@ class Login extends Component {
             if(response.ok) {
                 response.json().then(body => {
                     if (body.mfa) {
+                        var returnUrl = new URLSearchParams(document.location.search.substring(1)).get("returnUrl");
                         this.props.history.push({
                             pathname: '/mfa',
-                            state: {sig_response: body.mfa}
+                            state: {sig_response: body.mfa, return_url: returnUrl ? returnUrl : null}
                         });
                     } else {
                         var returnUrl = new URLSearchParams(document.location.search.substring(1)).get("returnUrl");
