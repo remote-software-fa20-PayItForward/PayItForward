@@ -38,8 +38,9 @@ class MySprout extends Component{
 					console.log(body);
 					this.setState({
 						empty: false,
-						requests: body
+						requests: body.reverse()
 					})
+					console.log(this.state);
 				} else {
 					this.setState({
 						empty: true,
@@ -59,7 +60,7 @@ class MySprout extends Component{
 			}).then((response) => {
 				response.json().then(body => {
 					this.setState({
-						requests: body
+						requests: body.reverse()
 					})
 				})
     	})
@@ -74,7 +75,7 @@ class MySprout extends Component{
                 { this.state.empty == false ? (
                     <Row className="justify-content-center m-5">
 											<CardColumns>
-	                        {this.state.requests.reverse().map((request, i) => {
+	                        {this.state.requests.map((request, i) => {
 															let donationProgress = (request.amountCollected/request.amount)*100;
 															console.log(donationProgress);
 															if (donationProgress > 100) {
